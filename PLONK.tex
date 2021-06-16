@@ -1,0 +1,2072 @@
+% !tex ts-program = pdflatex
+% !tex encoding = utf-8 unicode
+
+% this is a simple template for a latex document using the "article" class.
+% see "book", "report", "letter" for other types of document.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+\usepackage[
+    type={CC},
+    modifier={by-nc-sa},
+    version={3.0},
+]{doclicense}
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with xelatex)
+\usepackage[strict]{changepage}
+    
+    %%% examples of article customizations
+    % these packages are optional, depending whether you want the features they provide.
+    % see the latex companion or other references for full information.
+    
+    
+    %%% page dimensions
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (us) or a5paper or....
+    % \geometry{margin=2in} % for example, change the margins to 2 inches all round
+    % \geometry{landscape} % set up the page for landscape
+    %   read geometry.pdf for detailed page layout information
+ \usepackage{numdef}
+   
+\usepackage{graphicx} % support the \includegraphics command and options
+    % some of the article customisations are relevant for this class
+\usepackage{amsmath,amsthm}
+\usepackage{amsfonts} % math fonts such as \mathbb{}
+\usepackage{amssymb} % \therefore
+% \usepackage{bickham}
+\usepackage{hyperref}
+\usepackage{cryptocode}
+\usepackage{framed} 
+    % \usepackage[parfill]{parskip} % activate to begin paragraphs with an empty line rather than an indent
+    
+    %%% packages
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. Enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+    % % these packages are all incorporated in the memoir class to one degree or another...
+\usepackage{mathrsfs}
+\usepackage{booktabs}
+\usepackage{makecell}
+\usepackage{adjustbox}
+
+\usepackage{pgfplots}
+
+\renewcommand\theadalign{bc}
+\renewcommand\theadfont{\bfseries}
+\renewcommand\theadgape{\Gape[4pt]}
+  
+    %%% headers & footers
+\usepackage{fancyhdr} % this should be set after setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+    
+    
+    %%% section title appearance
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (see the fntguide.pdf for font help)
+    % (this matches context defaults)
+    
+    %%% toc (table of contents) appearance
+\usepackage[nottoc,notlof,notlot]{tocbibind} % put the bibliography in the toc
+\usepackage[titles,subfigure]{tocloft} % alter the style of the table of contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % no bold!
+
+    %%% end article customizations
+    \newcommand{\code}[1]{\texttt{#1}}
+\newcommand\tstrut{\rule{0pt}{2.6ex}}         % = `top' strut
+\newcommand\bstrut{\rule[-0.9ex]{0pt}{0pt}}   % = `bottom' strut
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+\newcommand{\bsigma}{\boldsymbol{\sigma}}
+\newcommand{\plonk}{\ensuremath{\mathcal{P} \mathfrak{lon}\mathcal{K}}\xspace}
+
+% \newcommand{\plonk}{\ensuremath{\mathtt{PLONK}}\xspace}
+%%% the "real" document content comes below...
+%\newcommand{\papertitle}{$\mathsf{Maitreya}$: Improved Prover Efficiency in Fully Succinct Universal zk-SNARKs through Permutation Arguments for Multiplicative Subgroups}
+\newcommand{\papertitle}{\plonk: Permutations over Lagrange-bases for Oecumenical Noninteractive arguments of Knowledge}
+%\newcommand{\authorname}}
+\newcommand{\company}{}
+\title{ \bf \papertitle \\[0.72cm]}
+\author{ Ariel Gabizon\thanks{Most of this work was done while the first author was working at Protocol Labs.}\\ \tt{Aztec}  \and Zachary J. Williamson\\ \tt{Aztec} \and Oana Ciobotaru} 
+
+% 	\large{\authorname} \\[0.5cm] \large{\company}
+% 	\\ {DRAFT}
+%}
+    %\date{} % activate to display a given date or no date (if empty),
+  
+           % otherwise the current date is printed 
+	
+\ProvidesPackage{numdef}
+
+%% Ariel Macros:
+\num\newcommand{\G1}{\ensuremath{{\mathbb G}_1}\xspace}
+\newcommand{\Gi}{\ensuremath{{\mathbb G}_i}\xspace}
+%\newcommand{\G}{\ensuremath{{\mathbb G}}\xspace}
+\newcommand{\Gstar}{\ensuremath{{\mathbb G}^*}\xspace}
+\newcommand{\x}{\ensuremath{\mathbf{x}}\xspace}
+\newcommand{\z}{\ensuremath{\mathbf{z}}\xspace}
+\newcommand{\X}{\ensuremath{\mathbf{X}}\xspace}
+
+\num\newcommand{\G2}{\ensuremath{{\mathbb G}_2}\xspace}
+%\num\newcommand{\G11}{\ensuremath{\G1\setminus \set{0} }\xspace}
+%\num\newcommand{\G21}{\ensuremath{\G2\setminus \set{0} }\xspace}
+\newcommand{\grouppair}{\ensuremath{G^*}\xspace}
+\newcommand{\prvperm}{\ensuremath{\mathrm{P_{\mathsf{\sigma}}}}\xspace}
+\newcommand{\verperm}{\ensuremath{\mathrm{V_{\mathsf{\sigma}}}}\xspace}
+
+\newcommand{\Gt}{\ensuremath{{\mathbb G}_t}\xspace}
+\newcommand{\F}{\ensuremath{\mathbb F}\xspace}
+\newcommand{\Fstar}{\ensuremath{\mathbb F^*}\xspace}
+
+\newcommand{\help}[1]{$#1$-helper\xspace}
+\newcommand{\randompair}[1]{\ensuremath{\mathsf{randomPair}(#1)}\xspace}
+\newcommand{\pair}[1]{$#1$-pair\xspace}
+\newcommand{\pairs}[1]{$#1$-pairs\xspace}
+\newcommand{\chalpoint}{\ensuremath{\mathfrak{z}}\xspace}
+
+\newcommand{\pairone}[1]{\G1-$#1$-pair\xspace}
+\newcommand{\pairtwo}[1]{\G2-$#1$-pair\xspace}
+\newcommand{\sameratio}[2]{\ensuremath{\mathsf{SameRatio}(#1,#2)}\xspace}
+\newcommand{\vecc}[2]{\ensuremath{(#1)_{#2}}\xspace}
+\newcommand{\players}{\ensuremath{[n]}\xspace}
+\newcommand{\adv}{\ensuremath{\mathcal A}\xspace}
+\newcommand{\advprime}{\ensuremath{{\mathcal A}'}\xspace}
+\newcommand{\extprime}{\ensuremath{E'}\xspace}
+\newcommand{\advrand}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
+\num\newcommand{\srs1}{\ensuremath{\mathsf{srs_1}}\xspace}
+\num\newcommand{\srs2}{\ensuremath{\mathsf{srs_2}}\xspace}
+\num\newcommand{\srs0}{\ensuremath{\mathsf{srs}}\xspace}
+\newcommand{\srsi}{\ensuremath{\mathsf{srs_i}}\xspace}
+\newcommand{\com}{\ensuremath{\mathsf{com}}\xspace}
+\newcommand{\comperm}{\ensuremath{\mathsf{com_{\sigma}}}\xspace}
+\newcommand{\cm}{\ensuremath{\mathsf{cm}}\xspace}
+\newcommand{\cmsig}{\ensuremath{\mathsf{cm_\sigma}}\xspace}
+\newcommand{\open}{\ensuremath{\mathsf{open}}\xspace}
+\newcommand{\openperm}{\ensuremath{\mathsf{open_{\sigma}}}\xspace}
+\newcommand{\sigof}[1]{\ensuremath{\sigma(#1)}\xspace}
+\newcommand{\proverexp}{\ensuremath{\mathsf{e}}\xspace}
+\newcommand{\reducedelems}{\ensuremath{\mathsf{r}}\xspace}
+
+\newcommand{\ci}{\ensuremath{\mathrm{CI}}\xspace}
+\renewcommand{\deg}{\ensuremath{\mathrm{deg}}\xspace}
+\newcommand{\pairvec}[1]{$#1$-vector\xspace}
+\newcommand{\Fq}{\ensuremath{\mathbb{F}_q}\xspace}
+\newcommand{\randpair}[1]{\ensuremath{\mathsf{rp}_{#1}}\xspace}
+\newcommand{\randpairone}[1]{\ensuremath{\mathsf{rp}_{#1}^{1}}\xspace}
+\newcommand{\abase}{\ensuremath{A_{\mathrm{\mathbf{0}}}}\xspace}
+\newcommand{\bbase}{\ensuremath{B_{\mathrm{\mathbf{0}}}}\xspace}
+\newcommand{\cbase}{\ensuremath{C_{\mathrm{\mathbf{0}}}}\xspace}
+
+\newcommand{\amid}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\bmid}{\ensuremath{B_{\mathrm{mid}}}\xspace}
+\newcommand{\cmid}{\ensuremath{C_{\mathrm{mid}}}\xspace}
+
+\newcommand{\negl}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
+\newcommand{\randpairtwo}[1]{\ensuremath{\mathsf{rp_{#1}^2}}\xspace}%the randpair in G2
+\newcommand{\nilp}{\ensuremath{\mathscr N}\xspace}
+\newcommand{\groupgen}{\ensuremath{\mathscr G}\xspace}
+\newcommand{\qap}{\ensuremath{\mathscr Q}\xspace}
+\newcommand{\polprot}[4]{$(#1,#2,#3,#4)$-polynomial protocol}
+\newcommand{\rangedprot}[5]{$#5$-ranged $(#1,#2,#3,#4)$-polynomial protocol}
+
+\newcommand{\rej}{\ensuremath{\mathsf{rej}}\xspace}
+\newcommand{\acc}{\ensuremath{\mathsf{acc}}\xspace}
+\newcommand{\res}{\ensuremath{\mathsf{res}}\xspace}
+\newcommand{\sha}[1]{\ensuremath{\mathsf{COMMIT}(#1)}\xspace}
+ \newcommand{\shaa}{\ensuremath{\mathsf{COMMIT}}\xspace}
+ \newcommand{\comm}[1]{\ensuremath{\mathsf{comm}_{#1}}\xspace}
+ \newcommand{\defeq}{:=}
+
+\newcommand{\B}{\ensuremath{\vec{B}}\xspace}
+\newcommand{\dom}{\ensuremath{H}\xspace}
+\newcommand{\C}{\ensuremath{\vec{C}}\xspace}
+\newcommand{\Btwo}{\ensuremath{\vec{B_2}}\xspace}
+\newcommand{\treevecsimp}{\ensuremath{(\tau,\rho_A,\rho_A \rho_B,\rho_A\alpha_A,\rho_A\rho_B\alpha_B, \rho_A\rho_B\alpha_C,\beta,\beta\gamma)}\xspace}% The sets of elements used in simplifed relation tree in main text body
+\newcommand{\rcptc}{random-coefficient subprotocol\xspace}
+\newcommand{\rcptcparams}[2]{\ensuremath{\mathrm{RCPC}(#1,#2)}\xspace}
+\newcommand{\verifyrcptcparams}[2]{\ensuremath{\mathrm{\mathsf{verify}RCPC}(#1,#2)}\xspace}
+\newcommand{\randadv}{\ensuremath{\mathsf{rand}_{\adv}}\xspace}
+ \num\newcommand{\ex1}[1]{\ensuremath{ #1\cdot g_1}\xspace}
+ \num\newcommand{\ex2}[1]{\ensuremath{#1\cdot g_2}\xspace}
+ \newcommand{\pr}{\mathrm{Pr}}
+ \newcommand{\powervec}[2]{\ensuremath{(1,#1,#1^{2},\ldots,#1^{#2})}\xspace}
+ \newcommand{\partition}{\ensuremath{{\mathcal T}}\xspace}
+ \newcommand{\partof}[1]{\ensuremath{{\partition_{#1}}}\xspace}
+\num\newcommand{\out1}[1]{\ensuremath{\ex1{\powervec{#1}{d}}}\xspace}
+\num\newcommand{\out2}[1]{\ensuremath{\ex2{\powervec{#1}{d}}}\xspace}
+ \newcommand{\nizk}[2]{\ensuremath{\mathrm{NIZK}(#1,#2)}\xspace}% #2 is the hash concatenation input
+ \newcommand{\verifynizk}[3]{\ensuremath{\mathrm{VERIFY\mhyphen NIZK}(#1,#2,#3)}\xspace}
+\newcommand{\protver}{protocol verifier\xspace} 
+\newcommand{\mulgroup}{\ensuremath{\F^*}\xspace}
+\newcommand{\lag}[1]{\ensuremath{L_{#1}}\xspace} 
+\newcommand{\sett}[2]{\ensuremath{\set{#1}_{#2}}\xspace}
+\newcommand{\omegaprod}{\ensuremath{\alpha_{\omega}}\xspace}
+\newcommand{\lagvec}[1]{\ensuremath{\mathrm{LAG}_{#1}}\xspace}
+\newcommand{\trapdoor}{\ensuremath{r}}
+\newcommand{\trapdoorext}{\ensuremath{r_{\mathrm{ext}}}\xspace}
+\newcommand{\trapdoorsim}{\ensuremath{r_{\mathrm{sim}}}\xspace}
+\renewcommand{\mod}{\ensuremath{\;\mathrm{mod}\;}}
+\newcommand{\hsub}{\ensuremath{H^*}\xspace}
+\num\newcommand{\enc1}[1]{\ensuremath{\left[#1\right]_1}\xspace}
+\newcommand{\enci}[1]{\ensuremath{\left[#1\right]_i}\xspace}
+\num\newcommand{\enc2}[1]{\ensuremath{\left[#1\right]_2}\xspace}
+\newcommand{\gen}{\ensuremath{\mathsf{gen}}\xspace}
+\newcommand{\prv}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
+\newcommand{\prvpoly}{\ensuremath{\mathrm{P_{\mathsf{poly}}}}\xspace}
+\newcommand{\prvpc}{\ensuremath{\mathrm{P_{\mathsf{PC}}}}\xspace}
+\newcommand{\verpoly}{\ensuremath{\mathrm{V_{\mathsf{poly}}}}\xspace}
+\newcommand{\verpc}{\ensuremath{\mathrm{V_{\mathsf{PC}}}}\xspace}
+\newcommand{\ideal}{\ensuremath{\mathcal{I}}\xspace}
+\newcommand{\prf}{\ensuremath{\pi}\xspace}
+\newcommand{\simprv}{\ensuremath{\mathrm{P^{sim}}}\xspace}
+
+%\newcommand{\enc}[1]{\ensuremath{\left[#1\right]}\xspace}
+%\num\newcommand{\G0}{\ensuremath{\mathbf{G}}\xspace}
+\newcommand{\GG}{\ensuremath{\mathbf{G^*}}\xspace}  % would have liked to call this G01 but problem with name
+\num\newcommand{\g0}{\ensuremath{\mathbf{g}}\xspace}
+\newcommand{\inst}{\ensuremath{\phi}\xspace}
+\newcommand{\inp}{\ensuremath{\mathsf{x}}\xspace}
+\newcommand{\wit}{\ensuremath{\omega}\xspace}
+\newcommand{\ver}{\ensuremath{\mathsf{\mathbf{V}}}\xspace}
+\newcommand{\per}{\ensuremath{\mathsf{\mathbf{P}}}\xspace}
+\newcommand{\sonic}{\ensuremath{\mathsf{Sonic}}\xspace}
+\newcommand{\aurora}{\ensuremath{\mathsf{Aurora}}\xspace}
+\newcommand{\auroralight}{\ensuremath{\mathsf{Auroralight}}\xspace}
+\newcommand{\groth}{\ensuremath{\mathsf{Groth'16}}\xspace}
+\newcommand{\kate}{\ensuremath{\mathsf{KZG}}\xspace}
+\newcommand{\rel}{\ensuremath{\mathcal{R}}\xspace}
+\newcommand{\ext}{\ensuremath{E}\xspace}
+\newcommand{\params}{\ensuremath{\mathsf{params}_{\inst}}\xspace}
+\newcommand{\protparams}{\ensuremath{\mathsf{params}_{\inst}^\advv}\xspace}
+\num\newcommand{\p1}{\ensuremath{P_1}\xspace}
+\newcommand{\advv}{\ensuremath{ {\mathcal A}^{\mathbf{*}}}\xspace} % the adversary that uses protocol adversary as black box
+\newcommand{\crs}{\ensuremath{\sigma}\xspace}
+%\num\newcommand{\crs1}{\ensuremath{\mathrm{\sigma}_1}\xspace}
+%\num\newcommand{\crs2}{\ensuremath{\mathrm{\sigma}_2}\xspace}
+\newcommand{\set}[1]{\ensuremath{\left\{#1\right\}}\xspace}
+\newcommand{\hgen}{\ensuremath{\mathbf{g}}\xspace}
+\renewcommand{\sim}{\ensuremath{\mathsf{sim}}\xspace}%the distribution of messages when \advv simulates message of \p1
+\newcommand{\real}{\ensuremath{\mathsf{real}}\xspace}%the distribution of messages when \p1 is honest and \adv controls rest of players
+ \newcommand{\koevec}[2]{\ensuremath{(1,#1,\ldots,#1^{#2},\alpha,\alpha #1,\ldots,\alpha #1^{#2})}\xspace}
+\newcommand{\mida}{\ensuremath{A_{\mathrm{mid}}}\xspace}
+\newcommand{\midb}{\ensuremath{B_{\mathrm{mid}}}\xspace}
+\newcommand{\midc}{\ensuremath{C_{\mathrm{mid}}}\xspace}
+\newcommand{\chal}{\ensuremath{\mathsf{challenge}}\xspace}
+\newcommand{\attackparams}{\ensuremath{\mathsf{params^{pin}}}\xspace}
+\newcommand{\pk}{\ensuremath{\mathsf{pk}}\xspace}
+\newcommand{\attackdist}[2]{\ensuremath{AD_{#1}}\xspace}
+\renewcommand{\neg}{\ensuremath{\mathsf{negl}(\lambda)}\xspace}
+\newcommand{\ro}{\ensuremath{{\mathcal R}}\xspace}
+\newcommand{\elements}[1]{\ensuremath{\mathsf{elements}_{#1}}\xspace}
+ \num\newcommand{\elmpowers1}[1]{\ensuremath{\mathrm{\mathsf{e}}^1_{#1}}\xspace}
+ \num\newcommand{\elmpowers2}[1]{\ensuremath{\mathrm{\mathsf{e}}^2_{#1}}\xspace}
+\newcommand{\elempowrs}[1]{\ensuremath{\mathsf{e}_{#1}}\xspace}
+ \newcommand{\secrets}{\ensuremath{\mathsf{secrets}}\xspace}
+ \newcommand{\polysofdeg}[1]{\ensuremath{\F_{< #1}[X]}\xspace}
+ \newcommand{\bivar}[1]{\ensuremath{\F_{< #1}[X,Y]}\xspace}
+ \newcommand{\sig}{\ensuremath{\mathscr{S}}\xspace}
+ \newcommand{\prot}{\ensuremath{\mathscr{P}}\xspace}
+ \newcommand{\PCscheme}{\ensuremath{\mathscr{S}}\xspace}
+ \newcommand{\protprime}{\ensuremath{\mathscr{P^*}}\xspace}
+ \newcommand{\sigprv}{\ensuremath{\mathsf{P_{sc}}}\xspace}
+ \newcommand{\sigver}{\ensuremath{\mathsf{V_{sc}}}\xspace}
+ \newcommand{\sigpoly}{\ensuremath{\mathsf{S_{\sigma}}}\xspace}
+ \newcommand{\idpoly}{\ensuremath{\mathsf{S_{ID}}}\xspace}
+\newcommand{\idpolyevala}{\ensuremath{\mathsf{\bar{s}_{ID1}}}\xspace}
+\newcommand{\sigpolyevala}{\ensuremath{\mathsf{\bar{s}_{\sigma1}}}\xspace}
+\newcommand{\sigpolyevalb}{\ensuremath{\mathsf{\bar{s}_{\sigma2}}}\xspace}
+\newcommand{\bctv}{\ensuremath{\mathsf{BCTV}}\xspace}
+\newcommand{\PI}{\ensuremath{\mathsf{PI}}\xspace}
+\newcommand{\PIb}{\ensuremath{\mathsf{PI_B}}\xspace}
+\newcommand{\PIc}{\ensuremath{\mathsf{PI_C}}\xspace}
+\newcommand{\dl}[1]{\ensuremath{\widehat{#1}}\xspace}
+\newcommand{\obgen}{\ensuremath{\mathcal O}\xspace}
+\newcommand{\PC}{\ensuremath{\mathscr{P}}\xspace}
+\newcommand{\permscheme}{\ensuremath{\sigma_\mathscr{P}}\xspace}
+
+	
+\newcommand{\selleft}{\ensuremath{\mathbf{q_L}}\xspace}
+\newcommand{\selright}{\ensuremath{\mathbf{q_R}}\xspace}
+\newcommand{\selout}{\ensuremath{\mathbf{q_O}}\xspace}
+\newcommand{\selmult}{\ensuremath{\mathbf{q_M}}\xspace}
+\newcommand{\selconst}{\ensuremath{\mathbf{q_C}}\xspace}
+\newcommand{\selectors}{\ensuremath{\mathcal{Q}}\xspace}
+\newcommand{\lvar}{\ensuremath{\mathbf{a}}\xspace}
+\newcommand{\vars}{\ensuremath{\mathcal{V}}\xspace}
+\newcommand{\rvar}{\ensuremath{\mathbf{b}}\xspace}
+\newcommand{\ovar}{\ensuremath{\mathbf{c}}\xspace}
+\newcommand{\pubvars}{\ensuremath{\mathcal{I}}\xspace}
+\newcommand{\assignment}{\ensuremath{\mathbf{x}}\xspace}
+\newcommand{\constsystem}{\ensuremath{\mathscr{C}}\xspace}
+\newcommand{\relof}[1]{\ensuremath{\rel_{#1}}\xspace}
+\newcommand{\pubinppoly}{\ensuremath{\mathsf{PI}}\xspace}
+\newcommand{\sumi}[1]{\sum_{i\in[#1]}}
+\newcommand{\summ}[1]{\sum_{i\in[#1]}}
+\newcommand{\sumj}[1]{\sum_{j\in[#1]}}
+\newcommand{\ZeroH}{\ensuremath{Z_{H}} \xspace}
+\newcommand{\lpoly}{\ensuremath{\mathsf{a}}\xspace}
+\newcommand{\rpoly}{\ensuremath{\mathsf{b}}\xspace}
+\newcommand{\opoly}{\ensuremath{\mathsf{c}}\xspace}
+\newcommand{\idpermpoly}{\ensuremath{\mathsf{z}}\xspace}
+\newcommand{\lagrangepoly}{\ensuremath{\mathsf{L}}\xspace}
+\newcommand{\zeropoly}{\ensuremath{\mathsf{\ZeroH}}\xspace}
+\newcommand{\selmultpoly}{\ensuremath{\mathsf{q_M}}\xspace}
+\newcommand{\selleftpoly}{\ensuremath{\mathsf{q_L}}\xspace}
+\newcommand{\selrightpoly}{\ensuremath{\mathsf{q_R}}\xspace}
+\newcommand{\seloutpoly}{\ensuremath{\mathsf{q_O}}\xspace}
+\newcommand{\selconstpoly}{\ensuremath{\mathsf{q_C}}\xspace}
+\newcommand{\idcomm}{\ensuremath{[s_{\mathsf{ID1}}]_1}\xspace}
+\newcommand{\sigcomma}{\ensuremath{[s_{\mathsf{\sigma1}}]_1}\xspace}
+\newcommand{\sigcommb}{\ensuremath{[s_{\mathsf{\sigma2}}]_1}\xspace}
+\newcommand{\sigcommc}{\ensuremath{[s_{\mathsf{\sigma3}}]_1}\xspace}
+\newcommand{\selleftcomm}{\ensuremath{[q_\mathsf{L}]_1}\xspace}
+\newcommand{\selrightcomm}{\ensuremath{[q_\mathsf{R}]_1}\xspace}
+\newcommand{\seloutcomm}{\ensuremath{[q_\mathsf{O}]_1}\xspace}
+\newcommand{\selconstcomm}{\ensuremath{[q_\mathsf{C}]_1}\xspace}
+\newcommand{\selmultcomm}{\ensuremath{[q_\mathsf{M}]_1}\xspace}
+
+\newcommand{\multlinecomment}[1]{\directlua{-- #1}}
+    
+
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{thm}[lemma]{Theorem}
+\newtheorem{dfn}[lemma]{Definition}
+\newtheorem{remark}[lemma]{Remark}
+
+\newtheorem{claim}[lemma]{Claim}
+\newtheorem{corollary}[lemma]{Corollary}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\crct}{\ensuremath{\mathsf{C}}\xspace}
+\newcommand{\A}{\mathcal{A}}
+%\newcommand{\G}{\mathcal{G}}
+\newcommand{\Gr}{\mathbb{G}}
+%\newcommand{\com}{\textsf{com}}  Ariel defined equivalent that also works in math mode
+\newcommand{\cgen}{\text{cgen}}
+\newcommand{\poly}{\ensuremath{\mathsf{poly(\lambda)}}\xspace}
+\newcommand{\snark}{\ensuremath{\mathsf{snark(\lambda)}}\xspace}
+\newcommand{\grandprod}{\mathsf{prod}}
+\newcommand{\perm}{\mathsf{perm}}
+%\newcommand{\open}{\mathsf{open}}
+\newcommand{\update}{\mathsf{update}}
+\newcommand{\Prove}{\mathcal{P}}
+\newcommand{\Verify}{\mathcal{V}}
+\newcommand{\Extract}{\mathcal{E}}
+\newcommand{\Simulate}{\mathcal{S}}
+\newcommand{\Unique}{\mathcal{U}}
+\newcommand{\Rpoly}{\R{\poly}}
+\newcommand{\Ppoly}{\Prove{\poly}}
+\newcommand{\Vpoly}{\Verify{\poly}}
+\newcommand{\Psnark}{\prv}%{\Prove{\snark}}
+\newcommand{\Vsnark}{\ver}%{\Verify{\snark}}
+\newcommand{\Rprod}{\R{\grandprod}}
+\newcommand{\Pprod}{\Prove{\grandprod}}
+\newcommand{\Vprod}{\Verify{\grandprod}}
+\newcommand{\Rperm}{\R{\perm}}
+\newcommand{\Pperm}{\Prove{\perm}}
+\newcommand{\Vperm}{\Verify{\perm}}
+% \newcommand{\zw}[1]{{\textcolor{magenta}{Zac:#1}}}
+% \newcommand{\ag}[1]{{\textcolor{blue}{\emph{Ariel:#1}}}}
+\newcommand{\prob}{\ensuremath{\mathrm{Pr}}\xspace}
+\newcommand{\extprot}{\ensuremath{E_{\prot}}\xspace}
+\newcommand{\transcript}{\ensuremath{\mathsf{transcript}}\xspace}
+\newcommand{\extpc}{\ensuremath{E_{\PCscheme}}\xspace}
+\newcommand{\advpc}{\ensuremath{\mathcal A_{\PCscheme}}\xspace}
+\newcommand{\advprot}{\ensuremath{\mathcal A_{\prot}}\xspace}
+\newcommand{\protmany}{\ensuremath{ {\prot}_k}\xspace}
+
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\marlin}{\ensuremath{\mathsf{Marlin}}\xspace}
+\newcommand{\fractal}{\ensuremath{\mathsf{Fractal}}\xspace}
+\newcommand{\Rsnark}{\R{\snark}}
+\begin{document}
+    \maketitle
+
+\begin{abstract}
+	zk-SNARK constructions that utilize an updatable universal structured reference string remove one of the main obstacles in deploying zk-SNARKs\cite{firstUniversal}. The important work of Maller et al.\ \cite{sonic} presented \sonic\;- the first potentially practical zk-SNARK with fully succinct verification for general arithmetic circuits with such an SRS.
+	However, the version of \sonic enabling fully succinct verification still requires relatively high proof construction overheads. We present a universal SNARK construction with fully succinct verification, and significantly lower prover running time (roughly 7.5-20 times fewer group exponentiations than \cite{sonic} in the fully succinct verifier mode depending on circuit structure).
+	
+	Similarly to \cite{sonic} we rely on a permutation argument based on Bayer and Groth \cite{permorig}. However, we focus on ``Evaluations on a subgroup rather than coefficients of monomials''; which enables simplifying both the permutation argument and the arithmetization step.
+\end{abstract}
+
+\section{Introduction}
+% 
+% Zero-knowledge Succinct Non-interactive Arguments of Knowledge (zk-SNARKs) \cite{Kilian,Micali,BCCT} represent a category of zero-knowledge proofs that can be used to prove knowledge of a witness for arbitrary NP relations, without leaking any information about the witness. Additionally, proofs are a only polylogarithmic in the witness size.
+% 
+% A setting that has gained much popularity is that of ``SNARKs with preprocessing'' (cf. e.g., \cite{GGPR}) where a one-time expensive computation of the verifier is allowed, in which a \emph{Structured Reference String} (SRS) is constructed. The advantage of this setting is potentially enabling polylogarithmic proof size and verification time also for non-uniform lang ugages.
+% 
+% More concretely, of great recent interest is the \emph{circuit satisfiability problem}, where given a public assignment for the values of a few of circuit wires, one wishes to demonstrate knowledge of an assignment to the rest of the wires that is consistent with the circuit computation.
+% 
+% Of great practical interest is having the preprocessing phase depend 
+% 
+% 
+% More concretely, when 
+% In what we call here a \emph{fully succinct} zk-SNARK
+% \footnote{Intuitively, one might consider polylogarithmic verification time a necessity for any SNARK, making the term ``fully succinct'' superflous. However, e.g., \cite{GGPR} only require polylogarithmic proof size in a SNARK; and in case verification time is also polylogarithmic call the SNARK \emph{unsubtle}.}
+% both the size of these proofs and the computation time are required to be polylogarithmic in witness size. 
+
+
+
+
+Due to real-world deployments of zk-SNARKs, it has become of significant interest to have the structured reference string (SRS) be constructible in a ``universal and updatable'' fashion. Meaning that the same SRS can be used for statements about all circuits of a certain bounded size; and that at any point in time the SRS can be updated by a new party, such that the honesty of only one party from all updaters up to that point is required for soundness.
+For brevity, let us call a zk-SNARK with such a setup process \emph{universal}.
+
+
+For the purpose of this introduction, let us say a zk-SNARK for circuit satisfiability is \emph{fully succinct}
+if 
+
+% In this paper, we are interested in zk-SNARKs that are \emph{universal and fully succinct} in the following sense.
+ \begin{enumerate}
+\item The preprocessing\footnote{We use the term SNARK in this paper for what is sometimes called a ``SNARK with preprocessing''(see e.g. \cite{GGPR}) where one allows a one-time verifier computation that is polynomial rather than polylogarithmic in the circuit size. In return, the SNARK is expected to work for all \emph{non-uniform circuits}, rather than only statements about uniform computation.} 
+ phase/SRS generation run time is quasilinear in circuit size.
+\item The prover run time is quasilinear in circuit size.
+\item The proof length is logarithmic\footnote{From a theoretical point of view, polylogarithmic proof length is more natural; but logarithmic nicely captures recent constructions with a constant number of group elements, and sometimes is a good indication of the ``practicality barrier''.} in circuit size.
+\item The verifier run time is polylogarithmic in circuit size.\footnote{
+In many definitions, only proof size is required to be polylogarithmic. 
+For example, in the terminology of \cite{GGPR}, additionally requiring polylogarithmic verifier run time means the SNARK is \emph{unsubtle}.}
+
+\end{enumerate}
+
+
+
+
+Maller et al.\ \cite{sonic} constructed for the first time a universal fully succinct zk-SNARK for circuit satisfiability, called \sonic.
+
+% Zero-Knowledge Succinct Non-interactive Arguments of Knowledge represent a category of zero-knowledge proofs that can be used to prove arbitrary NP relations, whilst hiding the values of the inputs and/or outputs of the relation. Both the size of these proofs and the computation time required to verify these proofs are constant, regardless of the complexity of the NP relation in question.
+% \\
+% \\
+% This technology is extremely useful in contexts where one must validate an NP relation in a resource or bandwidth-constrained environment. Of particular relevance are distributed ledger technologies, where transaction throughputs are low and data privacy guarantees are minimal. ZK-SNARKs represent a viable solution to both of these problems, but are constrained by the requirement to enact a `trusted setup', where trusted parties must  utilizes trapdoors (commonly referred to as `toxic waste') to add structure into a common reference string that is unique to a single SNARK-encoded NP relation. If knowledge of the toxic waste is leaked to an adversary, they can break the soundness of the SNARK protocol in question. This requirement to run a trusted setup is a significant impediment to the practical deployment of ZK-SNARK based proving systems.
+% \\
+% \\
+% `Universal' ZK-SNARKs are a category of ZK-SNARKs that only require a single trusted setup ceremony, to generate a structured reference string  that can be used to encode any NP relation up to a certain size determined by the size of the SRS. This removes the key limitation of ZK-SNARKs, as one can construct an arbitrary number of ZK-SNARK `circuits' without having to run additional setup ceremonies. The structured reference string is also updatable, allowing one to add additional randomness into the SRS if there are concerns regarding the security of the original trusted setup ceremony.
+% \\
+% \\
+% The first practical universal ZK-SNARK was the SONIC protocol~\cite{sonic}. However, SONIC relies on `helper' entities to batch validate proofs. To obtain a fully succinct construction, without helpers, both proof construction times and proof verification times suffer considerably.
+% \\
+% \\
+% We present a new universal ZK-SNARK construction that uses Lagrange bases to significantly improve both proof sizes, proof construction times, proof verification times and the overall size of the required structured reference string. This new ZK-SNARK construction is succinct by design and does not rely on helpers, or batch verification of proofs.
+
+
+\cite{sonic} also give a version of \sonic with dramatically improved prover run time, at the expense of efficient verification only in a certain amortized sense.
+
+\subsection{Our results}
+In this work we give a universal fully-succinct zk-SNARK with significantly improved prover run time compared to fully-succinct \sonic.
+
+At a high level our improvements stem from a more direct arithmetization of a circuit as compared to the \cite{Bootle}-inspired arithmetization of \cite{sonic}. This is combined with a permutation argument over univariate evaluations on a multiplicative subgroup rather than over coefficients of a bivariate polynomial as in \cite{sonic}.
+
+In a nutshell, one reason multiplicative subgroups are useful is that several protocols, including \sonic,  use a permutation argument based on Bayer and Groth \cite{permorig}. Ultimately, in the ``grand product argument'', this reduces to checking relations between coefficients of polynomials at ``neighbouring monomials''.
+
+We observe that if we think of the points $x,\hgen\cdot x$ as neighbours, where \hgen is a generator of a multiplicative subgroup of a field \F, it is very convenient to check relations between different polynomials at such pairs of points.
+
+A related convenience is that multiplicative subgroups interact well with Lagrange bases.
+For example, suppose  $H\subset \F$ is a multiplicative subgroup of order $n+1$, and $x\in H$.  The polynomial $L_x$ of degree at most $n$  that vanishes on $H\setminus\set{x}$ and has $f(x)=1$, has a very sparse representation of the form
+\[L_x(X)= \frac{c_x(X^{n+1}-1)}{(X-x)},\]
+for a constant $c_x$.
+This is beneficial when constructing an efficiently verifiable \cite{permorig}-style permutation argument in terms of polynomial identities.
+
+
+% 
+% \subsection{Overview of  techniques (messy Rant at this point}
+% Permutation arguments are central to SNARK constructions with a universal SRS.
+% 
+% Main technical point - permutation argument is more efficient when on mult subgroup in univariate poly.
+% 
+% Sonic work hader cause degree larger, bivariate, no subgroup
+% 
+% 
+% \sonic's fully succinct verification mode relies on a ``permutation argument''. However, they use a starting point
+% a rather complex arithmetization based on Bootle et al.\ \cite{Bootle}.
+% 
+% We notice here, as is implicit in other works e.g. \cite{BCGRS}, that a permutation argument suffices for a more direct and simple arithmetization, especially when using a ``permutation of values rather than monomials''.
+% 
+% To demonstrate this, let us look at a simplified instance when our arithmetic circuit 
+% \begin{itemize}
+%  \item Contains only multiplication gates.
+%  \item The number $n$ of circuit wires is equal to the number of gates.
+%  \item Every wire is the left, right, and output wire of exactly one gate.
+% \end{itemize}
+% Now define three permutations $L,R,O$ of $[n]$
+% such that
+% \begin{itemize}
+%  \item $L(i)$ is the left\footnote{In the actual construction we assume $L$ is the identity premutation as an efficiency optimization.} wire of the $i$'th gate.
+%  \item $R(i)$ is the right wire of the $i$'th gate.
+%  \item $O(i)$ is the output wire of the $i$'th gate.
+% \end{itemize}
+% 
+% 
+% Suppose now we are given polynomials $W_L,W_R,W_O\in \polysofdeg{n}$ and are guaranteed that
+% for some fixed $W\in \polysofdeg{n}$, for each $i\in [n]$,
+% $W_L(i) = W(L(i)), W_R(i)=W(R(i)),W_O(i) =W(O(i))$.
+% 
+% In that case, we have that that values $\sett{W(i)}f{i \in [n]}$ are a satisfying assignment for the circuit if and only if,
+% for each $i\in H$
+% \[W_L(i)\cdot W_R(i) =W_O(i)\]
+% which is equivalent to $P\defeq W_L\cdot W_R-W_O$ being divisible by $\ZeroH$.
+
+
+
+
+\subsection{Efficiency Analysis}
+
+We compare the performance of this work to the state of the art, both for non-universal SNARKs and universal SNARKs. At the time of publication, the only fully succinct universal SNARK construction is (the fully-succinct version of) the \sonic protocol~\cite{sonic}. This protocol requires the prover compute $273n$ \G1 group exponentiations, where $n$ is the number of multiplication gates. In fully-succinct \sonic, every wire can only be used in three linear relationships, requiring the addition of `dummy' multiplication gates to accommodate wires used in more than three addition gates. This increase in the multiplication gate count is factored into the prover computation estimate (see~\cite{sonic} for full details).
+
+Our universal SNARK requires the prover to compute 6 polynomial commitments, combined with two opening proofs to evaluate the polynomial commitments at a random challenge point. There are two ``flavours''of \plonk to suit the tastes of the user. By increasing the proof size by two group elements, the total prover computations can be reduced by $\approx10\%$. The combined degree of the polynomials is either $9(n + a)$ (larger proofs) or $11(n + a)$ (smaller proofs, reduced verifier work), where $n$ is the number of multiplication gates and $a$ is the number of addition gates.
+Currently, the most efficient fully-succinct SNARK construction available is Groth's 2016 construction~\cite{Groth16}, which requires a unique, non-updateable CRS per circuit. Proof construction times are dominated by $3n + m$ \G1 and $n$ \G2 group exponentiations, where $m$ is formally the number of R1CS variables, and is typically bounded by $n$ (for the rest of this section, the reader may assume $m=n$ for simplicity). If we assume that one \G2 exponentiation is equivalent to three \G1 exponentiations, this yields $6n + m$ equivalent \G1 group exponentiations.
+
+
+Performing a direct comparison between these SNARK arithmetisations requires some admittedly subjective assumptions. When evaluating common circuits, we found that the number of addition gates is ~2x the number of multiplication gates, however circuits that are optimized under the assumption that addition gates are `free' (as is common in R1CS based systems like \cite{Groth16}) will give worse estimates.
+
+At one extreme, for a circuit containing no addition gates and only fan-in-2 multiplication gates, our universal SNARK proofs require $\approx 1.1$ times more prover work than \cite{Groth16}, and $\approx 30$ times fewer prover work than \sonic. If $a = 2n$, the ratios change to $\approx 2.25$ times more prover work than \cite{Groth16}, and $\approx 10$ times less work than \sonic. If $a = 5n$, this changes to $\approx3$ times more work than \cite{Groth16}, and $\approx 5$ times less work than \sonic. We should note that these comparisons are only comparing the required number of group exponentiations.
+
+We also note that the degree of \plonk's structured reference string is equal to the number of gates in a circuit (if one uses the "fast" flavour of \plonk). This is a significant reduction in the SRS size compared to the state of the art.
+
+\begin{table}[!htbp]
+	\caption{Prover comparison. $m$ = number of wires, $n$ = number of multiplication gates, $a$ = number of addition gates}
+	\centering
+\begin{adjustbox}{width=1\textwidth}
+	\begin{tabular}{l|l|l|l|l|l|l}
+	& \thead{size $\leq d$\\ SRS} & \thead{size $=n$\\ CRS/SRS} & \thead{prover\\ work} & \thead{proof\\ length} & \thead{succinct} & \thead{universal} \\ \hline
+		\groth
+		        & - & $3n + m$ \G1      & \makecell[l]{$3n + m - \ell$ \G1 exp, \\ $n$ \G2 exp} & $2$ \G1, $1$ \G2 & \cmark & \xmark \\ \hline
+		\sonic (helped)    & $12d$ \G1, $12d$ \G2 & $12n$ \G1         &   $18n$ \G1 exp      & $4$ \G1, $2$ $\F$ & \xmark & \cmark \\ \hline
+		\sonic (succinct)  & $4d$ \G1, $4d$ \G2             & $36n$ \G1          & $273n$ \G1 exp           & $20$ \G1, $16$ \F & \cmark & \cmark \\ \hline
+		\auroralight       & $2d$ \G1, $2d$ \G2   & $2n$ \G1          & $8n$ \G1 exp         & $6$ \G1, $4$ \F & \xmark & \cmark \\ \hline
+		This work (small)         & $3d$ \G1, $1$ \G2     & $3n + 3a$ \G1, $1$ \G2 & \makecell[l]{$11n + 11a$ \G1 exp , \\ $\approx54(n+a)\text{log}(n+a)$ \F mul}        & $7$ \G1, $7$ \F & \cmark & \cmark \\ \hline
+		This work (fast prover)         & $d$ \G1, $1$ \G2     & $n + a$ \G1, $1$ \G2 & \makecell[l]{$9n + 9a$ \G1 exp , \\ $\approx54(n+a)\text{log}(n+a)$ \F mul}        & $9$ \G1, $7$ \F & \cmark & \cmark \\ \hline
+	\end{tabular}
+\end{adjustbox}
+\label{table:prover-work}
+\end{table} \
+
+When comparing proof construction, we also include the number of field multiplications for \plonk, as the number of fast-fourier-transforms required to construct proofs is non-trivial. All other succinct universal SNARK constructions also have high FFT transform costs, however given the difficulty of finding hard numbers, we cannot include them in the above table. Qualitative analysis suggests that the FFTs consume slightly less compute time than the \G1 group exponentiations. More details on the number of field multiplications are given in section~\ref{sec:benchmarks}.
+\\
+\\
+Verifier computation per proof is shown in table~\ref{table:verifier-work}. Only two bilinear pairing operations are required, due to the simple structure of the committed prover polynomials. In addition, the $\G2$ elements in each pairing are fixed, enabling optimizations that reduce pairing computation time by $\approx 30\%$~\cite{CCSD10}.
+%(TODO: ask Mary about how many group exponentiations SONIC verifiers require?)
+
+\begin{table}[!htbp]
+	\caption{Verifier comparison per proof, $P$=pairing, $\ell$=num of pub inputs. For non-succinct protocols, additional helper work is specified}
+	\centering
+	\begin{tabular}{l|l|l|l}
+		&  \thead{verifier\\ work} & \thead{elem. from\\ helper} & \thead{extra verifier \\ work in\\ helper mode} \\ \hline
+		\groth & $3P$, $\ell$ \G1 exp & - & - \\ \hline
+		\sonic (helped) & $10P$ & $3$ \G1, $2$ \F & $4P$ \\ \hline
+		\sonic (succinct) & $13P$ & - & - \\ \hline
+		\auroralight &  $5P$, $6$ \G1  exp &  $8$ \G1, $10$ \F & $12P$  \\ \hline
+		This work (small) & $2P$, $16$ \G1 exp & - & - \\ \hline
+		This work (fast prover) & $2P$, $18$ \G1 exp & - & - \\ \hline
+	\end{tabular}
+\label{table:verifier-work}
+\end{table}
+
+% \subsection{On the subject of arithmetic gates}
+% 
+% We have presented our main results in terms of fan-in two circuits with addition and multiplication gates. 
+% However, we think it is worth noting that \plonk enables more flexibility in the gate choice; as opposed to some other previous pairing based SNARKs. For example, as \cite{Groth16}'s verifier is based on evaluating an identity at a hidden challenge point using a pairing, it is inherent that only degree two identities/gates can be used. \plonk SNARKs are under no such restrictions -  as a polynomial commitment scheme is used to open the polynomials participating in the verifier check at a random point; after which any identity can be checked. It is possible to add highly custom arithmetic "gates" into a \plonk proving system, that are tailored to a specific use-case. For example, one could define a "gate" that evaluates a MiMC hash round~\cite{albrecht2016mimc}, or a gate that accumulates base-3 integers into a sum.
+% \\
+% \\
+% At a higher level, it is possible to construct and verify \plonk circuits using any cryptosystem that supports a succinct polynomial commitment scheme.
+
+\cleardoublepage
+\subsection{Performance and Benchmarks} \label{sec:benchmarks}
+
+\begin{figure}[h]
+\begin{tikzpicture}[every axis/.append style={width=0.5\linewidth,title style={align=center}}]
+	\begin{axis}[
+		name=axis1,
+		title={\textsf{Proof construction time}},
+		xlabel={\textsf{Number of gates}},
+		ylabel={\textsf{Time (s)}},
+		xmode=log,
+		ymode=log,
+		log basis x={2},
+		ymin={0.1},
+		ymax={40},
+		xtick=data,
+	]
+	\addplot plot coordinates {
+		(8192, 0.19)
+		(16384, 0.38)
+		(32768, 0.80)
+		(65536, 1.49)
+		(131072, 2.89)
+		(262144, 5.55)
+		(524288, 11.77)
+		(1048576, 22.83)
+	};
+	\end{axis}
+	\begin{axis}[
+		name=axis2,
+	    at={(axis1.outer north east)},anchor=outer north west,
+		title={\textsf{Circuit preprocessing time}},
+		xlabel={\textsf{Number of gates}},
+		ylabel={\textsf{Time (s)}},
+		xmode=log,
+		ymode=log,
+		log basis x={2},
+		ymin={0.1},
+		ymax={40},
+		xtick=data,
+	]
+	\addplot plot coordinates {
+		(8192, 0.12)
+		(16384, 0.22)
+		(32768, 0.38)
+		(65536, 0.77)
+		(131072, 1.50)
+		(262144, 2.73)
+		(524288, 5.34)
+		(1048576, 11.57)
+	};
+	\end{axis}
+	\begin{axis}[
+		name=axis3,
+	    at={(axis1.outer south west)},anchor=outer north west,
+		title={\textsf{Proof verification time}},
+		xlabel={\textsf{Number of gates}},
+		ylabel={\textsf{Time (ms)}},
+		xmode=log,
+		log basis x={2},
+		xtick=data,
+		ytick={0,2,4,6,8,10},
+		ymin={0},
+		ymax={10}
+	]
+	\addplot plot coordinates {
+		(8192, 1.4)
+		(16384, 1.2)
+		(32768, 1.3)
+		(65536, 1.4)
+		(131072, 1.4)
+		(262144, 1.3)
+		(524288, 1.3)
+		(1048576, 1.3)
+	};
+	\end{axis}
+\end{tikzpicture}
+\caption{Benchmarks for test \plonk circuits using the BN254 curve. Does not include witness generation. Tests performed on a Surface pro 6 with 16GB RAM and a core i7-8650U CPU, utilizing all 8 logical/4 physical cores.}
+\label{Fig:benchmarks}
+\end{figure}
+
+Figure~\ref{Fig:benchmarks} provides some estimates for the time required to construct and verify \plonk proofs. The benchmarks in question utilize the BN254 elliptic curve, using the \href{https://github.com/AztecProtocol/barretenberg}{Barretenberg ecc library}.
+\\
+\\
+Even for circuits with over a million gates, \plonk proofs are capable of being constructed on consumer-grade hardware in under 23 seconds. This marks a significant advancement in the efficiency of universal SNARKs, which are now practical for a wide range of real-world use-cases.
+\\
+\\
+Circuit preprocessing is a one-off computation, required for each program codified into a \plonk circuit. This step generates the polynomial commitments to the `selector' polynomials required to verify proofs.
+\\
+\\
+When constructing proofs, the time taken to perform the required fast fourier transforms is comparable to the time taken for elliptic curve scalar multiplications. The number of field multiplications in table~\ref{table:prover-work} is obtained from $8$ FFTs of size $4n$, $5$ FFTs of size $2n$ and $12$ FFTs of size $n$.
+\\
+\\
+The number of FFT transforms can be significantly reduced, if a circuit's preprocessed polynomials are provided as evaluations over the $4n$'th roots of unity (instead of in Lagrange-base form). However, given this dramatically increases the amount of information required to construct proofs, we omit this optimisation from our benchmarks.
+
+
+
+
+We conclude the introduction with a comparision to relevant concurrent work.
+
+\subsection{Comparison with the randomized sumcheck approach, and \fractal/\marlin:}
+Roughly speaking, all succinct proving systems work by using randomness to compress many constraint checks into one.
+The general way to obtain such compression, is by taking a random linear combination of the constraints.
+In the case of R1CS and similar systems, the more difficult constraints to be compressed are linear relations between the system variables, i.e. constraints of the form
+$<a_i,x>=0$ where $x\in \F^m$ are the system variables, and $a_i\in \F^m$ represents one of the constraints.\footnote{We emphasize that the vector $a_i$ here does not precisely correspond to one of the r1cs matrix rows, but rather to a ``flattening'' of it, i.e. it is a constraint of the form $y=\sum a'_{i,j} x_j$ where $a'_i$ is one the r1cs matrix rows.}
+
+These are analogous to the less general ``wiring constraints'' in a circuit satisfiability statement, which
+have the form $x_i=x_j$ (e.g. when $x_i$ represents the output wire of a gate $G$, and $x_j$ an input wire from $G$ into another gate $G'$).
+
+
+
+A random\footnote{It is a standard derandomization trick to use powers of a single random $r\in \F$ rather than random independent $r_i$.} linear combination of linear constraints might have the form
+
+\[\sum_{i\in [n]} r^i <a_i,x>=0 \]
+
+for a unifrom $r\in \F$
+
+Skipping some details, \cite{sonic} and the subsequent work of \cite{auroralight} (relying on \cite{aurora}) reduce such a check to evaluating a degree $n$ bivariate $S$ at a random point; \emph{such that the number of non-zero monomials in $S$ corresponds to the number of non-zero entries in the constraint vectors \sett{a_i}{i\in [n]}}.
+\cite{sonic} at this point devise a clever strategy to amortize the cost of many evaluations of $S$ across many proofs.
+This variant of \cite{sonic} is much more prover efficient, but not fully succinct because of the need for the verifier to compute at least one evaluation of $S$ by themselves.
+
+
+Thus, the barrier to a fully succinct version of the more prover efficient version of \sonic (and for a fully succinct version of \cite{
+auroralight}), is a method to efficiently verify an evaluation $S(z,y)$ in the case $S$ only contains $O(n)$ non-zero monomials.
+
+A significant technical contribution of the recent concurrent \fractal and \marlin systems \cite{marlin,fractal}
+is a solution to this problem ``in Lagrange Basis''.
+
+Specifically, suppose that $H,K$ are multiplicative subgroups of size $O(n)$ of \F such that $S$ has only $M$ non-zero values on $H\times K$; then \cite{marlin,fractal} devise a protocol to convince a succinct verifier that $S(z,y)=t$ where the prover's work is linear in $M$. This is a good point to note that the solution to this problem by the natural generalization of \cite{kate} to a bi-variate polynomial commitment scheme would have led to $O(n^2)$ proving time.
+
+
+Coming back to \plonk, the reason we don't require this ``bi-variate evaluation breakthrough'' is that we focus on constant fan-in circuits rather than R1CS/unlimited addition fan-in; and thus our linear constraints are just wiring constraints that can be reduced to a permutation check (as explained in Sections \ref{subsec:copychecks}, \ref{sec:constsystems}). One way to interpret the \cite{permorig} technique is that ``linear constraints that correspond to a permutation can be more simply combined than general linear constraints''. For example, in the above equation each constraint is \emph{multiplied} by a distinct random coefficient, whereas in the \cite{permorig} randomization, it suffices in a sense to \emph{add} the same random shift to each variable value. (See the permutation protocol in Section \ref{sec:permprotocol} for details.)
+\paragraph{Concrete comparison to Marlin}
+While \fractal leverages the sparse bi-variate evaluation technique in the context of transparent recursive SNARKs, \marlin focuses on constructing a fully succinct (universal) SNARK as in this paper.
+
+It is not completely straightforward to compare this work and \cite{marlin}, as we are in 
+the realm of concrete constants, and the basic measure both works use is different.
+While we take our main parameter $n$ to be the number of addition and multiplication gates in a fan-in two circuit;
+\cite{marlin} use as their main parameter the maximal number of non-zeroes in one of the three matrices describing an R1CS. For the same value of $n$ \plonk outperforms \marlin, e.g. by roughly a 2x factor in prover group operations and proof size.
+In the extreme case of a circuit with only multiplication gates, this would indeed represent the performance difference between the two systems.
+
+However, in constraint systems with ``frequent large addition fan-in'' \marlin may outperform the currently specified variant\footnote{It seems that the natural variants of \plonk where the addition fan-in is increased to three or four according to the instance could outperform the current numbers given in \marlin for any R1CS.} of \plonk.
+For example, this happens in the extreme case of one ``fully dense'' R1CS constraint
+\[\left(\sum_{j\in [m]} a_jx_j \right)\cdot \left( \sumj{m} b_jx_j\right) = \sumj{m}c_jx_j.\]
+where $a,b,c\in \F^m$ have all non-zero entries.
+
+
+Morever, it seems ideas implicit in \fractal, or alternatively a ``plug-in'' of the mentioned sparse bi-variate evaluation protocol into \cite{auroralight} will lead to improved performance via this route;
+especially in cases where some of the prover work can be delegated to an outside helper (in \plonk there is less opportunity for such delegation, as the wiring is checked on the witness itself, whereas in \cite{auroralight,marlin,fractal} it is in a sense checked on the random coefficients of the verifier).
+
+\section{Preliminaries}
+
+
+\subsection{Terminology and Conventions}\label{sec:terminology}
+We assume our field \F is of prime order.
+%We assume we have a
+%multiplicative subgroup $H \subset F$ of size $|H| = n$ where $n$ is the number of constraints in our R1CS.
+%and denote for simplicity the elements of H as H = {1, . . . , m}.
+%We assume the number of private variables n is equal to m.
+We denote by \polysofdeg{d} the set of univariate polynomials over \F of degree smaller than d. 
+We assume all algorithms described receive as an implicit parameter the security parameter $\lambda$.
+
+Whenever we use the term “efficient”, we mean an algorithm running in time \poly. Furthermore,
+we assume an “object generator” \obgen that is run with input $\lambda$ before all protocols, and returns all fields and groups used. Specifically, in our protocol $\obgen(\lambda) = (\F, \G1, \G2, \Gt, e, g_1, g_2,g_t)$ where
+\begin{itemize}
+\item \F is a prime field of super-polynomial size $r = \lambda^{\omega(1)}$
+.
+\item $\G1,\G2,\Gt$ are all groups of size $r$, and $e$ is an efficiently computable non-degenerate pairing
+$e : \G1 \times \G2 \to \Gt$.
+\item $g_1,g_2$ are uniformly chosen generators such that $e(g_1, g_2) = g_t$.
+\end{itemize}
+We usually let the $\lambda$ parameter be implicit, i.e.\ write \F instead of $\F(\lambda)$.
+We write \G1 and \G2 additively. We use the notations $\enc1{x}\defeq x\cdot g_1$ and $\enc2{x}\defeq x\cdot g_2$.
+
+We often denote by $[n]$ the integers \set{1,\ldots,n}.
+% For example, when we refer below to the field $\F$, it is in fact a function $\F(\lambda)$ of $\lambda$, and part of
+% the output of $\obgen(\lambda)$.
+We use the acronym e.w.p for ``except with probability''; i.e. e.w.p $\gamma$ means with probability \emph{at least} $1-\gamma$.
+
+\paragraph{universal SRS-based public-coin protocols}
+We describe public-coin (meaning the verifier messages are uniformly chosen) interactive protocols between a prover and verifier; when deriving results for non-interactive protocols, we implicitly assume we can get a proof length equal to the total communication of the prover, using the Fiat-Shamir transform/a random oracle. Using this reduction between interactive and non-interactive protocols, we can refer to the ``proof length'' of an interactive protocol. 
+
+We allow our protocols to have access to a structured reference string (SRS) that can be derived in deterministic \poly-time from an ``SRS of monomials'' of the form
+\sett{\enc1{x^i}}{a\leq i \leq b}, \sett{\enc2{x^i}}{c\leq i \leq d}, for uniform $x\in \F$,
+and some integers $a,b,c,d$ with absolute value bounded by \poly.
+It then follows from Bowe et al. \cite{SecondMPC} that the required SRS can be derived in a universal and updatable setup requiring only one honest participant; in the sense that an adversary controlling all but one of the participants in the setup does not gain more than a \negl advantage in its probability of producing a proof of any statement.
+
+For notational simplicity, we sometimes use the SRS \srs0 as an implicit parameter in protocols, and do not explicitly write it.
+
+\subsection{Analysis in the AGM model}\label{subsec:AGM}
+For security analysis we will use the Algebraic Group Model of Fuchsbauer, Kiltz and Loss\cite{AGM}.
+In our protocols, by an \emph{algebraic adversary} \adv in an SRS-based protocol we mean a \poly-time algorithm which satisfies the following.
+\begin{itemize}
+ \item For $i\in \set{1,2}$, whenever \adv outputs an element $A\in \Gi$, it also outputs a vector $v$ over \F such that $A = <v,\srsi>$.
+\end{itemize}
+
+\paragraph{Idealized verifier checks for algebraic adversaries}
+We introduce some terminology to capture the advantage of analysis in the AGM.
+
+First we say our \srs0 \emph{has degree $Q$} if all elements of \srsi are of the form  \enci{f(x)} for $f\in \polysofdeg{Q}$ and uniform $x\in \F$. In the following discussion let us assume we are executing a protocol with a degree $Q$ SRS, and denote by $f_{i,j}$ the corresponding polynomial for the $j$'th element of \srsi.
+
+Denote by $a,b$ the vectors of $\F$-elements whose encodings in $\G1,\G2$ an algebraic adversary \adv outputs during a protocol execution; e.g., the $j$'th $\G1$ element output by \adv is \enc1{a_j}.
+
+By a ``real pairing check'' we mean a check of the form
+\[(a\cdot T_1) \cdot (T_2\cdot b)=0\]
+for some matrices $T_1,T_2$ over $\F$.
+Note that such a check can indeed be done efficiently given the encoded elements and the pairing function $e:\G1\times \G2\to \Gt$.
+
+
+
+Given such a ``real pairing check'', and the adversary \adv and protocol execution during which the elements were output, define the corresponding ``ideal check'' as follows.
+Since \adv is algebraic when he outputs \enci{a_j} he also outputs a vector $v$ such that, from linearity, $a_j = \sum v_\ell f_{i,\ell}(x)=R_{i,j}(x)$ for $R_{i,j}(X) \defeq \sum v_\ell f_{i,\ell}(X)$.
+Denote, for $i\in \set{1,2}$ the vector of polynomials $R_i=(R_{i,j})_j$.
+The corresponding ideal check, checks as a polynomial identity whether
+\[(R_1 \cdot T_1)\cdot (T_2\cdot R_2) \equiv 0\]
+
+
+The following lemma is inspired by \cite{AGM}'s analysis of \cite{Groth16},
+and tells us that for soundness analysis against algebraic adversaries it suffices to look at ideal checks.
+Before stating the lemma we define the $Q$-DLOG assumption similarly to \cite{AGM}.
+\begin{dfn}\label{ref:qdlog}
+ Fix integer $Q$. The \emph{$Q$-DLOG assumption for $(\G1,\G2)$} states that given 
+ \[\enc1{1},\enc1{x},\ldots,\enc1{x^Q},\enc2{1},\enc2{x},\ldots,\enc2{x^Q}\]
+ for uniformly chosen $x\in \F$, the probability of an efficient \adv outputting $x$
+ is \negl.
+\end{dfn}
+
+
+\begin{lemma}\label{lem:AGManalysis}
+Assume the $Q$-DLOG for $(\G1,\G2)$.
+ Given an algebraic adversary \adv participating in a protocol with a degree $Q$ SRS,
+ the probability of any real pairing check passing is larger by at most an additive \negl factor than the probability the corresponding ideal check holds.
+\end{lemma}
+\begin{proof}
+ Let $\gamma$ be the difference between the satisfiability of the real and ideal check.
+ We describe an adversary \advv for the $Q$-DLOG problem that succeeds with probability $\gamma$; this implies $\gamma=\negl$.
+ \advv receives the challenge 
+ \[\enc1{1},\enc1{x},\ldots,\enc1{x^Q},\enc2{1},\enc2{x},\ldots,\enc2{x^Q}\]
+and constructs using group operations the correct SRS for the protocol.
+ Now \advv runs the protocol with \adv, simulating the verifier role. Note that as \advv receives from \adv the vectors of coefficients $v$, he can compute the polynomials \set{R_{i,j}} and check if we are in the case that the real check passed but ideal check failed.
+ In case we are in this event, \advv computes
+ \[R\defeq (R_1 \cdot T_1)(T_2\cdot R_2). \]
+ We have that $R\in\polysofdeg{2Q}$ is a non-zero polynomial for which
+ $R(x)=0$. Thus \advv can factor $R$ and find $x$.
+\end{proof}
+
+
+\paragraph{Knowlege soundness in the Algebraic Group Model}
+We say a protocol \prot between a prover \prv and verifier \ver for a relation \rel has \emph{Knowledge Soundness in the Algebraic Group Model} if there exists an efficient \ext such that
+the probability of any algebraic adversary \adv winning the following game is \negl.
+
+\begin{enumerate}
+ \item \adv chooses input \inp and plays the role of \prv in \prot with input \inp.
+ \item \ext given access to all of \adv's messages during the protocol (including the coefficients of the linear combinations) outputs \wit.
+ \item \adv wins if 
+ \begin{enumerate}
+  \item \ver outputs \acc at the end of the protocol, and 
+  \item $(\inp,\wit)\notin \rel$.
+ \end{enumerate}
+
+\end{enumerate}
+
+
+
+% 
+% 
+% When analyzing the security of our protocols, we assume the following restrictions on the adversary \adv and the structure of the protocol, akin to the Linear Interactive Proof notion of \cite{BCIOP}. We call a protocol with the structure below - a
+% \emph{pairing-based Generic Group protocol}.
+% %The following is a natural extension of NILPs to the interactive setting.
+% % Following \cite{groth16} (see also Section 2 of \cite{BG18} for formal details, and \cite{BCIOP} for a more general treatment of this framework), it suffices to show knowledge soundness of \bctvprime as a Non-Interactive Linear Proof (NILP). That is, 
+% 
+% \begin{itemize}
+% \item All protocol participants are given an SRS $\srs0 = (\srs1,\srs2)$ where every element of \srsi is of the form $\enci{R(\x)}$ for a predefined rational function $R\in \F(\X)$ of total degree (in numerator and denumrator) at most $d=\poly$ and a uniformly chosen $\x\in \F^N$.
+% \item The messages of the verifier are always uniform elements $\gamma \in \F$.
+% \item The messages sent by \adv are elements of either \G1,\G2 or \F.
+% The elements of \Gi sent are always of the form $<m, \srsi>$ for a vector of coefficients $m$ chosen by \adv only as a function of the verifier messages up to that point (but not dependent on the value of \srs0).
+% \item Note that all \G1 and \G2 elements sent by the prover of the form \enci{R_j(\x)} for some rational function $R_j$ of total degree at most $d$. The verifier performs certain pairing equation checks amongst the \set{e_j}. The pairing equation can depend on the verifier messages, and elements of \F sent by \adv. Note that this corresponds to checking some degree two equation amongst the \set{R_j} at \x. We make the assumption that the verifier outputs \acc or \rej according to if the equations holds as a rational function identity in \X.
+% \end{itemize}
+% \cite{groth16} (see also Section 2 of \cite{BG18}) showed that for a non-interactive protocol with no verifier messages, when $d/|\F| = \negl$ a protocol of the above form is secure against generic group adversaries .
+% It is straightforward to extend this result to the above interactive setting.
+
+% 
+% \subsection{Notation and assumptions about sampling} 
+% For a set $S$ we denote, by $s\gets S$, the sampling of a uniformly random element from $S$. When describing protocols, we often assume the ability to sample uniformly at random from different sets, e.g., $\F_p$. In reality, randomness sampling may be statistically biased or pseudorandom, in which case security is preserved up to this statistical bias or dependent on the security of the pseudorandomness. Moreover, we assume the sampling process does not reveal intermediate values so the only output is the sampled value $s$.
+% \\
+% \\
+% For an algorithm $A$, we write $y \gets A(x)$ to refer to the process of running $A$ on an input string $x$ and obtaining output string $y$. For probabilistic algorithms that consume randomness $r$, we write $y := A(x, r)$ when we want to explicitly refer to it. If $a$ is deterministic then $y \gets A(x)$ and $y := A(x)$ represent the same process. The notation $y \gets A^{B}(x)$ refers to running an algorithm $A$ that has access to another algorithm (also called an oracle) $B$, i.e., $A$ gives $B$ an input and waits until an output from $B$ has been received.
+% 
+% \subsection{Common choice of groups with pairing and hash function}
+% We assume that all parties that use the protocol share a common choice of $p, \Gr, \Gr_2, \Gr_T, g, g_2, g_T, e,H$, where
+% \begin{itemize}
+% 	\item $p$ is a prime and we let $\F_p$ denote the set of integers modulo $p$ represented by $0,\ldots,p-1$
+% 	\item $\Gr, \Gr_2, \Gr_T$ are groups of prime order $p$, written multiplicatively with neutral element 1, where the group operation and deciding group membership can be computed efficiently
+% 	\item $g,g_2,g_T$ are the group elements generating $\Gr,\Gr_2$ and $\Gr_T$ respectively
+% 	\item $e:\Gr\times \Gr_2\to \Gr_T$ is an efficiently computable bilinear map (pairing) such that for all $a,b\in \Z: e(g^a,g_2^b)=g_T^{ab}$
+% 	\item $H:\{0,1\}^*\to \{0,1\}^{\ell}$ is an efficiently computable hash function that takes arbitrary length inputs and returns $\ell$-bit outputs  
+% \end{itemize}
+% 
+% \subsection{Common setup over groups with pairing} \label{setup}
+% We also assume all parties share a common choice of $g^X, g^{X^2}, \ldots, g^{X^{2n}}, g_2^X, g_2^{X^2}, \ldots, g_2^{X^{2n}}$, where $X \in \F_p$ is generated via a trusted setup multiparty computation.
+% \\
+% \\
+% We make the assumption that the group elements have been honestly and securely computed in this way. Specifically, we assume by some trusted procedure $X$ has been sampled uniformly at random. We note that the pairing can be used to check the group elements are of the right form, i.e., for $i=1,\ldots,2n: e(g^{X^{i}},g_2)=e(g_1,g_2^{X^{i}})$ and for $i=1, \ldots, 2n-1: e(g^{X^{i+1}}, g_2^{X}) = e(g^{X^{i}}, g_2)$.
+% \\
+% \\
+% It should be noted that the protocol relies on $X$ being destroyed. If an attacker can recover $X$, they can create a commitment for arbitrary polynomials, that satisfy our SNARK proof relation.
+% 
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \subsection{The $q$-strong Diffie-Hellman assumption (SDH)}
+% The strong Diffie-Hellman ($q$-SDH) problem was first defined by Boneh and Boyen~\cite{BonehBoyen2004}. Adapted to our type of groups with pairings it says given $g,g^x,\ldots,g^{x^q},g_2,g_2^x$ for uniformly random $x\gets \F_p$ it should be hard to find $c,z$ such that $z=g^{\frac{1}{x+c}}$. More precisely, let $\A$ be an attacker, then we define its advantage against the SDH assumption over our setup to be 
+% $$\textbf{Adv}^{\text{SDH}}_{q,\A}=\Pr[x\gets \F_p; (c,z)\gets \A(g,g^x,\ldots,g^{x^q},g_2,g_2^x): (c,z)\in \F_p \times \Gr \text{ and } z^{x+c}=g].$$ We will assume that all realistic adversaries $\A$ humanity may construct in the immediate future will have miniscule advantage when using our choice of groups and pairing and $q=2n$.
+% \\
+% \\
+% Please note that the $q$-SDH assumption implies the hardness of other computational tasks such as the discrete logarithm problem for instance.
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% 
+% \subsection{Random oracle model}
+% We will model our choice of hash function as a random oracle~\cite{Bellare}. Intuitively this means we believe the hash function mangles the input so much that the output looks random. Our protocols will use the hash function as a subroutine, i.e., algorithms are of the form $A^{\mathcal{O}(\cdot)}$. In our security modelling, we replace the hash function with a random oracle, i.e., instead of using $\mathcal{O}(x)=H(x)$ we define $\mathcal{O}(x)$ to return a random $y\gets \{0,1\}^{\ell}$ when $x$ has not been input before, and otherwise return the same $y$ as was used on the previous oracle call on $x$. Strengthening the random oracle model, we may also consider the programmable random oracle model, where an additional oracle $\mathcal{O}'$ is \d that on input $x$ ...
+% 
+% 
+% \subsection{Non-interactive zero-knowledge proofs}
+% $R = \{(w,x, crs)\} \subseteq \{0,1\}^{\star} \times \{0,1\}^{\star} \times \{0, 1\}^{\star}\}$ is a binary relation between a witness string $w$ an input string $x$ and a common reference string $crs$. An interactive zero knowledge protocol describes a system where a prover, $P$, must convince a verifier $V$ that, for a given input string $x$, there exists a witness $w$ such that $(w,x, crs) \in R$. If the zero knowledge protocol is \textbf{complete}, $V$ will always validate an input string $x$, created by $P$ interacting with $w$, where $(w,x, crs) \in R$. The following uses definitions from~\cite{ProofsOfKnowledge}.
+% \\
+% \\
+% A zero-knowledge protocol is \textbf{sound} if there exists a probabilistic polynomial time algorithm $E$ that can extract the witness string $w$ from a cheating prover $P^{\star}$ if given oracle access to $P^{\star}$ (i.e. if $P^{\star}$ can convince $V$ with a common input, $E$ can obtain proofs from $P^{\star}$ for any random challenge). If $P^{\star}$ can satisfy $V(x)$ with probability $\epsilon$, $E$ is able to extract a witness statement $w$ that satisfies $R$ with in $poly(\epsilon)$. i.e. whenever $P^{\star}$ can satisfy $V(x)$, $E$ can extract a valid witness string such that $(w, x, crs) \in R$ with overwhelming probability. Therefore $\epsilon$ is negligible for a `fake' proof where $(w, x, crs) \notin R$.
+% \\
+% \\
+% A proof system is \textbf{honest-verifier zero-knowledge} if there exists a probabilistic polynomial-time algorithm $S$ that, for any $(w, x, crs) \in R$, identically recreates the outputs of $V$.
+% \\
+% \\
+% In the universal SNARK protocol, the common reference string is generated through the protocol's commitment key generation phase (see section~\ref{setup}).
+% 
+% \subsection{Sigma Protocols}
+% 
+% For a proof relation $R = \{w, x, crs)\} \subseteq \{0, 1\}^{\star} \times \{0, 1\}^{\star} \times \{0, 1\}^{\star}$, a protocol, $\mathcal{P}$ is considered to be a $\Sigma$ protocol~\cite{Sigma} if the following are true:
+% \\
+% \\
+% $\mathcal{P}$ is a three-step protocol between two polynomial-algorithms $P, V$. Both algorithms have input string $x$ as a common input. The witness to $R$, $w$, is a private input to $P$. $\mathcal{P}$ must conform to the following three-step process:
+% 
+% \begin{itemize}
+% 	\item{$P$ sends $V$ a message $a$}
+% 	\item{$V$ sends $P$ a random challenge $c \overset{\$}{\gets} \mathbb{Z}_{p}$}
+% 	\item{$P$ sends $V$ a response $z$. $V$ accepts or rejects depending on the variables $x, a, c, z$}
+% \end{itemize}
+% $\mathcal{P}$ must be complete. If $P, V$ follow $\mathcal{P}$ with inputs that satisfy the proof relation, $V$ must always accept.
+% \\
+% \\
+% $\mathcal{P}$ must have the \textbf{special soundness} property. If, for any input string $x$, common reference string $crs$ and a pair of valid protocol parameters $(a, c, z), (a', c', z')$, $\mathcal{P}$ has special soundness if there exists an efficiently-computable algorithm to extract $w$ such that $(w, x, crs) \in R$.
+% \\
+% \\
+% $\mathcal{P}$ is special honest-verifier zero knowledge. There exist a polynomial-time algorithm $M$ that, for input string $x$ and random value $e \gets \mathbb{Z}_{p}$, outputs valid protocol parameters $(a, e, z)$ with the same probability distribution as honest algorithms $P, V$ acting on input string $x$.
+% 
+% \subsection{The Fiat-Shamir Transform}
+% 
+% The protocols in this paper utilize the Fiat-Shamir transform~\cite{FiatShamir}, which makes an interactive protocol non-interactive through the use of a hash function $H$. Instead of $c$ being provided by the verifier, $c$ is the output of a hash function, whose input is the set of the $\Sigma$ protocol's commitments. The challenge, $c$, is treated as a pseudo-random number whose entropy source is the input string of proof. The Fiat-Shamir transform is secure in the random oracle model~\cite{Bellare}.
+% 
+% 
+% \subsection{Sigma-protocols and the Fiat-Shamir heuristic}
+% Proof systems allow two parties, called the r and the verifier, to interact in a way that convinces the verifier a particular statement is true. Let $R$ be a binary relation with an efficient algorithm that can determine whether $(x,w)\in R$. We will call $x$ an instance and when $(x,w)\in R$ we call $w$ a witness to $x$. In our proof system, statements will be defined by the relation $R$, which is defined by our setup, and instances $x$, and be the claim that the prover knows a witness $w$ such that $(x,w)\in R$.
+% \\
+% \\
+% A Sigma-protocol is a particular type of proof system where the prover sends an initial commitment message to the verifier, gets back a random challenge from the verifier, and then sends a final response. Afterwards the verifier checks the instance $x$ and the transcript of commitment, challenge and response and decides whether to accept or reject. We are going to use a special type of Sigma-protocols that can be described by four efficient algorithms $,\Unique,\Extract,\Simulate$ and where the verifier chooses challenges from $\{0,1\}^{\ell}$.
+% \begin{description}
+% 	\item[$\Prove(x,w)$:] The prover algorithm is stateful and works in two phases. Assuming the input satisfies $(x,w)\in R$ it first generates an initial commitment message $B$. Then after receiving a challenge $c\in \{0,1\}^{\ell}$ it computes a response $z$.
+% 	\item[$\Unique(x,c,z)\to B$:] The deterministic unique commitment reconstruction algorithm on instance $x$, challenge $c$ and answer $z$, returns an initial commitment $B$. If the input is malformed, it may instead return an error symbol $\bot$. 
+% 	
+% 	The algorithm implicitly defines a verification procedure of a transcript $(B,c,z)$ that accepts if and only if $B=\Unique(x,c,z)\neq \bot$. We require (perfect) completeness, which means for all $(x,w)\in R$ and all $c\in \{0,1\}^{\ell}$ the outputs $B$ and $z$ of $\Prove(x,w)$ will satisfy $B=\Unique(x,c,z)\neq \bot$.
+% 	\item[$\Extract(x,c,z,c',z')\to w$:] The deterministic extraction algorithm returns a string $w$. We require (perfect) special soundness, which means whenever $\Unique(x,c,z)=\Unique(z,c',z')\neq \bot$ then the output $w$ will be a witness such that $(x,w)\in R$. 
+% 	\item[$\Simulate(x,c)\to z$:] The simulation algorithm returns a simulated answer $z$. We require (perfect) special honest verifier zero-knowledge, which means for all $(x,w)\in R$ and $c\in \{0,1\}^{\ell}$ the output has the same probability distribution as a response $z$ obtained from running $\Prove(x,w)$ on challenge $c$.
+% \end{description}
+% 
+% 
+% 
+% \subsection {The Kate polynomial commitment scheme}
+% 
+% $$\mathcal{R}_{poly}=\left\{\begin{array}{c} (x)=\left((A, P(X), a) \right) | \\
+% A \in \Gr , a \in \F_p \text{ and } A = g^{P(a)} \\
+% \end{array} \right\}$$
+% 
+% \begin{figure}[h]
+% 	\centering
+% 	\fbox{
+% 		\parbox{\textwidth}{
+% 			\begin{description}
+% 				\item[$\mathcal{P}_{poly}(A, P(X))$:] \ \\
+% 				First output of $\Prove$ is $$A$$ \\
+% 				Compute challenge $z = H(A)$ \\
+% 				Compute $a = P(z)$ \\
+% 				Compute $B = g^{\frac{P(X) - a}{X-z}}$ \\
+% 				return $\pi = (a, B)$ \\
+% 				\item[$\mathcal{V}_{poly}(A),\pi)$:] \ \\
+% 				Validate $A, B \in \Gr$\\
+% 				Compute first challenge $r = H(W(X, Y), Z(X, Y))$ \\
+% 				Validate that
+% 				$$
+% 				e(A, g_2^{d_i - d}) = e(g^{a - z} \cdot B, g_2) \cdot e(B, g_2^x)
+% 				$$
+% 				If all checks pass, return $1$ if $r=H(a)$, else return $0$
+% 			\end{description}
+% 		}
+% 	}
+% 	\caption{Algorithms $\mathcal{P}_{main}$, $\mathcal{V}_{main}$}
+% 	\label{fig:pProdd}
+% \end{figure}
+% 
+% \subsection{Multiplicative subgroups and Lagrange interpolation}
+% 
+
+\section{A batched version of the \cite{kate} scheme}\label{sec:kate}
+Crucial to the efficiency of our protocol is a batched version of the \cite{kate} polynomial commitment scheme similar to Appendix C of \cite{sonic}, allowing to query multiple committed polynomials at multiple points.
+%We are able to use the simplier original \cite{kate} scheme, as we do not care about exact degree bound.
+We begin by defining polynomial commitment schemes in a manner conducive to our protocol.
+Specifically, we define the \open procedure in a batched setting having multiple polynomials and evaluation points.
+
+\begin{dfn}\label{dfn:PCscheme}
+A $d$-polynomial commitment scheme consists of 
+\begin{itemize}
+ \item $\gen(d)$ -  a randomized algorithm that outputs an SRS \srs0.
+ \item $\com(f,\srs0)$ - that given a polynomial $f\in \polysofdeg{d}$ returns a commitment \cm to $f$.
+ \item A public coin protocol  \open between parties \prvpc and \verpc. \prvpc is given $ f_1,\ldots,f_t \in \polysofdeg{d}$. \prvpc and \verpc are both given integer $t=\poly$, $\cm_1,\ldots,\cm_t$ - the alleged commitments to $f_1,\ldots,f_t$, $z_1,\ldots,z_t\in\F$ and $s_1,\ldots,s_t\in \F$ - the alleged correct openings $f_1(z_1),\ldots,f_t(z_t)$. At the end of the protocol \verpc outputs \acc or \rej. 
+\end{itemize}
+such that
+\begin{itemize}
+ \item \textbf{Completeness:} Fix integer $t$, $z_1,\ldots,z_t\in \F$, $f_1,\ldots,f_t \in \polysofdeg{d}$.
+ Suppose that for each $i\in [t]$, $\cm_i = \com(f_i,\srs0)$.  Then if \open is run correctly with values
+ $t, \sett{\cm_i,z_i,s_i=f_i(z)}{i\in [t]}$, \verpc outputs \acc with probability one.
+ \item \textbf{Knowledge soundness in the algebraic group model:} There exists an efficient \ext such that for any algebraic adversary \adv the probability of \adv winning the following game is \negl over the randomness of \adv and \gen.
+ \begin{enumerate}
+  \item Given \srs0, \adv outputs $t,\cm_1,\ldots,\cm_t$.
+  \item \ext, given access to the messages of \adv during the previous step, outputs $f_1,\ldots,f_t \in \polysofdeg{d}$.
+  \item \adv outputs $ z_1,\ldots,z_t \in \F$, $s_1,\ldots,s_t \in \F$.
+  \item \adv takes the part of \prvpc in the protocol \open with inputs
+  $\cm_1,\ldots,\cm_t,z_1,\ldots,z_t,s_1,\ldots,s_t$.
+  \item $\adv$ wins if 
+  \begin{itemize} 
+   \item \verpc outputs \acc at the end of the protocol.
+   \item For some $i\in [t]$, $s_i\neq f_i(z_i)$.
+  \end{itemize}
+
+ \end{enumerate}
+
+\end{itemize}
+\end{dfn}
+
+
+
+We describe the following scheme based on \cite{kate,sonic}.
+% It is in fact a slightly simpler scheme than in \cite{sonic} because, as explained in the introduction, there is no need to deal with holes in the allowed range of degrees.
+
+\begin{enumerate}
+ \item $\gen(d)$ - choose uniform $x\in \F$. Output $\srs0 =(\enc1{1},\enc1{x},\ldots,\enc1{x^{d-1}},\enc2{1},\enc2{x})$.
+ \item $\com(f,\srs0) \defeq \enc1{f(x)}$.
+ \item We first describe the \open protocol in the case $z_1=\ldots=z_t=z$.\\
+ \noindent
+ $\open(\set{cm_i},\set{z_i},\set{s_i})$:
+ \begin{enumerate}
+  \item \verpc sends random $\gamma\in \F$.
+ \item \prvpc computes the polynomial
+ \[h(X)\defeq \sum_{i=1}^t \gamma^{i-1}\cdot \frac{f_i(X)-f_i(z)}{X-z}  \]
+ and using \srs0 computes and sends $W\defeq \enc1{h(x)}$.
+% \[]
+ \item\label{step:computeW} \verpc computes the elements 
+ \[F\defeq \sum_{i\in [t]} \gamma^{i} \cdot \cm_i, v\defeq \enc1{\sum_{i\in [t]} \gamma^{i}\cdot s_i}\]
+ \item \verpc outputs \acc if and only if
+ \[ e(F-v,\enc2{1})\cdot e(-W,\enc2{x-z} )=1. \]
+ \end{enumerate}
+
+ We argue knowledge soundness for the above protocol. More precisely, we argue the existence of an efficient \ext such that an algebraic adversary \adv can only win the KS game w.p. \negl when restricting itself to choosing $z=z_1=\ldots=z_t$.
+ 
+ 
+ Let \adv be such an algebraic adversary.
+ 
+ \adv begins by outputting $\cm_1,\ldots,\cm_t$.
+ Each $\cm_i$ is a linear combination $\sum_{j=0}^{d-1} a_{i,j} \enc1{x^j}$.
+ \ext, who is given the coefficients \set{a_{i,j}}, simply outputs the polynomials
+ \[f_i(X)\defeq \sum_{j=0}^{d-1} a_{i,j} \cdot X^j.\]
+ \adv now outputs $z,s_1,\ldots,s_t\in \F$.
+  Assume that for some $i\in [t]$, $f_i(z)\neq s_i$. We show that for any strategy of \adv from this point, \verpoly outputs \acc w.p \negl.
+ 
+ In the first step of \open, \verpoly chooses a random $\gamma \in \F$.
+ Define 
+ \[f(X)\defeq \sum_{i\in [t]} \gamma^i \cdot f_i(X), s\defeq \sum_{i\in [t]} \gamma^i \cdot s_i.\]
+ 
+ We have that e.w.p. $t/|\F|$, $f(z)\neq s$.
+ Now \adv outputs $W=H(x)$ for some $H\in\polysofdeg{d}$.
+ According to Lemma \ref{lem:AGManalysis}, it suffices to upper bound the probability that the ideal check corresponding to the real pairing check in the protocol passes. It has the form
+ \[f(X)-s \equiv H(X)(X-z).\]
+ The check passing implies that
+ $f(X)-s$ is divisible by $(X-z)$, which implies $f(z)=s$. Thus the ideal check can only pass w.p.  \negl over the randomness of \verpoly, which implies the same thing for the real check according to Lemma \ref{lem:AGManalysis}.
+ 
+ 
+ 
+ 
+ 
+ 
+ The \open protocol for multiple evaluation points simply consists of running in parallel the \open protocol for each evaluation point and the polynomials evaluated at that point.
+ And then applying a generic method for batch randomized evaluation of pairing equations.
+ For notational simplicity we describe the \open protocol explicitly only in the case of two distinct evaluation points among $z_1,\ldots,z_t$ (this also happens to be our case in the main protocol).
+For this, let us denote the distinct evaluation points by $z,z'$ and by $t_1,t_2$ the number of polynomials and by $\sett
+{f_i}{i\in [t_1]},\sett{f'_i}{i\in [t_2]}$ the polynomials to be evaluated at $z,z'$ respectively.
+
+
+ \underline{$\open(\sett{cm_i}{i\in [t_1]},\sett{cm'_i}{i\in [t_2]},\set{z,z'},\set{s_i,s'_i})$}:
+ \begin{enumerate}
+  \item \verpc sends random $\gamma\,\gamma', \in \F$.
+ \item\label{step:computeW}  \prvpc computes the polynomials
+ \[h(X)\defeq \sum_{i=1}^{t_1} \gamma^{i-1}\cdot \frac{f_i(X)-f_i(z)}{X-z}  \]
+ \[h'(X)\defeq \sum_{i=1}^{t_2} \gamma'^{i-1}\cdot \frac{f'_i(X)-f'_i(z')}{X-z'}  \]
+ and using \srs0 computes and sends $W\defeq \enc1{h(x)}, W'\defeq \enc1{h'(x)}$.
+% \[]
+ \item \verpc chooses random $r'\in \F$.
+ \item\verpc computes the element 
+ \[F\defeq \left(\sum_{i\in [t_1]} \gamma^{i-1} \cdot \cm_i-\enc1{\sum_{i\in [t_1]} \gamma^{i-1}\cdot s_i}\right) +  r' \cdot\left(\sum_{i\in [t_2]} \gamma'^{i-1} \cdot \cm'_i -\enc1{\sum_{i\in [t_2]} \gamma'^{i-1}\cdot s'_i}\right)\]
+ \verpc computes outputs \acc if and only if
+ \[ e\left(F + z\cdot W +r'z'\cdot W',\enc2{1}\right )\cdot e(-W-r'\cdot W',\enc2{x} )=1. \]
+ 
+ \end{enumerate}
+
+ 
+ 
+ We summarize the efficiency properties of this batched version of the \cite{kate} scheme.
+ 
+ \begin{lemma}\label{lem:kate}
+ Fix positive integer $d$.
+  There is a $d$-polynomial commitment scheme \PCscheme such that
+  \begin{enumerate}
+   \item For $n\leq d$ and $f\in \polysofdeg{n}$, computing $\com(f)$ requires $n$ \G1-exponentiations.
+   \item Given $\z \defeq (z_1,\ldots,z_t)\in \F^t, f_1,\ldots, f_t \in \polysofdeg{d}$, denote by $t^*$ the number of distinct values in \z; and for $i\in [t^*]$, $d_i\defeq \max\sett{\deg(f_i)}{i\in S_i}$ where $S_i$ is the set of indices $j$ such that $z_j$ equals the $i$'th distinct point in \z.
+   Let $\cm_i = \com(f_i)$.
+   Then \open(\set{cm_i,f_i,z_i,s_i})  requires
+   \begin{enumerate}
+    \item $\sum_{i\in [t^*]} d_i$ \G1-exponentiations of \prvpc.
+    \item $t+2t^*-2$ \G1-exponentiations and 2 pairings of \verpc.
+    \end{enumerate}
+
+   
+  \end{enumerate}
+
+ \end{lemma}
+
+
+\end{enumerate}
+% Note that $|\srs| = 2d$ in the above scheme.
+% \emph{However}, a crucial point is that once we fix $\ell$ values from which we will always choose \set{d_1,\ldots,d_t},
+% we can work with a subvector of \srs of size $d+\ell$. In our SNARK, given a circuit size, we will only need $\ell=3$ of the \G2 values from $\sigma$ in our SRS.
+% 
+% 
+% The following is implied almost directly by Theorem 6.1 and Appendix C.1 of  \cite{sonic}. We leverage that the pairings in step \ref{step:computeW} can be batched for indices $i,j$ such that $d_i=d_j$.
+% \begin{lemma}\label{lem:pcSCHEME}
+% Fix any $d$ and assume the $d$-power bi-linear Strong Diffie Hellman assumption holds.
+%  Then the above scheme is a $d$-polynomial commitment scheme such that
+%  \begin{enumerate}
+%   \item \prvpoly requires \max \G1 exponentiations for computing $\com(f,\max,\srs)$.
+%   \item \prvpoly requires $\sum_{i=1}^t O(d_i\log(d_i))$ field operations and  $\sum_{i=1}^t d_i$ exponentiations for computing $\open(\sett{cm_i}{i\in [t]},$ $\sett{d_i}{i\in [t]},\sett{s_i}{i\in [t]},$ $z)$.
+% \item \verpoly requires $t^*+2$ pairings, where $t^*$ is the number of distinct values amongst $d_1,\ldots,d_t$.
+%   \end{enumerate}
+% 
+% \end{lemma}
+
+
+
+\section{Idealised low-degree protocols}\label{sec:polyprot}
+We define a limited type of protocol between a prover and a verifier to cleanly capture and abstract the use of a polynomial commitment scheme such as \cite{kate}.
+ In this protocol, the prover sends low-degree polynomials to a third trusted party \ideal.
+The verifier may then ask \ideal whether certain identites hold between the prover's polynomials, and additional predefined polynomials known to the verifier.
+\begin{dfn}\label{dfn:polyprotocol}
+Fix positive integers $d,D,t,\ell$.
+A \emph{$(d,D,t,\ell)$-polynomial protocol} is a multiround protocol between a prover \prvpoly, verifier 
+\verpoly and trusted party \ideal that proceeds as follows.
+
+\begin{enumerate}
+\item The protocol definition includes a set of \emph{preprocessed polynomials} $g_1,\ldots,g_\ell \in \polysofdeg{d}$.
+
+\item The messages of \prvpoly are sent to \ideal and are of the form $f$ for $f\in \polysofdeg{d}$. If \prvpoly sends a message not of this form, the protocol is aborted.
+ 
+ 
+\item The messages of  \verpoly to \prvpoly are arbitrary (but we will concentrate on public coin protocols where the messages are simply random coins).
+
+
+ \item At the end of the protocol, suppose $f_1,\ldots,f_t$ are the polynomials that were sent from \prvpoly to \ideal. \verpoly may ask \ideal if certain polynomial identities holds between \set{f_1,\ldots,f_t,g_1,\ldots,g_\ell}.
+ Where each identity is of the form
+ \[F(X)\defeq G(X, h_1(v_1(X)),\ldots,h_M(v_M(X)))\equiv 0,\]
+ for some $h_i\in  \set{f_1,\ldots,f_t,g_1,\ldots,g_\ell}$, $G\in \F[X,X_1,\ldots,X_{M}]$, $v_1,\ldots,v_{M} \in \polysofdeg{d}$
+ such that $F\in \polysofdeg{D}$ for every choice of $f_1,\ldots,f_t$ made by \prvpoly when following the protocol correctly.
+ 
+ 
+ 
+ \item After receiving the answers from \ideal regarding the identities, \verpoly outputs \acc if all identities hold, and outputs \rej otherwise.
+
+\end{enumerate}
+ 
+\end{dfn}
+\begin{remark}
+% We note that
+%  \begin{itemize}
+%  \item One may wonder 
+% \item 
+A more expressive model would be to have \prvpoly send messages $(f,n)$ for $n\leq d$ to \ideal instead of just $f$; and have \ideal enforce $f\in \polysofdeg{n}$. 
+We avoid doing this as this extra power is not needed for our protocol, and results in reduced efficiency as it translates to needing to use a polynomial commitment scheme with the ability to dynamically enforce a smaller than $d$ degree bound (as the \cite{sonic}-variant of \cite{kate} is able to do).
+ %\end{itemize}
+
+\end{remark}
+
+
+
+% If $t$ is a bound on the number of polynomials sent by the prover, and $\ell$ a bound on the nubmer of preprocessed polynomials, we sometimes call the above a \emph{$(d,D,t,\ell)$-polynomial protocol}.
+
+We define polynomial protocols for relations in the natural way.
+\begin{dfn}\label{dfn:protforrel}
+Given a relation \rel, a \emph{polynomial protocol for \rel} is a polynomial protocol with the following additional properties.
+\begin{enumerate}
+ \item At the beginning of the protocol, \prvpoly and \verpoly are both additionally given an input \inp. The description of \prvpoly assumes possession of \wit such that $(\inp,\wit)\in \rel$.
+ \item \textbf{Completeness:} If \prvpoly follows the protocol correctly using a witness \wit for \inp, \verpoly accepts with probability one.
+ \item \textbf{Knowledge Soundness:} There exists an efficient \ext, that given access to the messages of \prvpoly to \ideal outputs \wit such that, for any strategy of \prvpoly, the probability of the following event is \negl.
+ \begin{enumerate}
+  \item \verpoly outputs \acc at the end of the protocol, and
+  \item $(\inp,\wit)\notin \rel$.
+ \end{enumerate}
+
+\end{enumerate}
+\end{dfn}
+\begin{remark}
+We intentionally do not define a zero-knowlege property for idealized protocols, as acheiving ZK will depend on how much information on the polynomials sent to \ideal is leaked in the final ``compiled'' protocol. This in turn depends on specific details of the polynomial commitment scheme used for compilation.
+\end{remark}
+
+\subsection{Polynomial protocols on ranges}
+In our protocol \verpoly actually needs to check if certain polynomial equations hold on a certain range of input values, rather than as a polynomial identity.
+Motivated by this, for a subset $S\subset \F$, we define an \emph{$S$-ranged $(d,D,t,\ell)$-polynomial protocol} identically to a $(d,D,t,\ell)$-polynomial protocol, except that the verifier asks if his identities hold on all points of $S$, rather than identically. We then define ranged polynomial protocols for relations in the exact same way as in Definition \ref{dfn:protforrel}.
+
+We show that converting a ranged protocol to a polynomial protocol only incurs one additional prover polynomial.
+\begin{lemma}\label{lem:ranged-to-reg}
+ Let \prot be an \rangedprot{d}{D}{t}{\ell}{S} for \rel. Then we can construct a \polprot{\max \set{d,|S|,D-|S|}}{D}{t+1}{\ell+1} \protprime for \rel.
+ 
+%  that is equivalent to \prot in the following sense:
+% 
+%  Given a strategy for \prvpoly in \prot, we can efficiently construct a strategy for \prvpoly in \protprime, such that the probability that \verpoly outputs \acc is different in the two only by a \negl factor.
+%  
+%  The same holds when starting with a strategy of \prvpoly in \protprime and moving to \prot.
+\end{lemma}
+
+For the lemma, we use the following simple claim.
+\begin{claim}\label{clm:divcheck}
+ Fix $F_1,\ldots,F_k \in \polysofdeg{n}$. Fix $Z\in \polysofdeg{n}$. 
+ Suppose that for some $i\in [k]$, $Z\nmid F_i$.
+ Then
+ \begin{enumerate}
+  \item 
+ e.w.p $1/|\F|$ over uniform $a_1,\ldots,a_k \in \F$, $Z$ doesn't divide
+ \[F\defeq \sum_{j=1}^k a_j \cdot F_j.\]
+ \item Assuming $Z$ decomposes to distinct linear factors over \F, e.w.p $k/|\F|$ over uniform $a\in \F$, $Z$ doesn't divide
+ \[G\defeq \sum_{j=1}^k a^{j-1} \cdot F_j.\]
+  \end{enumerate}
+\end{claim}
+\begin{proof}
+ $Z| F$ is equivalent to $F\mod Z =0$.
+ Denoting $R\defeq F_i\mod Z$, we have that $R\neq 0$;
+ i.e. $R$ isn't the zero polynomial.
+ And we have 
+ \[F= \sum_{j=1, j\neq i}^k a_j \cdot F_j + a_i\cdot R\;\;\;  (\mathrm{mod}\; Z)\]
+ Thus, for any fixing of  \sett{a_j}{j\neq i} there is at most one value $a_i\in \F$ 
+ such that $F\mod Z =0$.
+ The first item of the claim follows.
+ 
+ To prove the second, write similarly
+ \[G= \sum_{j=1, j\neq i}^k a^{j-1} \cdot F_j + a^{i-1}\cdot R\;\;\;  (\mathrm{mod}\; Z)\]
+ Let $x\in \F$ be such that $Z(x)=0$ but $R(x)\neq 0$.
+ Then $G\mod Z =0$ implies $G(x)=0$, which means $a$ is a root of the non-zero polynomial
+ \[g(Y)\defeq \sum_{j=1, j\neq i}^k Y^{j-1} \cdot F_j(x) + Y^{i-1}\cdot R(x),\]
+ which is the case for at most $k$ values of $a$.
+\end{proof}
+
+\begin{proof}(Of Lemma \ref{lem:ranged-to-reg})
+Let \prot be the \rangedprot{d}{D}{t}{\ell}{S}.
+We construct the protocol \protprime.
+The set of preprocessed polynomials in \protprime are the same as in \prot with the addition of $Z_S(X)\defeq \prod_{a\in S} (X-a)$.
+\protprime proceeds exactly as \prot until the point where \verpoly asks about identites on $S$.
+Suppose that the $k$ identities the verifier asks about are
+$F_1(X),\ldots, F_k(X)$ (where each $F_i$ is of total degree at most $D$ and of the form described in Definition \ref{dfn:polyprotocol}).
+\protprime now proceeds as follows:
+\begin{itemize}
+ \item \verpoly sends uniform $a_1,\ldots,a_k\in \F$ to \prvpoly.
+\item \prvpoly computes the polynomial $T\defeq \frac{\sum_{i\in [k]}{a_i\cdot F_i}}{Z_S}$.
+\item \prvpoly sends $T$ to \ideal.
+\item \verpoly queries the identity
+\[\sum_{i\in [k]} a_i\cdot F_i(X) \equiv T\cdot Z_S\]
+ \end{itemize}
+ 
+ It follows from Claim \ref{clm:divcheck} that e.w.p. $1/|\F|$ over \verpoly's choice of $a_1,\ldots,a_k$, the existence of an appropriate $T\in \F[X]$ is equivalent to $F_1,\ldots,F_k$ vanishing on $S$.
+ This in turn is equivalent to \verpoly outputting \acc in the analogous execution of \prot.
+\end{proof}
+
+
+\subsection{From polynomial protocols to protocols against algebraic adversaries}\label{subsec:ideal-AGM}
+We wish to use the polynomial commitment scheme of Section \ref{sec:kate} to compile a polynomial protocol into one with knowledge soundness in the algebraic group model (in the sense defined in Section \ref{subsec:AGM}).
+
+
+For the purpose of capturing the efficiency of the transformation, we first define somewhat technical measures of the  \polprot{d}{D}{t}{\ell} \prot.
+
+
+
+
+For $i\in [t]$, let $d_i$ be the maximal degree of $f_i$ sent by an honest prover in \prot.
+Assume only one identity 
+$G(X, h_1(v_1(X)),\ldots,h_M(v_M(X)))\equiv 0$
+is checked by \verpoly in \prot.
+
+For $i\in [M]$, let $d'_i$ be the ``matching'' $d_j$. That is $d'_i = d_j$ if $h_i=f_j$, and $d'_i = \deg(g_j)$ if $h_i=g_j$.
+
+
+
+
+Let $t^* = t^*(\prot)$ be the number of distinct polynomials amongst $v_1,\ldots,v_M$.
+Let $S_1\cup\ldots \cup S_{t^*}= [M]$ be a partition of $[M]$ according to the distinct values.
+For $j\in [t^*]$, let $e_j\defeq \max \sett{d'_i}{i\in S_j}$
+
+Finally, define $\proverexp(\prot) \defeq \sumi{t}(d_i+1) + \sumj{t^*} e_j$.
+
+% 
+% From this point, to allow dealing with the \set{f_i} and \set{g_i} uniformly, let us denote for $i\in [\ell]$, $f_{t+i}(X)\defeq g_i(X)$.
+
+
+ \begin{lemma}\label{lem:ideal-to-AGM}
+ Let \prot be a public coin \polprot{d}{D}{t}{\ell} for a relation \rel where only one identity is checked by \verpoly.
+ Then we can construct a protocol \protprime for \rel with knowledge soundness in the Algebraic Group Model under $2d$-DLOG such that
+ \begin{enumerate}
+  \item The prover \prv in \protprime requires $\proverexp(\prot)$ \G1-exponentiations.
+  \item The total prover communication consists of $t+t^*(\prot)$ \G1 elements and $M$ \F-elements. 
+\item The verifier \ver requires $t+t^*(\prot)$ \G1-exponentiations, two pairings and one evaluation of $G$.
+  \end{enumerate}
+
+\end{lemma}
+\begin{proof}
+Let $\PCscheme=(\gen,\com,\open)$ be the $d$-polynomial commitment scheme described in Lemma \ref{lem:kate}.
+The SRS of \protprime includes $\srs0=\gen(d)$,
+with the addition of $\set{\com(g_1),\ldots,\com(g_\ell)}$.
+
+Given \prot we describe \protprime. \prv and \ver behave identically to \prvpoly and \verpoly,
+except in the following two cases.
+\begin{itemize}
+ \item Whenever \prvpoly sends a polynomial $f_i\in \polysofdeg{d}$ to \ideal in \prot, \prv sends $\cm_i = \com(f_i)$ to  \ver.
+ \item Let $v^*_1,\ldots,v^*_{t^*}$ be the distinct polynomials amongst $v_1,\ldots,v_{M}$.
+ When \verpoly asks about the identity
+  \[F(X)\defeq G(X, h_1(v_1(X)),\ldots,h_{M}(v_{M}(X)))\equiv 0,\]
+  \begin{enumerate}
+ \item \ver chooses random $x\in \F$, computes $v^*_1(x),\ldots,v^*_{t^*}(x)$, and sends $x$ to \prv. 
+ \item \prv replies with \sett{s_i}{i\in [M]}, which are the alleged values $h_1(v_1(x)),\ldots,h_{M}(v_{M}(x))$.
+
+\item\label{step:open} \ver engages in the protocol \open with \prv to verify the correctness of \set{s_i}
+\item \ver outputs \acc if and only if 
+  \[G(x,s_1,\ldots,s_{M})= 0.\]
+
+  \end{enumerate}
+
+
+\end{itemize}
+
+The efficiency claims about \protprime follow directly from Lemma \ref{lem:kate}.
+
+
+To prove the claim about knowledge soundness in the AGM we must describe the extractor \ext for the protocol \protprime.
+For this purpose, let \extprot be the extractor of the protocol \prot as guaranteed to exist from Definition \ref{dfn:protforrel}, and \extpc be the extractor for the Knowledge Soundness game of \PCscheme as in Definition \ref{dfn:PCscheme}.
+
+
+Now assume an algebraic adversary \adv is taking the role of \prv in \protprime.
+\begin{enumerate}
+ \item \ext sends the commitments $\cm_1,\ldots,\cm_t$  to \extpc and receives in return $f_1,\ldots,f_t \in \polysofdeg{d}$.
+ \item \ext plays the role of \ideal in interaction with \extprot, sending him the polynomials $f_1,\ldots,f_t$.
+ \item When \extprot outputs \wit, \ext also outputs \wit.
+\end{enumerate}
+
+Now let us define two events (over the randomness of \ver,\adv and \gen):
+\begin{enumerate}
+ \item We think of an adversary \advprot participating in \prot, and using the polynomials $f_1,\ldots,f_t$ as their messages to \ideal. We define $A$ to be the event that the identity $F$ held, but $(\inp,\wit)\notin \rel$. By the KS of \prot, $\prob(A)=\negl$.
+ \item We let $B$ be the event that for some $i\in [M], h_i(v_i(x))\neq s_i$, and at the same time \verpc has output \acc when \open was run as a subroutine in Step \ref{step:open}. By the KS of \PCscheme, $\prob(B)=\negl$.
+\end{enumerate}
+
+Now look at the event $C$ that \ver outputs \acc, but \ext failed in the sense that $(\inp,\wit)\notin \rel$.
+We split $C$ into two events.
+\begin{enumerate}
+ \item $A$ or $B$ also happened - this has \negl probability.
+ \item $C$ happened but not $A$ or $B$. This means $F$ is not the zero polynomial, but $F(x)=0$; which happens w.p. \negl.
+\end{enumerate}
+
+
+
+\end{proof}
+
+
+
+\paragraph{Reducing the number of field elements}
+We describe an optimization by Mary Maller, to reduce the number of $\F$-elements in the proof from $M$.
+We begin with an illustrating example.
+Suppose \ver wishes to check the identity
+$h_1(X)\cdot h_2(X) - h_3(X)\equiv 0$.
+The compilation described above would have \prv send the values of $h_1,h_2,h_3$ at a random $x\in \F$; and \ver would check if $h_1(x)h_2(x)-h_3(x)=0$.
+Thus, \prv sends three field elements.
+
+Note however, that we could instead have \prv send only $c\defeq h_1(x)$,
+and then simply verify in the \open protocol whether the polynomial
+$L(X)\defeq c\cdot h_2(X) -h_3(X)$ is equal to zero at $x$. (Note that we can compute $\com(L)=c\cdot \com(h_2)-\com(h_3)$.)
+
+
+To describe the general method, we must define another technical measure of a polynomial protocol. We assume again (mainly for simplicity) that \verpoly checks only one identity $F$.
+Now define $\reducedelems(\prot)$ to be the minimal size of a subset $S\subset [M]$ such that 
+\begin{itemize}
+ \item $([M]\setminus S)\subset S_i$ for one of the subsets $S_i$ of the partition described before Lemma \ref{lem:ideal-to-AGM}.
+ \item The polynomial $G$ such that
+ \[F(X)\defeq G(X, h_1(v_1(X)),\ldots,h_{M}(v_{M}(X)))\]
+has degree zero or one as a polynomial in the variables \sett{X_j}{j\in [M]\setminus S} whose coefficients are polynomials in $X$ and \sett{X_j}{j\in S}. 
+\end{itemize}
+Assume \prot is such that $\reducedelems \defeq \reducedelems(\prot)<M$
+
+We claim that the reduction of Lemma \ref{lem:ideal-to-AGM} can be changed such that only $\reducedelems$ $\F$-elements are sent by \prv.
+\begin{enumerate}
+ \item \prv now sends only \sett{s_i=h_i(v_i(x))}{i\in S}.
+ \item Now let $L$ be the restriction $G|_{X=x;X_i=s_i, i\in S}$. \ver and \prv use \sett{\com(f_i}{i\in [S]}, and the linearity of \com, to compute the commitment to the corresponding restriction $F_L$ of $F$.
+ \item \ver computes the unique value $s=F_L(v^*_i(x))$, that will imply $F(x)=0$, assuming correctness of \sett{s_i}{i\in S}.
+ \item Now \prv and \ver engage in the protocol \open to verify the correctness of $\sett{s_i}{i\in S}\cup \set{s}$.
+\end{enumerate}
+
+
+ 
+
+
+\section{Polynomial protocols for identifying permutations}\label{sec:permprotocol}
+At the heart our universal SNARK is a ``permutation check'' inspired by the permutation argument originally presented by Bayer and Groth \cite{permorig} and its variants in \cite{Bootle,sonic}. Again, our main advantage over \cite{sonic} is getting a simpler protocol by working with \emph{univariate} polynomials and multiplicative subgroups.
+
+
+\paragraph{Degree bounds:}
+ We use two integer parameters $n\leq d$. Intuitively, $n$ is the degree of the honest prover's polynomials, and $d$ is the bound we actually enforce on malicious provers. Accordingly, we assume degree bound $n$ while analyzing prover efficiency and describing ``official'' protocol inputs; but allow degree bound $d$ while analyzing soundness.
+
+ 
+We assume the existence of a multiplicative subgroup $H\subset \F$ of order $n$ with generator \hgen.
+
+
+For $i\in [n]$, we denote by $L_i(X)$ the element of \polysofdeg{n} with $L_i(\hgen^i)=1$ and $L_i(a)=0$ for $a\in H$ different from  $\hgen^i$, i.e. \sett{L_i}{i\in [n]} is a Lagrange basis for $H$.
+%\footnote{It would be more natural to work with a basis for \dom, but it is more efficient to work with a basis for $H$, and Claim \ref{clm:pointcheck} implies this is also fine.}
+
+One thing to note is that the \set{L_i} can ``reduce point checks to range checks''.
+More precisely, the following claim follows directly from the definition of \set{L_i}.
+\begin{claim}\label{clm:pointcheck}
+ Fix $i\in [n]$, and $Z,Z^*\in \F[X]$. Then $L_i(a) (Z(a)-Z^*(a)) =0$ for each $a\in \dom$ if and only if 
+ $Z(\hgen^i) = Z^*(\hgen^i)$.
+\end{claim}
+
+
+
+
+For $f,g\in \polysofdeg{d}$ and a permutation $\sigma :[n]\to [n]$,
+we write $g=\sigma(f)$ if for each $a\in \dom$, $g(\hgen^i) = f(\hgen^{\sigma(i)})$. \footnote{Note that according to this definition there are multiple $g$ with $g=\sigma(f)$. Intuitively, we think of \sigof{f} as the unique such $g\in \polysofdeg{n}$, but do not define this formally to avoid needing to enforce this degree bound for efficiency reasons.}
+
+We present a ranged polynomial protocol enabling \prvpoly to prove that
+$g=\sigof{f}$.
+
+\paragraph{Preprocessed polynomials:}
+The polynomial $\idpoly\in \polysofdeg{n}$ defined by 
+$\idpoly(\hgen^i) = i$ for each $i\in [n]$ and $\sigpoly \in \polysofdeg{n}$ defined by
+$\sigpoly(\hgen^i) = \sigma(i)$ for each $i\in [n]$.
+\paragraph{Inputs:}
+$f,g\in \polysofdeg{n}$
+\paragraph{Protocol:}
+\begin{enumerate}
+ \item\label{item:betgamma} \verpoly chooses random $\beta,\gamma \in\F$ and sends them to \prvpoly.
+ \item Let $f'\defeq f+\beta\cdot  \idpoly +\gamma, g'\defeq g+\beta\cdot \sigpoly + \gamma$.
+That is, for $i\in [n]$
+ \[f'(\hgen^i) = f(\hgen^i) + \beta\cdot i + \gamma,
+ g'(\hgen^i) = g(\hgen^i) + \beta\cdot \sigma(i) + \gamma\]
+ \item \prvpoly computes $Z \in \polysofdeg{n}$, such that 
+ $Z(\hgen) = 1$; and for $i\in \set{2,\ldots,n}$
+ \[Z(\hgen^i)  = \prod_{1\leq j <i} f'(\hgen^j)/g'(\hgen^j).\]
+ (If one of the product elements is undefined, which happens w.p. \negl over $\gamma$, the protocol is aborted\footnote{This abort ruins the perfect completeness of the protocol. If one wishes to preserve perfect completeness, the protocol can be altered such that if for some $i$, $g'(\hgen^i)=0$, \prvpoly proves this to \verpoly, and \verpoly accepts in this case. This adds a \negl factor to the soundness error.}.)
+ \item \prvpoly sends $Z$ to \ideal.
+ \item \verpoly checks if for all $a\in \dom$
+ \begin{enumerate}
+  \item $L_1(a) (Z(a)-1) = 0$.
+  \item $Z(a)f'(a) = g'(a)Z(a\cdot \hgen)$.
+ \end{enumerate}
+and outputs \acc iff all checks hold.
+\end{enumerate}
+
+
+\begin{lemma}\label{lem:permprotocol}
+Fix $f,g \in \polysofdeg{d}$.
+For any strategy of \prvpoly, the probability of \verpoly outputting \acc in the above protocol when $g\neq \sigof{f}$ is \negl.
+\end{lemma}
+\begin{proof}
+ Suppose that $g\neq \sigof{f}$. By claim \ref{clm:randpermO}, e.w.p \negl over the choice of $\beta,\gamma\in \F$, 
+ \[a\defeq \prod_{i\in [n]}f'(\hgen^i)\neq b\defeq \prod_{i\in [n]} g'(\hgen^i).\]
+ Assume $\beta,\gamma$ were chosen such that the above holds, and also such that $g'(\hgen^i)\neq 0$ for all $i\in [n]$. We show \verpoly rejects; specifically, that assuming both identites \verpoly checks hold leads to contradiction.
+ 
+ From the first check we know that $Z(\hgen) = 1$.
+From the second check we can show inductively, that for each $i\in [n]$
+\[Z(\hgen^{i+1}) = \prod_{1\leq j \leq i} \frac{f'(\hgen^j)}{g'(\hgen^j)}.\]
+In particular, $Z(\hgen^{n+1})=a/b$.
+
+As $\hgen^{n+1}=\hgen$, 
+\[1=Z(\hgen) = Z(\hgen^{n+1})= a/b \neq 1,\]
+which is a contradiction.
+\end{proof}
+
+
+\subsection{Checking ``extended''  permutations}\label{subsec:extperm}
+In our protocol, we in fact need to check a permutation ``across'' the values of several polynomials.
+Let us define this setting formally.
+Suppose we now have mutliple polynomials $f_1,\ldots,f_k\in \polysofdeg{d}$ and a permutation $\sigma:[kn]\to [kn]$.
+For $(g_1,\ldots,g_k)\in \left(\polysofdeg{d}\right)^k$, we say that
+$(g_1,\ldots,g_k)=\sigof{f_1,\ldots,f_k}$ if the following holds.
+
+Define the sequences $(f_{(1)},\ldots, f_{(kn)}),(g_{(1)},\ldots,g_{(kn)}) \in \F^{kn}$
+by 
+\[f_{((j-1)\cdot n + i)} \defeq f_j(\hgen^i), g_{((j-1)\cdot n + i)} \defeq g_j(\hgen^i),\]
+for each $j\in [k], i\in [n]$.
+Then we have $g_{(\ell)} = f_{(\sigma(\ell))}$ for each $\ell \in [kn]$.
+
+
+
+
+% It is straightforward to extend the protocol to check several permuations $\sigma_1,\ldots,\sigma_k$ in parallel, while only paying once the costs associated with the original $f$. Details are in the protocol description and lemma below.
+
+\paragraph{Preprocessed polynomials:}
+The polynomials $\idpoly_1,\ldots,\idpoly_k \in \polysofdeg{n}$ defined by $\idpoly_j(\hgen^i) =(j-1)\cdot n + i$ for each $i\in [n]$.
+
+\emph{In fact, only $\idpoly=\idpoly_1$ is actually included in the set of preprocessed polynomials, as $\idpoly_j(x)$ can be computed as $ \idpoly_j(x) = \idpoly(x) + (j-1)\cdot n$.}
+
+
+For each $j\in [k]$, $\sigpoly_j \in \polysofdeg{n}$, defined by
+$\sigpoly_j(\hgen^i) = \sigma((j-1)\cdot n + i)$ for each $i\in [n]$.
+
+\paragraph{Inputs: $f_1,\ldots,f_k,g_1,\ldots,g_k \in \polysofdeg{n}$}
+\paragraph{Protocol:}
+\begin{enumerate}
+ \item\label{item:betgamma} \verpoly chooses random $\beta,\gamma \in\F$ and sends to \prvpoly.
+ \item Let $f_j'\defeq f_j+\beta\cdot  \idpoly_j +\gamma$, and $ g'_j\defeq g_j+\beta\cdot \sigpoly_j + \gamma$.
+That is, for $j\in [k],i\in [n]$
+ \[f'_j(\hgen^i) = f_j(\hgen^i) + \beta((j-1)\cdot n + i) + \gamma,
+ g'_j(\hgen^i) = g_j(\hgen^i) + \beta\cdot \sigma((j-1)\cdot n + i) + \gamma\]
+\item Define $f',g' \in \polysofdeg{kn}$ by 
+\[f'(X) \defeq \prod_{j\in [k]} f'_j(X),g'(X) \defeq \prod_{j\in [k]} g'_j(X).\]
+ 
+ \item \prvpoly computes $Z \in \polysofdeg{n}$, such that 
+ $Z(\hgen) =1$; and for $i\in \set{2,\ldots,n}$
+ \[Z(\hgen^i)  = \prod_{1\leq \ell <i} f'(\hgen^j)/g'(\hgen^j).\]
+ (The case of one of the products being undefined is handled as in the previous protocol.)
+ 
+ 
+ \item \prvpoly sends $Z$ to \ideal.
+ \item \verpoly checks if for all $a\in \dom$
+ \begin{enumerate}
+  \item $L_1(a) (Z(a)-1) =0$.
+  \item $Z(a)f'(a) = g'(a)Z(a\cdot \hgen)$.
+ \end{enumerate}
+ and outputs \acc iff all checks hold.
+\end{enumerate}
+\begin{lemma}\label{lem:permprotocolmany}
+Fix any $f_1,\ldots,f_k,g_1,\ldots g_k \in \polysofdeg{d}$ and permutation $\sigma$ on $[kn]$ as inputs to the above protocol \protmany.
+Suppose that $(g_1,\ldots,g_k) \neq \sigof{f_1,\ldots,f_k}$.
+Then, for any strategy of \prvpoly, the probability of \verpoly outputting \acc is \negl.
+
+% Moreover, in the terminology of Lemma \ref{lem:ideal-to-AGM}, we have $t^*(\protmany)=2,\proverexp(\protmany) =4n+2, D(\protmany) = 4n+2$.
+\end{lemma}
+\begin{proof}
+ $(g_1,\ldots,g_k) \neq \sigof{f_1,\ldots,f_k}$ implies that with high probability over $\beta,\gamma \in \F$ the product $F$ of the values 
+ \sett{f'_j(\hgen^i)}{j\in [k],i\in [n]} is different from the product $G$ of the values
+ \sett{g'_j(\hgen^i)}{j\in [k],i\in [n]}.
+ Note now that 
+    \[F=\prod_{i\in [n]} f'(\hgen^i), G=\prod_{i\in [n]} g'(\hgen^i),\]
+ and that the next steps of the protocol are identical to those in the previous protocol,
+ and as analyzed there - exactly check if these products are equal.
+\end{proof}
+
+\subsection{Checking ``extended copy constraints'' using a permutation}\label{subsec:copychecks}
+We finally come to the actual primitive that will be used in our main protocol.
+Let $\partition= \set{T_1,\ldots,T_s}$ be a partition of $[kn]$ into disjoint blocks.
+Fix $f_1,\ldots,f_k\in \polysofdeg{n}$.
+We say that $f_1,\ldots,f_k$ \emph{copy-satisfy} \partition if, when defining $(f_{(1)},\ldots,f_{(kn)})\in \F^{kn}$ as above, we have 
+$f_{(\ell)} = f_{(\ell')}$ whenever $\ell,\ell'$ belong to the same block
+ of \partition.
+
+ 
+ 
+We claim that the above protocol for extended permutations can be directly used for checking whether $f_1,\ldots,f_k$ satisfy \partition:
+% \begin{claim}\label
+Define a permutation $\sigof{\partition}$ on $[kn]$ such that for each block $T_i$ of \partition, $\sigof{\partition}$ contains a cycle going over all elements of $T_i$.
+Then, $(f_1,\ldots,f_k)$ copy-satisfy \partition if and only if 
+$(f_1,\ldots,f_k) = \sigma(f_1,\ldots,f_k)$.
+
+
+\section{Constraint systems}\label{sec:constsystems}
+Fix integers $m,n$ with $n\leq m\leq 2n$
+We present a type of constraint system that captures fan-in two arithmetic circuits of unlimited fan-out with $n$ gates and $m$ wires (but is more general).
+
+The constraint system $\constsystem=(\vars,\selectors)$ is defined as follows.
+\begin{itemize}
+ \item \vars is of the form $\vars=(\lvar,\rvar,\ovar)$,  where $\lvar,\rvar,\ovar \in [m]^n$. We think of $\lvar,\rvar,\ovar$ as the left, right and output sequence of \constsystem respectively.
+\item $\selectors = (\selleft,\selright,\selout,\selmult,\selconst)\in (\F^n)^5$ where we think of $\selleft,\selright,\selout,\selmult,\selconst \in \F^n$ as ``selector vectors''.
+\end{itemize}
+We say $\assignment \in \F^{m}$ \emph{satisfies} \constsystem if for each $i\in [n]$,
+\[(\selleft)_i\cdot \assignment_{\lvar_i} + (\selright)_i \cdot \assignment_{\rvar_i} + (\selout)_i \cdot \assignment_{\ovar_i} + (\selmult)_i\cdot (\assignment_{\lvar_i}\assignment_{\rvar_i}) + (\selconst)_i =0.\]
+
+To define a relation based on \constsystem, we extend it to include a positive integer $\ell\leq m$, and  subset $\pubvars \subset [m]$ of ``public inputs''. Assume without loss of generality that $\pubvars =\set{1,\ldots,\ell}$.
+
+Now we can define the relation \relof{\constsystem} as the set of pairs $(\inp,\wit)$ with $\inp\in \F^\ell,\wit\in \F^{m-\ell}$ such 
+that $\assignment\defeq (\inp,\wit)$ satisfies \constsystem.
+
+
+
+We proceed to show some useful instantiations of this type of constraints.
+
+\paragraph{Arithmetic circuits:}
+A fan-in 2 circuit of $n$ gates, each being either an addition or multiplication gate, can be captured in such a constraint system as follows.
+\begin{enumerate}
+ \item $m$ is set to be the number of wires, and each wire is associated with an index $i\in [m]$.
+
+ For each $i\in [n]$,
+ \item Set $\lvar_i,\rvar_i,\ovar_i$ to be the index of left/right/output wire of the $i$'th gate respectively.
+ \item Set $(\selleft)_i=0,(\selright)_i=0,(\selmult)_i=1,(\selout)_i=-1$ when the $i$'th gate is a multiplication gate.
+ \item Set $(\selleft)_i=1,(\selright)_i=1,(\selmult)_i=0,(\selout)_i=-1$ when the $i$'th gate is an addition gate. (Note that we can get ``linear combination gates'' by using other non-zero values for $(\selleft)_i,(\selright)_i$.)
+
+ 
+ \item Always set $(\selconst)_i=0$.
+ 
+\end{enumerate}
+
+
+
+\paragraph{Booleanity constraints:}
+A common occurrence in proof systems is the need to enforce $\assignment_j \in \set{0,1}$ for some $j\in [m]$. This is equivalent in our system to setting, for some $i\in [n]$,
+\[\lvar_i=\rvar_i=j,(\selleft)_i=-1, (\selmult)_i=1, (\selright)_i=(\selout)_i = (\selconst)_i =0.\]  
+
+\paragraph{Enforcing public inputs:}
+It is quite convenient and direct to enforce values of public inputs $\assignment_1,\ldots\assignment_\ell$: To enforce the constraint $\assignment_j = \inp_j$ we set  for some $i\in [n]$
+\[\lvar_i=j,    (\selleft)_i=1 ,(\selmult)_i= (\selright)_i=(\selout)_i = 0 , (\selconst)_i =-\inp_j.\]  
+
+
+
+
+
+\section{Main protocol}
+Let $\constsystem=(\vars,\selectors)$ be a constraint system of the form described in Section \ref{sec:constsystems}.
+We present our main protocol for the relation \relof{\constsystem}.
+It will be convenient to first define the following notion of the \emph{partition of \constsystem}, denoted $\partof{\constsystem}$, as follows.
+
+Suppose $\vars=(\lvar,\rvar,\ovar)$; think of \vars as a vector $V$ in $[m]^{3n}$.
+For $i\in [m]$, let $T_i\subset [3n]$ be the set of indices $j\in [3n]$ such that $V_j=i$.
+Now define 
+\[\partof{\constsystem}\defeq \sett{T_i}{i\in [m]}\]
+
+
+We make a final definition before presenting the protocol.
+We say \constsystem is \emph{prepared for $\ell$ public inputs} if for $i\in [\ell]$ 
+\[\lvar_i=i,    (\selleft)_i=1 ,(\selmult)_i= (\selright)_i=(\selout)_i = 0 , (\selconst)_i =0.\]  
+
+Recall that $\dom=\set{\hgen,\ldots,\hgen^n}$.
+We present an \dom-ranged polynomial protocol for \relof{\constsystem}.
+
+\paragraph{Preprocessing:}
+Let $\sigma = \sigof{\partof{\constsystem}}$.
+
+The polynomials $\idpoly_1,\idpoly_2,\idpoly_3, \sigpoly_1,\sigpoly_2,\sigpoly_3\in \polysofdeg{n}$ as defined in the protocol of subsection \ref{subsec:extperm} .
+
+Overloading notation, the polynomials $\selleft,\selright,\selout,\selmult,\selconst\in \polysofdeg{n}$ defined for each $i\in [n]$ by
+\[\selleft(\hgen^i)\defeq(\selleft)_i,\selright(\hgen^i)\defeq (\selright)_i,\selout(\hgen^i)\defeq (\selout)_i,\selmult(\hgen^i)\defeq (\selmult)_i,\selconst(\hgen^i)\defeq (\selconst)_i\]
+\paragraph{Protocol:}
+
+\begin{enumerate}
+ \item Let $\assignment\in \F^m$ be \prvpoly's assignment consistent with the public input \inp.
+ \prvpoly computes the three polynomials $f_L,f_R,f_O\in \polysofdeg{n}$, where for $i\in [n]$
+\[f_L(i)= \assignment_{\lvar_i},f_R(i)= \assignment_{\rvar_i},f_O(i)= \assignment_{\ovar_i}.\]
+\prvpoly sends $f_L,f_R,f_O$ to \ideal.
+\item \prvpoly and \verpoly run the extended permutation check protocol using the permutation $\sigma$ between $(f_L,f_R,f_O)$ and itself. As explained in Section \ref{subsec:copychecks}, this exactly checks whether $(f_L,f_R,f_O)$ copy-satisfies \partof{\constsystem}.
+\item \verpoly computes the ``Public input polynomial'' 
+\[\pubinppoly(X) \defeq \sum_{i\in [\ell]} -\inp_i \cdot L_i(X) \]
+\item \verpoly now checks the identity 
+\[\selleft \cdot f_L + \selright \cdot f_R + \selout \cdot f_O + \selmult\cdot f_L\cdot f_R+ (\selconst+\PI) =0,\]
+on \dom.
+
+\end{enumerate}
+
+\begin{thm}\label{thm:mainprot}
+ The above protocol is an  \dom-ranged polynomial protocol for the relation \relof{\constsystem}.
+\end{thm}
+\begin{proof}
+ Our main task is to describe and prove correctness of an extractor \ext.
+ \ext simply uses the values of $f_L,f_R,f_O$ to construct an assignment in the natural way - e.g. if $\lvar_i = j$ for some $i\in [n]$, let $\assignment_j = f_L(\hgen^i)$.
+ Finally, \ext defines and outputs $\wit \defeq (\assignment_{\ell+1},\ldots,\assignment_m)$.
+ Now, let us look at the event  $C$ where $(\inp,\wit)\notin \rel$ but \verpoly outputs \acc.
+We split $C$ into the two subevents, where $(f_L,f_R,f_O)$ doesn't copy-satisfy \sigof{\constsystem},
+and where it does.
+The first subevent has probability \negl according to the correctness of Lemma \ref{lem:permprotocolmany} and its use for copy-satisfiability checks as explained in Section \ref{subsec:copychecks}.
+
+On the other hand, if $(f_L,f_R,f_O)$ copy-satisfies \sigof{\constsystem} and the identity checked by \verpoly holds, it must be the case that $(\inp,\wit)\in \relof{\constsystem}$.
+ \end{proof}
+
+
+ 
+ Now, using Lemma \ref{lem:ranged-to-reg} and Lemma \ref{lem:ideal-to-AGM} we get
+ \begin{corollary}\label{cor:final}
+  Let \constsystem be a constraint system of the form described in Section \ref{sec:constsystems} with parameter $n$. There is a protocol for the relation \relof{\constsystem} with Knowledge Soundness in the Algebraic Group Model such that
+   \begin{enumerate}
+  \item The prover \prv requires $11n+2$ \G1-exponentiations.
+  \item The total prover communication consists of $7$ \G1-elements and $8$ \F-elements.\footnote{The result stated in introduction with $7$ \F-elements uses an additional optimization suggested by Vitalik Buterin explained in Section \ref{sec:finalconst}.} 
+ \end{enumerate}
+
+ \end{corollary}
+\begin{proof}
+We bound the quantities $\proverexp(\prot),t^*(\prot),\reducedelems(\prot)$ from Section \ref{subsec:ideal-AGM}; where \prot is the polynomial protocol derived from the protocol of Theorem \ref{thm:mainprot} using Lemma \ref{lem:ranged-to-reg}. The result then follows from Lemma \ref{lem:ideal-to-AGM} and the discussion after. 
+(For extra clarity, a full self-contained description of the final protocol is given in Section \ref{sec:finalconst}.)
+
+We commit to polynomials $f_L,f_R,f_O\in\polysofdeg{n},Z\in \polysofdeg{n+1}$ and a polynomial $T\in \polysofdeg{3n}$ resulting from division by $Z_{H^*}$.
+This requires $7n+1$ \G1-exponentiations.
+Then, we need to open at random $x\in \F$: $f_L(x),f_R(x),f_O(x),T(x),\idpoly(x),\sigpoly_1(x),\sigpoly_2(x)$
+
+and at $x\cdot \hgen$:
+$Z(x\cdot \hgen)$.
+
+Note that fixing these 8 values, our identity becomes a linear polynomial $L$ which is a linear combination of $\selleft,\selright,\selout,\selmult,\selconst,Z,\sigpoly_3$. This implies $\reducedelems(\prot)\leq 8$.
+
+It follows that
+\begin{itemize}
+ \item 
+$\proverexp(\prot) = 11n+2$ -
+as we add to the $7n+1$ cost of commitments, the maximal degree among the polynomial evaluated at $x$ which is $3n$ plus the maximum degree among polynomials evaluated at $x/\hgen$ which is $n+1$.
+\item $t^*(\prot)=2$ - as we have two distinct evaluation points.
+\item $\reducedelems(\prot)\leq 8$.
+
+\end{itemize}
+
+
+\end{proof}
+
+
+ 
+ 
+ \section{The final protocol, rolled out}\label{sec:finalconst}
+ For the reader's convenience we present the full final protocol.
+
+ Adding zero-knowledge was not explicitly discussed so far, but is implemented here:
+ All that is needed is essentially adding random multiples of $Z_{H}$ to the witness based-polynomials. This does not ruin satisfiability, but creates a situation where the values are either completely uniform or determined by verifier equations.
+ 
+ 
+
+ We explicitly define the multiplicative subgroup $H$ as containing the $n$'th roots of unity in $\F_p$, where $\omega$ is a primitive $n$'th root of unity and a generator of $H$. i.e: $H = \{1, \omega, \ldots, \omega^{n-1}\}$.
+ \\
+ \\
+ We assume that the number of gates in a circuit is no more than $n$.
+ \\
+ \\
+ We also include an optimisation suggested by Vitalik Buterin, to define the identity permutations through degree-1 polynomials. The identity permutations must map each wire value to a unique element $\in$ \F. This can be done by defining $\idpoly_1(X) = X, \idpoly_2(X) = k_1X, \idpoly_3(X) = k_2X$, where $k_1, k_2$ are quadratic non-residues $\in \F$.
+ This effectively maps each wire value to a root of unity in $H$, with right and output wires having an additional multiplicative factor of $k_1, k_2$ applied respectively.
+ By representing the identity permutation via degree-1 polynomials, their evaluations can be directly computed by the verifier. This reduces the size of the proof by 1 \F element, as well as reducing the number of Fast-Fourier-Transforms required by the prover.
+\\
+\\
+Finally, in the following protocol we use $H$ to refer to a hash function, where $H:\{0,1\}^*\to \{0,1\}^{\ell}$ is an efficiently computable hash function that takes arbitrary length inputs and returns $\ell$-bit outputs  
+
+\subsection{Polynomials that define a specific circuit}
+
+The following polynomials, along with integer $n$, uniquely define a universal SNARK circuit:
+
+\begin{itemize}
+	\item $\selmultpoly(X), \selleftpoly(X), \selrightpoly(X), \seloutpoly(X), \selconstpoly(X)$, the `selector' polynomials that define the circuit's arithmetisation
+	\item $\idpoly_1(X) = X, \idpoly_2(X) = k_1X, \idpoly_3(X) = k_2X$: the identity permutation applied to $\lvar, \rvar, \ovar$. $k_1, k_2\in \F$ are chosen such that $H,k1\cdot H,k2\cdot H$ are distinct cosets of $H$ in $\F^*$, and thus consist of $3n$ distinct elements. (For example, when $\omega$ is a quadratic residue in $\F$, take $k_1$ to be any quadratic non-residue, and $k_2$ to be a  quadratic non-residue not contained in $k_1\cdot H$.)
+	\item $\sigpoly_1(X), \sigpoly_2(X), \sigpoly_3(X)$: the copy permutation applied to $\lvar, \rvar, \ovar$
+	\item $n$, the total number of arithmetic gates for a given circuit. This is used by $\Vsnark$ to compute the vanishing polynomial $\zeropoly(X) = {X^{n} - 1}$
+\end{itemize}
+
+\subsection{Commitments to wire values}
+
+For the following protocol we describe a proof relation for a universal SNARK circuit containing $n$ arithmetic gates. The witnesses to the proof are the wire value witnesses $(w_i)_{i=1}^{3n}$. The commitments $[a]_1, [b]_1, [c]_1$ are computationally binding Kate polynomial commitments to the wire value witnesses, utilizing a structured reference string containing the group elements $(x \cdot [1]_1, \ldots , x^{n} \cdot [1]_1)$. 
+
+\subsection{The un-rolled universal SNARK proof relation}
+
+
+$$\Rsnark=\left\{\begin{array}{c} (x,w,crs)=((w_i)_{i \in [\ell]}), ((w_i)_{i=1, i \notin [\ell]}^{3n}), \\
+(q_{Mi}, q_{Li}, q_{Ri}, q_{Oi}, q_{Ci})_{i=1}^n, n, \sigma(x)) \\
+\text{For all } i\in \{1,\ldots,3n\}: w_i \in \F_p,  
+\text{ and for all } i \in \{1, \ldots, n \}:\\ w_i w_{n+i} q_{Mi} + w_i q_{Li} + w_{n+i} q_{Ri}+ w_{2n+i} q_{Oi} + q_{Ci} = 0 \\
+\text{and for all } i \in \{1, \ldots, 3n \}: w_i = w_{\sigma(i)}
+\end{array} \right\}$$
+
+
+
+
+
+\subsection{The protocol}
+
+We describe the protocol below as a non-interactive protocol using the Fiat-Shamir hueristic.
+For this purpose we always denote by \transcript the concatenation of the common preprocessed input, and public input, and the proof elements written by the prover up to a certain point in time.
+We use \transcript for obtaining random challenges via Fiat-Shamir. One can alternatively, replace all points where we write below ``compute challenges'', by the verifier sending random field elements, to obtain the interactive protocol from which we derive the non-interactive one.
+\begin{description}
+	\item[Common preprocessed input:]
+	$$\begin{array}{l}n, (x \cdot [1]_1, \ldots, {x^{n+2}} \cdot [1]_1), (q_{Mi}, q_{Li}, q_{Ri}, q_{Oi}, q_{Ci})_{i=1}^n, \sigma(X), \\
+	\selmultpoly(X) = \sum_{i=1}^nq_{Mi}\lagrangepoly_i(X), \\
+	\selleftpoly(X) = \sum_{i=1}^nq_{Li}\lagrangepoly_i(X), \\
+	\selrightpoly(X) = \sum_{i=1}^nq_{Ri}\lagrangepoly_i(X), \\ \seloutpoly(X) = \sum_{i=1}^nq_{Oi}\lagrangepoly_i(X), \\ \selconstpoly(X) = \sum_{i=1}^nq_{Ci}\lagrangepoly_i(X), \\
+	\sigpoly_1(X) = \sum_{i=1}^n \sigma(i) \lagrangepoly_i(X), \\ \sigpoly_2(X) = \sum_{i=1}^n \sigma(n + i) \lagrangepoly_i(X), \\ \sigpoly_3(X) = \sum_{i=1}^n \sigma(2n + i) \lagrangepoly_i(X)\\ \
+\end{array}$$
+	\item[Public input:] 	$\ell, \vecc{w_i}{i\in [\ell]}$
+	\item[\underline{Prover algorithm:}] \ \\
+	\item[Prover input:] $\vecc{w_i}{i\in [3n]}$
+	
+	\end{description}
+	
+	
+	\noindent
+	\paragraph{\textbf{Round 1:}} \ \\
+	Generate random blinding scalars $(b_1, \ldots, b_{9}) \in \F_p$ \\
+	Compute wire polynomials $\lpoly(X), \rpoly(X), \opoly(X):$
+	$$
+	\lpoly(X) = (b_1X + b_2)\zeropoly(X) + \sum_{i=1}^nw_i\lagrangepoly_i(X)
+	$$
+	$$
+	\rpoly(X) = (b_3X + b_4)\zeropoly(X) + \sum_{i=1}^nw_{n+i}\lagrangepoly_i(X)
+	$$
+	$$
+	\opoly(X) = (b_5X + b_6)\zeropoly(X) + \sum_{i=1}^nw_{2n+i}\lagrangepoly_i(X)
+	$$
+	Compute $[a]_1 := \enc1{\lpoly(x)}, [b]_1 := \enc1{\rpoly(x)}, [c]_1 := \enc1{\opoly(x)}$
+	\\ \\
+	First output of $\Psnark$ is $([a]_1, [b]_1, [c]_1)$.
+	\\ \\
+	\noindent
+	\paragraph{\textbf{Round 2:}} \ \\
+	Compute permutation challenges $(\beta, \gamma) \in \F_p:$ \[\beta = H(\transcript,0), \gamma = H(\transcript, 1) \]
+	Compute permutation polynomial $\idpermpoly(X):$
+	\begin{adjustwidth}{-50mm}{-50mm}
+	$$
+	\begin{array}{c}
+	\idpermpoly(X) = (b_7X^2 + b_8X + b_9)\zeropoly(X) \\
+	+ \lagrangepoly_1(X) + \sum_{i=1}^{n-1} \left(
+	\lagrangepoly_{i+1}(X) \prod_{j=1}^i\frac{(w_j + \beta \omega^{j-1} + \gamma)(w_{n+j} + \beta k_1 \omega^{j-1} + \gamma)(w_{2n + j} + \beta k_2 \omega^{j-1} + \gamma)}{(w_j + \sigma(j)\beta + \gamma)(w_{n+j} + \sigma(n+j)\beta + \gamma)(w_{2n+j} + \sigma(2n+j)\beta + \gamma)}
+	\right)
+	\end{array}
+	$$
+	\end{adjustwidth}
+	Compute $[z]_1 := \enc1{\idpermpoly(x)}$ \\
+	\\ \\
+	Second output of $\Psnark$ is $([z]_1)$
+	\\ \\
+	\noindent
+	\paragraph{\textbf{Round 3:}} \ \\
+	Compute quotient challenge $\alpha \in \F_p:$ \[ \alpha = H(\transcript) \]
+	Compute quotient polynomial $\mathsf{t}(X):$
+	\begin{adjustwidth*}{-22mm}{-22mm}
+	$$
+	\begin{array}{l}
+	\mathsf{t}(X) = \\
+	\ \ \ \left( \lpoly(X)\rpoly(X)\mathsf{q_M}(X) + \lpoly(X)\mathsf{q_L}(X) + \rpoly(X)\mathsf{q_R}(X) + \opoly(X)\mathsf{q_O}(X) + \pubinppoly(X) + \mathsf{q_C}(X) \right) \frac{1}{\zeropoly(X)} \\
+	+ \left((\lpoly(X) + \beta X + \gamma)(\rpoly(X) + \beta k_1 X + \gamma)(\opoly(X) + \beta k_2 X + \gamma )\idpermpoly(X) \right) \frac{\alpha}{\zeropoly(X)} \\
+	- \left((\lpoly(X) + \beta \sigpoly_1(X) + \gamma)(\rpoly(X) + \beta \sigpoly_2(X) + \gamma)(\opoly(X) + \beta \sigpoly_3(X) + \gamma) \idpermpoly(X\omega) \right)\frac{\alpha}{\zeropoly(X)} \\
+	+ \left(\idpermpoly(X) - 1 \right) \lagrangepoly_1(X) \frac{\alpha^2}{\zeropoly(X)}
+	\end{array}
+	$$
+	\end{adjustwidth*}
+	Split $t(X)$ into degree$<n$ polynomials $t_{lo}(X), t_{mid}(X), t_{hi}(X)$, where
+	$$
+	t(X) = t_{lo}(X) + X^nt_{mid}(X) + X^{2n}t_{hi}(X)
+	$$
+	Compute $[t_{lo}]_{1} := \enc1{\mathsf{t_{lo}}(x)}, [t_{mid}]_1 := \enc1{\mathsf{t_{mid}}(x)}, [t_{hi}]_1 := \enc1{\mathsf{t_{hi}}(x)}$ \\ \\
+	Third output of $\Psnark$ is $([t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1)$
+	\\ \\
+	\noindent
+	\paragraph{\textbf{Round 4:}} \ \\Compute evaluation challenge $\chalpoint \in \F_p:$ \[ \chalpoint = H(\transcript)\]
+	Compute opening evaluations:
+	$$
+	\begin{array}{c}
+	\bar{a} = \lpoly(\chalpoint), \bar{b} = \rpoly(\chalpoint), \bar{c} = \opoly(\chalpoint), \sigpolyevala = \sigpoly_1(\chalpoint), \sigpolyevalb = \sigpoly_2(\chalpoint), \\
+	\bar{t} = \mathsf{t}(\chalpoint), \bar{z}_\omega = \idpermpoly(\chalpoint \omega)
+	\end{array}
+	$$
+	Compute linearisation polynomial $\mathsf{r}(X):$
+	$$
+	\begin{array}{l}
+	\mathsf{r}(X) = \\
+	\ \ \ \left( \bar{a} \bar{b} \cdot \mathsf{q_M}(X) + \bar{a} \cdot \mathsf{q_L}(X) + \bar{b} \cdot \mathsf{q_R}(X) + \bar{c} \cdot \mathsf{q_O}(X) + \mathsf{q_C}(X) \right) \\
+	+ \left( (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma) \cdot \idpermpoly(X) \right)\alpha \\
+	- \left( (\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\beta \bar{z}_\omega \cdot \sigpoly_3(X)\right)\alpha \\
+	+ \left( \idpermpoly(X) \right) \lagrangepoly_1(\chalpoint)\alpha^2 \\
+	\end{array}
+	$$
+	Compute linearisation evaluation $\bar{r} = \mathsf{r}(\chalpoint)$ \\ \\
+	Fourth output of $\Psnark$ is $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{z}_\omega, \bar{t}, \bar{r})$ \\ \\
+	\noindent
+	\paragraph{\textbf{Round 5:}}\ \\
+	Compute opening challenge $v \in \F_p:$
+	$$
+	v = H(\transcript)
+	$$
+	Compute opening proof polynomial $\mathsf{W_\chalpoint}(X):$
+	$$
+	\mathsf{W_\chalpoint}(X) = \frac{1}{X - \chalpoint} \left(
+	\begin{array}{l}
+	(\mathsf{t_{lo}}(X) + \chalpoint^n \mathsf{t_{mid}}(X) + \chalpoint^{2n}\mathsf{t_{hi}}(X) - \bar{t}) \\
+	+ v(\mathsf{r}(X) - \bar{r}) \\
+	+ v^2(\lpoly(X) - \bar{a}) \\
+	+ v^3(\rpoly(X) - \bar{b}) \\
+	+ v^4(\opoly(X) - \bar{c}) \\
+	+ v^5(\sigpoly_1(X) - \sigpolyevala) \\
+	+ v^6(\sigpoly_2(X) - \sigpolyevalb) \\
+	\end{array}
+	\right)
+	$$
+	Compute opening proof polynomial $\mathsf{W_{\chalpoint\omega}}(X):$
+	$$
+	\mathsf{W_{\chalpoint \omega}}(X) = \frac{(\idpermpoly(X) - \bar{z}_\omega)}{X - \chalpoint \omega}
+	$$
+	Compute $[W_\chalpoint]_1 := \enc1{\mathsf{W_\chalpoint}(x)}, [W_{\chalpoint \omega}]_1 := \enc1{\mathsf{W_{\chalpoint \omega}}(x)}$ \\ \\
+
+	The fifth output of $\Psnark$ is $([W_\chalpoint]_1, [W_{\chalpoint\omega}]_1)$
+	\\ \\
+	Return
+	$$
+	\pi_{\mathsf{SNARK}} = \left(
+	\begin{array}{c}
+	[a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_\chalpoint]_1, [W_{\chalpoint \omega}]_1, \\
+	\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{r}, \bar{z}_\omega \\
+	\end{array}
+	\right)
+	$$
+	
+	Compute multipoint evaluation challenge $u \in \F_p:$
+	$$
+	u = H(\transcript)
+	$$
+
+	We now describe the verifier algorithm in a way that minimizes the number of \G1 scalar multiplications.
+	\begin{description}
+	\item[\underline{Verifier algorithm}] \ \\
+	\item[Verifier preprocessed input:] 
+	$$
+	\begin{array}{l}
+ \selmultcomm := \selmultpoly(x) \cdot [1]_1, \selleftcomm := \selleftpoly(x) \cdot [1]_1, \selrightcomm := \selrightpoly(x) \cdot [1]_1, \seloutcomm := \seloutpoly(x) \cdot [1]_1, \\
+	\sigcomma := \sigpoly_1(x) \cdot [1]_1, \sigcommb := \sigpoly_2(x) \cdot [1]_1, \sigcommc := \sigpoly_3 (x)\cdot [1]_1 \\
+	x \cdot [1]_2, c:=P(\omega),
+	\end{array}
+	$$
+	where $P(X):=\frac{X^n-1}{X-\omega}$.
+	\item[$\Vsnark((w_i)_{i \in {[}\ell{]}}, \pi_{\mathsf{SNARK}})$:] \ \\
+\end{description}
+\noindent
+\begin{enumerate}
+ \item 	Validate $([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_z]_1, [W_{z\omega}]_1) \in \G1$.
+\item	Validate $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{r}, \bar{z}_\omega) \in \F_p^{7}$.
+\item	Validate $(w_i)_{i \in [\ell]} \in \F_p^{\ell}$.
+	\item Compute challenges $\beta, \gamma,\alpha,\chalpoint,v,u \in \F_p$ as in prover description, from the common inputs, public input, and elements of $\pi_{\mathsf{SNARK}}$.
+% 	$$
+% 	\beta = H([a]_1, [b]_1, [c]_1, (w_i)_{i \in [\ell]}), \gamma = H([a]_1, [b]_1, [c]_1, (w_i)_{i \in [\ell]}, \beta)
+% 	$$
+% 	Compute quotient challenge $\alpha \in \F_p:$
+% 	$$
+% 	\alpha = H([a]_1, [b]_1, [c]_1, [z]_1)
+% 	$$
+% 	Compute evaluation challenge $z \in \F_p:$
+% 	$$
+% 	z = H([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1)
+% 	$$
+	\item Compute zero polynomial evaluation $\zeropoly(\chalpoint) = {\chalpoint^n - 1}$.
+\item	Compute Lagrange polynomial evaluation $\lagrangepoly_1(\chalpoint) = \frac{\chalpoint^n - 1}{c(\chalpoint - \omega)}$.
+\item	Compute public input polynomial evaluation $\pubinppoly(\chalpoint) = \sum_{i \in \ell}w_i \lagrangepoly_i(\chalpoint)$.
+\item	Compute quotient polynomial evaluation $$\bar{t} = \frac{\bar{r} + \pubinppoly(\chalpoint)
+	-((\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} + \gamma)\bar{z}_\omega)\alpha
+	- \lagrangepoly_1(\chalpoint)\alpha^2}{\zeropoly(\chalpoint)}$$.
+% 	Compute opening challenge $v \in \F_p:$
+% 	$$
+% 	v = H([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, \bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{z}, \bar{t}, \bar{r})
+% 	$$
+% 	Compute multipoint evaluation separation challenge $u \in \F_p:$
+% 	$$
+% 	u = H([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_z]_1, [W_{z \omega^{-1}}]_1, \bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,\bar{z}, \bar{t}, \bar{r})
+% 	$$
+\item	Compute first part of batched polynomial commitment $[D]_1 := v \cdot [r]_1 + u \cdot [z]_1:$
+	$$
+	[D]_1 :=
+	\begin{array}{l}
+	\bar{a}\bar{b} v \cdot \selmultcomm + \bar{a} v \cdot \selleftcomm + \bar{b}v \cdot \selrightcomm + \bar{c}v \cdot \seloutcomm +  v \cdot \selconstcomm \\
+	+ \left( (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma)\alpha v + \lagrangepoly_1(\chalpoint)\alpha^2 v + u\right) \cdot [z]_1\\
+	-(\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\alpha v\beta \bar{z}_\omega \sigcommc \end{array}
+	$$
+\item	Compute full batched polynomial commitment $[F]_1:$
+	$$
+	[F]_1 := 	\begin{array}{l}
+	[t_{lo}]_1
+	+ \chalpoint^n \cdot [t_{mid}]_1
+	+ \chalpoint^{2n} \cdot [t_{hi}]_1 \\
+	+ [D]_1
+	+ v^2 \cdot [a]_1
+	+ v^3 \cdot [b]_1
+	+ v^4 \cdot [c]_1
+	+ v^5 \cdot \sigcomma
+	+ v^6 \cdot \sigcommb
+	\end{array}
+	$$
+\item 	Compute group-encoded batch evaluation $[E]_1$:
+	$$
+	[E]_1 :=
+	\left( \begin{array}{l}
+	\bar{t}
+	+ v \bar{r}
+	+ v^2 \bar{a}
+	+ v^3 \bar{b}
+	+ v^4 \bar{c} \\
+	+ v^5 \sigpolyevala
+	+ v^6 \sigpolyevalb
+	+ u\bar{z_\omega}
+	\end{array}
+	\right)
+	\cdot [1]_1
+	$$
+	\item Batch validate all evaluations:
+	$$
+	\begin{array}{c}
+	e([W_\chalpoint]_1 + u \cdot [W_{\chalpoint \omega}]_1,  [x]_2)
+	\overset{?}{=}
+	e(\chalpoint \cdot [W_\chalpoint]_1 + u\chalpoint\omega \cdot [W_{\chalpoint \omega}]_1 + [F]_1 - [E]_1, [1]_2) \\
+	\end{array}
+	$$
+\end{enumerate}
+
+
+
+ \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe, Cody Gunton, Alexander Vlasov and Kevaundray Wedderburn for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
+\bibliography{references}
+    
+\appendix
+    
+    
+
+\section{Claims for permutation argument:}
+
+Fix a permutation $\sigma$ of $[n]$, and $a_1,\ldots,a_n,b_1,\ldots,b_n \in \F$.
+\begin{claim}\label{clm:randpermO}
+ If the following holds with non-negligible probability over random $\beta,\gamma \in \F$
+ \[\prod_{i\in [n]} (a_i + \beta \cdot i + \gamma) = \prod_{i\in [n]} (b_i+ \beta \cdot \sigma(i) + \gamma)\] 
+ then $\forall i \in [n]$, $b_i = a_{\sigma(i)}$.
+\end{claim}
+
+We will prove claim \ref{clm:randpermO} using the following lemmas. For completeness, we include below a variant of the well-known Schwartz-Zippel lemma that we use in this paper.
+
+\begin{lemma}(Schwartz-Zippel). Let $P(X_1, \ldots, X_n)$ be a non-zero multivariate polynomial of degree $d$ over $\mathbb{Z}_p$, then
+the probability of $P(\alpha_1, \ldots, \alpha_n)= 0 \leftarrow \mathbb{Z}_p$ for randomly chosen $\alpha_1, \ldots, \alpha_n$ is at most $d/p$.
+\end{lemma}
+
+The Schwartz-Zippel lemma is used in polynomial equality testing. Given two multi-variate polynomials $P_1(X_1, \ldots, X_n)$
+and $P_2(X_1, \ldots, X_n)$ we can test whether $P_1(\alpha_1, \ldots, \alpha_n) -  P_2(\alpha_1, \ldots, \alpha_n)  = 0$ for random $\alpha_1, \ldots, \alpha_n  \leftarrow \mathbb{Z}_p$.
+If the two polynomials are identical, this will always be true, whereas if the two polynomials are different then the equality holds with probability at most $max(d_1, d_2)/p$, where $d_1$ and 
+$d_2$ are the degrees of the polynomials $P_1$ and $P_2$. 
+
+\begin{lemma}\label{le:simple_prod}
+If the following holds with non-negligible probability over random $\gamma \in \F$, 
+
+\begin{equation}
+\label{eq:simple_prod}
+\prod_{i=1}^{n}(a_i+\gamma) = \prod_{i=1}^{n}(b_i+\gamma) 
+\end{equation} 
+then the entries in the tuple $(a_1, \ldots, a_n)$ equal the entries in the tuple $(b_1, \ldots, b_n)$, but not necessarily in that order. 
+\end{lemma}
+
+\begin{proof}
+Let $P_a(X) =  \prod_{i=1}^{n}(X+ a_i)$ and $P_b(X) = \prod_{i=1}^{n}(X+b_i)$. The roots of $P_a$ are $(-a_1, \ldots, -a_n)$ and the roots of $P_b$ are $(-b_1, \ldots, -b_n)$.  
+By the Schwartz-Zippel lemma, if polynomials $P_a(X)$ and $P_b(X)$ are not equal, equality \ref{eq:simple_prod} holds with probability $\frac{n}{|\mathbb{F}|}$ which is negligible for any polynomial degree $n$ used in our snark construction. 
+Thus, equality \ref{eq:simple_prod} holds with non-negligible probability only when the two polynomials $P_a(X)$ and $P_b(X)$ are equal. This implies all the roots of $P_a(X)$ must be roots of $P_b(X)$ and the other way around, which, in turn, 
+implies the conclusion of the lemma. As a note, the conclusion of the lemma can be written in an equivalent but more formal way: there exist a permutation $\sigma$ of $[n]$ such that $b_i = a_{\sigma(i)}, \forall i \in [n]$.
+\end{proof}
+
+\begin{corollary} \label{co:simple_prod}
+Fix a permutation $\sigma$ of $[n]$, and $A_1,\ldots,A_n,B_1,\ldots,B_n \in \F$. If the following holds with non-negligible probability over random $\beta \in \F$, 
+ \[\prod_{i\in [n]} (A_i + \beta \cdot i) = \prod_{i\in [n]} (B_i+ \beta \cdot \sigma(i))\] 
+ then the values in the tuple $(\frac{B_1}{\sigma(1)}, \ldots, \frac{B_n}{\sigma(n)})$ are the same as the values in the tuple $(A_1, \ldots, \frac{A_n}{n})$, but not necessarily in this order. 
+  
+\begin{proof} The roots of $P_A(Y) = \prod_{i\in [n]} (i \cdot Y + A_i )$ are $(-A_1, \ldots, -\frac{A_n}{n})$, the roots of $P_B(Y) =  \prod_{i\in [n]} (\sigma (i) \cdot Y + B_i)$ are  $(-\frac{B_1}{\sigma(1)}, \ldots, -\frac{B_n}{\sigma(n)})$. Together with 
+lemma \ref{le:simple_prod}, we obtain the desired conclusion.
+\end{proof}
+
+\end{corollary}
+
+\begin{proof} for Claim \ref{clm:randpermO}
+
+Lets denote by $B_i = b_i + \gamma$ and $A_i = a_i + \gamma$, $\forall i \in [n]$. Then, according to \ref{co:simple_prod}, the values in the tuple $(\frac{B_1}{\sigma(1)}, \ldots, \frac{B_n}{\sigma(n)})$ are the same as the values in 
+the tuple $(A_1, \ldots, \frac{A_n}{n})$, $\forall i \in [n]$. Assume there exists $i_0 \in [n]$ such that $B_{i_0} \neq A_{\sigma(i_0)}$. This implies there exists $j \in [n]$, with $j \neq \sigma(i_0) $ such that $\frac{B_{i_0}}{\sigma(i_0)} = \frac{A_j}{j}$. 
+Expending, we obtain $j \cdot (b_{i_0}+ \gamma) = \sigma(i_0) \cdot (a_j + \gamma)$ and this holds with non-negligible probability over the choice of $\gamma$. Using the Schwartz-Zippel lemma as in \ref{le:simple_prod}, 
+we obtain that $\sigma(i_0) = j$ which contradicts our assumption. Hence, we have proven that $\forall  i \in [n], B_i = A_{\sigma(i)}$, which, in turn, implies $b_i = a_{\sigma(i)}$, $\forall  i \in [n]$. 
+\end{proof}
+
+
+% \subsection{Claims for permutation argument:}
+% \begin{claim}\label{clm:randperm}
+%  Fix a permutation $\sigma$ of $[n]$, and $a_1,\ldots,a_n,b_1,\ldots,b_n \in \F$.
+%  Suppose that for some $i\in [n]$, $b_{\sigma(i)}\neq a_i$.
+%  Then w.h.p. over random $\beta,\gamma \in \F$
+%  \[\prod_{i\in [n]} (a_i + \beta \cdot i + \gamma) \neq \prod_{i\in [n]} (b_{\sigma(i)} + \beta \cdot i + \gamma)\]
+% \end{claim}
+% 
+\end{document}
+
+
