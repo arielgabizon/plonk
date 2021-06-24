@@ -1001,7 +1001,7 @@ such that
 \begin{itemize}
  \item \textbf{Completeness:} Fix integer $t$, $z_1,\ldots,z_t\in \F$, $f_1,\ldots,f_t \in \polysofdeg{d}$.
  Suppose that for each $i\in [t]$, $\cm_i = \com(f_i,\srs0)$.  Then if \open is run correctly with values
- $t, \sett{\cm_i,z_i,s_i=f_i(z)}{i\in [t]}$, \verpc outputs \acc with probability one.
+ $t, \sett{\cm_i,z_i,s_i=f_i(z_i)}{i\in [t]}$, \verpc outputs \acc with probability one.
  \item \textbf{Knowledge soundness in the algebraic group model:} There exists an efficient \ext such that for any algebraic adversary \adv the probability of \adv winning the following game is \negl over the randomness of \adv and \gen.
  \begin{enumerate}
   \item Given \srs0, \adv outputs $t,\cm_1,\ldots,\cm_t$.
@@ -1080,7 +1080,7 @@ For this, let us denote the distinct evaluation points by $z,z'$ and by $t_1,t_2
 
  \underline{$\open(\sett{cm_i}{i\in [t_1]},\sett{cm'_i}{i\in [t_2]},\set{z,z'},\set{s_i,s'_i})$}:
  \begin{enumerate}
-  \item \verpc sends random $\gamma\,\gamma', \in \F$.
+  \item \verpc sends random $\gamma,\gamma' \in \F$.
  \item\label{step:computeW}  \prvpc computes the polynomials
  \[h(X)\defeq \sum_{i=1}^{t_1} \gamma^{i-1}\cdot \frac{f_i(X)-f_i(z)}{X-z}  \]
  \[h'(X)\defeq \sum_{i=1}^{t_2} \gamma'^{i-1}\cdot \frac{f'_i(X)-f'_i(z')}{X-z'}  \]
@@ -1198,7 +1198,7 @@ Given a relation \rel, a \emph{polynomial protocol for \rel} is a polynomial pro
 \end{enumerate}
 \end{dfn}
 \begin{remark}
-We intentionally do not define a zero-knowlege property for idealized protocols, as acheiving ZK will depend on how much information on the polynomials sent to \ideal is leaked in the final ``compiled'' protocol. This in turn depends on specific details of the polynomial commitment scheme used for compilation.
+We intentionally do not define a zero-knowlege property for idealized protocols, as achieving ZK will depend on how much information on the polynomials sent to \ideal is leaked in the final ``compiled'' protocol. This in turn depends on specific details of the polynomial commitment scheme used for compilation.
 \end{remark}
 
 \subsection{Polynomial protocols on ranges}
@@ -1425,7 +1425,7 @@ More precisely, the following claim follows directly from the definition of \set
 
 
 For $f,g\in \polysofdeg{d}$ and a permutation $\sigma :[n]\to [n]$,
-we write $g=\sigma(f)$ if for each $a\in \dom$, $g(\hgen^i) = f(\hgen^{\sigma(i)})$. \footnote{Note that according to this definition there are multiple $g$ with $g=\sigma(f)$. Intuitively, we think of \sigof{f} as the unique such $g\in \polysofdeg{n}$, but do not define this formally to avoid needing to enforce this degree bound for efficiency reasons.}
+we write $g=\sigma(f)$ if for each $i\in \dom$, $g(\hgen^i) = f(\hgen^{\sigma(i)})$. \footnote{Note that according to this definition there are multiple $g$ with $g=\sigma(f)$. Intuitively, we think of \sigof{f} as the unique such $g\in \polysofdeg{n}$, but do not define this formally to avoid needing to enforce this degree bound for efficiency reasons.}
 
 We present a ranged polynomial protocol enabling \prvpoly to prove that
 $g=\sigof{f}$.
@@ -1908,10 +1908,9 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\begin{array}{l}
  \selmultcomm := \selmultpoly(x) \cdot [1]_1, \selleftcomm := \selleftpoly(x) \cdot [1]_1, \selrightcomm := \selrightpoly(x) \cdot [1]_1, \seloutcomm := \seloutpoly(x) \cdot [1]_1, \\
 	\sigcomma := \sigpoly_1(x) \cdot [1]_1, \sigcommb := \sigpoly_2(x) \cdot [1]_1, \sigcommc := \sigpoly_3 (x)\cdot [1]_1 \\
-	x \cdot [1]_2, c:=P(\omega),
+	x \cdot [1]_2
 	\end{array}
 	$$
-	where $P(X):=\frac{X^n-1}{X-\omega}$.
 	\item[$\Vsnark((w_i)_{i \in {[}\ell{]}}, \pi_{\mathsf{SNARK}})$:] \ \\
 \end{description}
 \noindent
@@ -1932,19 +1931,11 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 % 	z = H([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1)
 % 	$$
 	\item Compute zero polynomial evaluation $\zeropoly(\chalpoint) = {\chalpoint^n - 1}$.
-\item	Compute Lagrange polynomial evaluation $\lagrangepoly_1(\chalpoint) = \frac{\chalpoint^n - 1}{c(\chalpoint - \omega)}$.
+\item	Compute Lagrange polynomial evaluation $\lagrangepoly_1(\chalpoint) = \frac{\omega(\chalpoint^n - 1)}{n(\chalpoint - \omega)}$.
 \item	Compute public input polynomial evaluation $\pubinppoly(\chalpoint) = \sum_{i \in \ell}w_i \lagrangepoly_i(\chalpoint)$.
 \item	Compute quotient polynomial evaluation $$\bar{t} = \frac{\bar{r} + \pubinppoly(\chalpoint)
 	-((\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} + \gamma)\bar{z}_\omega)\alpha
 	- \lagrangepoly_1(\chalpoint)\alpha^2}{\zeropoly(\chalpoint)}$$.
-% 	Compute opening challenge $v \in \F_p:$
-% 	$$
-% 	v = H([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, \bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{z}, \bar{t}, \bar{r})
-% 	$$
-% 	Compute multipoint evaluation separation challenge $u \in \F_p:$
-% 	$$
-% 	u = H([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_z]_1, [W_{z \omega^{-1}}]_1, \bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,\bar{z}, \bar{t}, \bar{r})
-% 	$$
 \item	Compute first part of batched polynomial commitment $[D]_1 := v \cdot [r]_1 + u \cdot [z]_1:$
 	$$
 	[D]_1 :=
@@ -1995,7 +1986,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 
 
 
- \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe, Cody Gunton, Alexander Vlasov and Kevaundray Wedderburn for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
+ \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe, David Wong, Cody Gunton, Alexander Vlasov and Kevaundray Wedderburn for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
 \bibliography{references}
     
 \appendix
