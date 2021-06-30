@@ -1850,9 +1850,9 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\begin{array}{l}
 	\mathsf{r}(X) = \\
 	\ \ \ \left( \bar{a} \bar{b} \cdot \mathsf{q_M}(X) + \bar{a} \cdot \mathsf{q_L}(X) + \bar{b} \cdot \mathsf{q_R}(X) + \bar{c} \cdot \mathsf{q_O}(X) + \mathsf{q_C}(X) \right) \\
-	+ \left( (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma) \cdot \idpermpoly(X) \right)\alpha \\
-	- \left( (\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\beta \bar{z}_\omega \cdot \sigpoly_3(X)\right)\alpha \\
-	+ \left( \idpermpoly(X) \right) \lagrangepoly_1(\chalpoint)\alpha^2 \\
+	+ \alpha \left( (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma) \cdot \idpermpoly(X) 
+	- (\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\beta \bar{z}_\omega \cdot \sigpoly_3(X)\right) \\
+	+ \alpha^2 \left( \idpermpoly(X) \right) \lagrangepoly_1(\chalpoint) \\
 	\end{array}
 	$$
 	Compute linearisation evaluation $\bar{r} = \mathsf{r}(\chalpoint)$ \\ \\
@@ -1863,7 +1863,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	$$
 	v = H(\transcript)
 	$$
-	Compute quotient evaluation $$\bar{t} = \mathsf{t}(\chalpoint)$$.
+	Compute quotient evaluation: $$\bar{t} = \mathsf{t}(\chalpoint)$$
 	Compute opening proof polynomial $\mathsf{W_\chalpoint}(X):$
 	$$
 	\mathsf{W_\chalpoint}(X) = \frac{1}{X - \chalpoint} \left(
