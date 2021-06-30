@@ -1766,7 +1766,7 @@ For this purpose we always denote by \transcript the concatenation of the common
 We use \transcript for obtaining random challenges via Fiat-Shamir. One can alternatively, replace all points where we write below ``compute challenges'', by the verifier sending random field elements, to obtain the interactive protocol from which we derive the non-interactive one.
 \begin{description}
 	\item[Common preprocessed input:]
-	$$\begin{array}{l}n, (x \cdot [1]_1, \ldots, {x^{n+2}} \cdot [1]_1), (q_{Mi}, q_{Li}, q_{Ri}, q_{Oi}, q_{Ci})_{i=1}^n, \sigma(X), \\
+	$$\begin{array}{l}n, (x \cdot [1]_1, \ldots, {x^{n+5}} \cdot [1]_1), (q_{Mi}, q_{Li}, q_{Ri}, q_{Oi}, q_{Ci})_{i=1}^n, \sigma(X), \\
 	\selmultpoly(X) = \sum_{i=1}^nq_{Mi}\lagrangepoly_i(X), \\
 	\selleftpoly(X) = \sum_{i=1}^nq_{Li}\lagrangepoly_i(X), \\
 	\selrightpoly(X) = \sum_{i=1}^nq_{Ri}\lagrangepoly_i(X), \\ \seloutpoly(X) = \sum_{i=1}^nq_{Oi}\lagrangepoly_i(X), \\ \selconstpoly(X) = \sum_{i=1}^nq_{Ci}\lagrangepoly_i(X), \\
@@ -1829,7 +1829,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\end{array}
 	$$
 	\end{adjustwidth*}
-	Split $t(X)$ into degree$<n$ polynomials $t_{lo}(X), t_{mid}(X), t_{hi}(X)$, where
+	Split $t(X)$ into degree $<n$ polynomials $t_{lo}(X), t_{mid}(X)$ and $t_{hi}(X)$ of degree at most $n+5$, such that
 	$$
 	t(X) = t_{lo}(X) + X^nt_{mid}(X) + X^{2n}t_{hi}(X)
 	$$
@@ -1842,7 +1842,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	$$
 	\begin{array}{c}
 	\bar{a} = \lpoly(\chalpoint), \bar{b} = \rpoly(\chalpoint), \bar{c} = \opoly(\chalpoint), \sigpolyevala = \sigpoly_1(\chalpoint), \sigpolyevalb = \sigpoly_2(\chalpoint), \\
-	\bar{t} = \mathsf{t}(\chalpoint), \bar{z}_\omega = \idpermpoly(\chalpoint \omega)
+	 \bar{z}_\omega = \idpermpoly(\chalpoint \omega)
 	\end{array}
 	$$
 	Compute linearisation polynomial $\mathsf{r}(X):$
@@ -1856,13 +1856,14 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\end{array}
 	$$
 	Compute linearisation evaluation $\bar{r} = \mathsf{r}(\chalpoint)$ \\ \\
-	Fourth output of $\Psnark$ is $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{z}_\omega, \bar{t}, \bar{r})$ \\ \\
+	Fourth output of $\Psnark$ is $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{z}_\omega, \bar{r})$ \\ \\
 	\noindent
 	\paragraph{\textbf{Round 5:}}\ \\
 	Compute opening challenge $v \in \F_p:$
 	$$
 	v = H(\transcript)
 	$$
+	Compute quotient evaluation $$\bar{t} = \mathsf{t}(\chalpoint)$$.
 	Compute opening proof polynomial $\mathsf{W_\chalpoint}(X):$
 	$$
 	\mathsf{W_\chalpoint}(X) = \frac{1}{X - \chalpoint} \left(
@@ -1986,7 +1987,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 
 
 
- \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe, David Wong, Cody Gunton, Alexander Vlasov and Kevaundray Wedderburn for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
+ \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe, Cody Gunton, Alexander Vlasov, Kevaundray Wedderburn and David Wong for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
 \bibliography{references}
     
 \appendix
