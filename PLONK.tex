@@ -1845,36 +1845,34 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	 \bar{z}_\omega = \idpermpoly(\chalpoint \omega)
 	\end{array}
 	$$
-	Compute linearisation polynomial $\mathsf{r}(X):$
-	$$
-	\begin{array}{l}
-	\mathsf{r}(X) = \\
-	\ \ \ \left( \bar{a} \bar{b} \cdot \mathsf{q_M}(X) + \bar{a} \cdot \mathsf{q_L}(X) + \bar{b} \cdot \mathsf{q_R}(X) + \bar{c} \cdot \mathsf{q_O}(X) + \mathsf{q_C}(X) \right) \\
-	+ \alpha \left( (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma) \cdot \idpermpoly(X) 
-	- (\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\beta \bar{z}_\omega \cdot \sigpoly_3(X)\right) \\
-	+ \alpha^2 \left( \idpermpoly(X) \right) \lagrangepoly_1(\chalpoint) \\
-	\end{array}
-	$$
-	Compute linearisation evaluation $\bar{r} = \mathsf{r}(\chalpoint)$ \\ \\
-	Fourth output of $\Psnark$ is $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{z}_\omega, \bar{r})$ \\ \\
+	Fourth output of $\Psnark$ is $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{z}_\omega )$ \\ \\
 	\noindent
 	\paragraph{\textbf{Round 5:}}\ \\
 	Compute opening challenge $v \in \F_p:$
 	$$
 	v = H(\transcript)
 	$$
-	Compute quotient evaluation: $$\bar{t} = \mathsf{t}(\chalpoint)$$
+	Compute linearisation polynomial $\mathsf{r}(X):$
+	$$
+	\begin{array}{l}
+	\mathsf{r}(X) = \\
+	\ \ \ \left[ \bar{a} \bar{b} \cdot \mathsf{q_M}(X) + \bar{a} \cdot \mathsf{q_L}(X) + \bar{b} \cdot \mathsf{q_R}(X) + \bar{c} \cdot \mathsf{q_O}(X) + \pubinppoly(\chalpoint) + \mathsf{q_C}(X) \right] \\
+	+ \alpha [ (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma) \cdot \idpermpoly(X)\\ 
+	- (\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} + \beta \bar{z}_\omega \cdot \sigpoly_3(X)+\gamma )] \\
+	+ \alpha^2 \left[( \idpermpoly(X) -1 ) \lagrangepoly_1(\chalpoint)\right] \\
+	- Z_H(\chalpoint)\cdot(t_{lo}(X)+ \chalpoint ^n t_{mid}(X) + \chalpoint^{2n} t_{hi}(X))\\
+	\end{array}
+	$$
 	Compute opening proof polynomial $\mathsf{W_\chalpoint}(X):$
 	$$
 	\mathsf{W_\chalpoint}(X) = \frac{1}{X - \chalpoint} \left(
 	\begin{array}{l}
-	(\mathsf{t_{lo}}(X) + \chalpoint^n \mathsf{t_{mid}}(X) + \chalpoint^{2n}\mathsf{t_{hi}}(X) - \bar{t}) \\
-	+ v(\mathsf{r}(X) - \bar{r}) \\
-	+ v^2(\lpoly(X) - \bar{a}) \\
-	+ v^3(\rpoly(X) - \bar{b}) \\
-	+ v^4(\opoly(X) - \bar{c}) \\
-	+ v^5(\sigpoly_1(X) - \sigpolyevala) \\
-	+ v^6(\sigpoly_2(X) - \sigpolyevalb) \\
+	\mathsf{r}(X)  \\
+	+ v(\lpoly(X) - \bar{a}) \\
+	+ v^2(\rpoly(X) - \bar{b}) \\
+	+ v^3(\opoly(X) - \bar{c}) \\
+	+ v^4(\sigpoly_1(X) - \sigpolyevala) \\
+	+ v^5(\sigpoly_2(X) - \sigpolyevalb) \\
 	\end{array}
 	\right)
 	$$
@@ -1891,7 +1889,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\pi_{\mathsf{SNARK}} = \left(
 	\begin{array}{c}
 	[a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_\chalpoint]_1, [W_{\chalpoint \omega}]_1, \\
-	\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{r}, \bar{z}_\omega \\
+	\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,  \bar{z}_\omega \\
 	\end{array}
 	\right)
 	$$
@@ -1917,7 +1915,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 \noindent
 \begin{enumerate}
  \item 	Validate $([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_z]_1, [W_{z\omega}]_1) \in \G1$.
-\item	Validate $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{r}, \bar{z}_\omega) \in \F_p^{7}$.
+\item	Validate $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,  \bar{z}_\omega) \in \F_p^{7}$.
 \item	Validate $(w_i)_{i \in [\ell]} \in \F_p^{\ell}$.
 	\item Compute challenges $\beta, \gamma,\alpha,\chalpoint,v,u \in \F_p$ as in prover description, from the common inputs, public input, and elements of $\pi_{\mathsf{SNARK}}$.
 % 	$$
@@ -1934,42 +1932,47 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\item Compute zero polynomial evaluation $\zeropoly(\chalpoint) = {\chalpoint^n - 1}$.
 \item	Compute Lagrange polynomial evaluation $\lagrangepoly_1(\chalpoint) = \frac{\omega(\chalpoint^n - 1)}{n(\chalpoint - \omega)}$.
 \item	Compute public input polynomial evaluation $\pubinppoly(\chalpoint) = \sum_{i \in \ell}w_i \lagrangepoly_i(\chalpoint)$.
-\item	Compute quotient polynomial evaluation $$\bar{t} = \frac{\bar{r} + \pubinppoly(\chalpoint)
-	-((\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} + \gamma)\bar{z}_\omega)\alpha
-	- \lagrangepoly_1(\chalpoint)\alpha^2}{\zeropoly(\chalpoint)}$$.
-\item	Compute first part of batched polynomial commitment $[D]_1 := v \cdot [r]_1 + u \cdot [z]_1:$
+% \item	Compute quotient polynomial evaluation $$\bar{t} = \frac{\bar{r} + \pubinppoly(\chalpoint)
+% 	
+% 	- \lagrangepoly_1(\chalpoint)\alpha^2}{\zeropoly(\chalpoint)}$$.
+\item To save a verifier scalar multiplication, we split $r$ into its constant and non-constant terms. Compute $r$'s constant term: 
+\[r_0 \defeq \pubinppoly(\chalpoint) -\bar{z}_{\omega}\alpha- \lagrangepoly_1(\chalpoint)\alpha^2- (\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} +\gamma ),\]
+	and let $r'(X)\defeq r(X)-r_0$. 
+	\item Compute first part of batched polynomial commitment $[D]_1 := [r']_1 + u \cdot [z]_1:$ 
 	$$
 	[D]_1 :=
 	\begin{array}{l}
-	\bar{a}\bar{b} v \cdot \selmultcomm + \bar{a} v \cdot \selleftcomm + \bar{b}v \cdot \selrightcomm + \bar{c}v \cdot \seloutcomm +  v \cdot \selconstcomm \\
-	+ \left( (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma)\alpha v + \lagrangepoly_1(\chalpoint)\alpha^2 v + u\right) \cdot [z]_1\\
-	-(\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\alpha v\beta \bar{z}_\omega \sigcommc \end{array}
+	\bar{a}\bar{b} \cdot \selmultcomm + \bar{a}  \cdot \selleftcomm + \bar{b} \cdot \selrightcomm + \bar{c} \cdot \seloutcomm +   \cdot \selconstcomm \\
+	+ \left( (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma)\alpha  + \lagrangepoly_1(\chalpoint)\alpha^2  + u\right) \cdot [z]_1\\
+	-(\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\alpha \beta \bar{z}_\omega \sigcommc\\
+-Z_H(\chalpoint) ([t_{lo}]_1
+	+ \chalpoint^n \cdot [t_{mid}]_1
+	+ \chalpoint^{2n} \cdot [t_{hi}]_1) 
+	 	
+	
+	\end{array}
 	$$
 \item	Compute full batched polynomial commitment $[F]_1:$
 	$$
 	[F]_1 := 	\begin{array}{l}
-	[t_{lo}]_1
-	+ \chalpoint^n \cdot [t_{mid}]_1
-	+ \chalpoint^{2n} \cdot [t_{hi}]_1 \\
-	+ [D]_1
-	+ v^2 \cdot [a]_1
-	+ v^3 \cdot [b]_1
-	+ v^4 \cdot [c]_1
-	+ v^5 \cdot \sigcomma
-	+ v^6 \cdot \sigcommb
+	[D]_1
+	+ v \cdot [a]_1
+	+ v^2 \cdot [b]_1
+	+ v^3 \cdot [c]_1
+	+ v^4 \cdot \sigcomma
+	+ v^5 \cdot \sigcommb
 	\end{array}
 	$$
 \item 	Compute group-encoded batch evaluation $[E]_1$:
 	$$
 	[E]_1 :=
 	\left( \begin{array}{l}
-	\bar{t}
-	+ v \bar{r}
-	+ v^2 \bar{a}
-	+ v^3 \bar{b}
-	+ v^4 \bar{c} \\
-	+ v^5 \sigpolyevala
-	+ v^6 \sigpolyevalb
+r_0
+	+ v \bar{a}
+	+ v^2 \bar{b}
+	+ v^3 \bar{c} \\
+	+ v^4 \sigpolyevala
+	+ v^5 \sigpolyevalb
 	+ u\bar{z_\omega}
 	\end{array}
 	\right)
