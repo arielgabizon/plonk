@@ -536,8 +536,8 @@ We also note that the degree of \plonk's structured reference string is equal to
 		\sonic (helped)    & $12d$ \G1, $12d$ \G2 & $12n$ \G1         &   $18n$ \G1 exp      & $4$ \G1, $2$ $\F$ & \xmark & \cmark \\ \hline
 		\sonic (succinct)  & $4d$ \G1, $4d$ \G2             & $36n$ \G1          & $273n$ \G1 exp           & $20$ \G1, $16$ \F & \cmark & \cmark \\ \hline
 		\auroralight       & $2d$ \G1, $2d$ \G2   & $2n$ \G1          & $8n$ \G1 exp         & $6$ \G1, $4$ \F & \xmark & \cmark \\ \hline
-		This work (small)         & $3d$ \G1, $1$ \G2     & $3n + 3a$ \G1, $1$ \G2 & \makecell[l]{$11n + 11a$ \G1 exp , \\ $\approx54(n+a)\text{log}(n+a)$ \F mul}        & $7$ \G1, $7$ \F & \cmark & \cmark \\ \hline
-		This work (fast prover)         & $d$ \G1, $1$ \G2     & $n + a$ \G1, $1$ \G2 & \makecell[l]{$9n + 9a$ \G1 exp , \\ $\approx54(n+a)\text{log}(n+a)$ \F mul}        & $9$ \G1, $7$ \F & \cmark & \cmark \\ \hline
+		This work (small)         & $3d$ \G1, $1$ \G2     & $3n + 3a$ \G1, $1$ \G2 & \makecell[l]{$11n + 11a$ \G1 exp , \\ $\approx54(n+a)\text{log}(n+a)$ \F mul}        & $7$ \G1, $6$ \F & \cmark & \cmark \\ \hline
+		This work (fast prover)         & $d$ \G1, $1$ \G2     & $n + a$ \G1, $1$ \G2 & \makecell[l]{$9n + 9a$ \G1 exp , \\ $\approx54(n+a)\text{log}(n+a)$ \F mul}        & $9$ \G1, $6$ \F & \cmark & \cmark \\ \hline
 	\end{tabular}
 \end{adjustbox}
 \label{table:prover-work}
@@ -835,154 +835,6 @@ the probability of any algebraic adversary \adv winning the following game is \n
 \end{enumerate}
 
 
-
-% 
-% 
-% When analyzing the security of our protocols, we assume the following restrictions on the adversary \adv and the structure of the protocol, akin to the Linear Interactive Proof notion of \cite{BCIOP}. We call a protocol with the structure below - a
-% \emph{pairing-based Generic Group protocol}.
-% %The following is a natural extension of NILPs to the interactive setting.
-% % Following \cite{groth16} (see also Section 2 of \cite{BG18} for formal details, and \cite{BCIOP} for a more general treatment of this framework), it suffices to show knowledge soundness of \bctvprime as a Non-Interactive Linear Proof (NILP). That is, 
-% 
-% \begin{itemize}
-% \item All protocol participants are given an SRS $\srs0 = (\srs1,\srs2)$ where every element of \srsi is of the form $\enci{R(\x)}$ for a predefined rational function $R\in \F(\X)$ of total degree (in numerator and denumrator) at most $d=\poly$ and a uniformly chosen $\x\in \F^N$.
-% \item The messages of the verifier are always uniform elements $\gamma \in \F$.
-% \item The messages sent by \adv are elements of either \G1,\G2 or \F.
-% The elements of \Gi sent are always of the form $<m, \srsi>$ for a vector of coefficients $m$ chosen by \adv only as a function of the verifier messages up to that point (but not dependent on the value of \srs0).
-% \item Note that all \G1 and \G2 elements sent by the prover of the form \enci{R_j(\x)} for some rational function $R_j$ of total degree at most $d$. The verifier performs certain pairing equation checks amongst the \set{e_j}. The pairing equation can depend on the verifier messages, and elements of \F sent by \adv. Note that this corresponds to checking some degree two equation amongst the \set{R_j} at \x. We make the assumption that the verifier outputs \acc or \rej according to if the equations holds as a rational function identity in \X.
-% \end{itemize}
-% \cite{groth16} (see also Section 2 of \cite{BG18}) showed that for a non-interactive protocol with no verifier messages, when $d/|\F| = \negl$ a protocol of the above form is secure against generic group adversaries .
-% It is straightforward to extend this result to the above interactive setting.
-
-% 
-% \subsection{Notation and assumptions about sampling} 
-% For a set $S$ we denote, by $s\gets S$, the sampling of a uniformly random element from $S$. When describing protocols, we often assume the ability to sample uniformly at random from different sets, e.g., $\F_p$. In reality, randomness sampling may be statistically biased or pseudorandom, in which case security is preserved up to this statistical bias or dependent on the security of the pseudorandomness. Moreover, we assume the sampling process does not reveal intermediate values so the only output is the sampled value $s$.
-% \\
-% \\
-% For an algorithm $A$, we write $y \gets A(x)$ to refer to the process of running $A$ on an input string $x$ and obtaining output string $y$. For probabilistic algorithms that consume randomness $r$, we write $y := A(x, r)$ when we want to explicitly refer to it. If $a$ is deterministic then $y \gets A(x)$ and $y := A(x)$ represent the same process. The notation $y \gets A^{B}(x)$ refers to running an algorithm $A$ that has access to another algorithm (also called an oracle) $B$, i.e., $A$ gives $B$ an input and waits until an output from $B$ has been received.
-% 
-% \subsection{Common choice of groups with pairing and hash function}
-% We assume that all parties that use the protocol share a common choice of $p, \Gr, \Gr_2, \Gr_T, g, g_2, g_T, e,H$, where
-% \begin{itemize}
-% 	\item $p$ is a prime and we let $\F_p$ denote the set of integers modulo $p$ represented by $0,\ldots,p-1$
-% 	\item $\Gr, \Gr_2, \Gr_T$ are groups of prime order $p$, written multiplicatively with neutral element 1, where the group operation and deciding group membership can be computed efficiently
-% 	\item $g,g_2,g_T$ are the group elements generating $\Gr,\Gr_2$ and $\Gr_T$ respectively
-% 	\item $e:\Gr\times \Gr_2\to \Gr_T$ is an efficiently computable bilinear map (pairing) such that for all $a,b\in \Z: e(g^a,g_2^b)=g_T^{ab}$
-% 	\item $H:\{0,1\}^*\to \{0,1\}^{\ell}$ is an efficiently computable hash function that takes arbitrary length inputs and returns $\ell$-bit outputs  
-% \end{itemize}
-% 
-% \subsection{Common setup over groups with pairing} \label{setup}
-% We also assume all parties share a common choice of $g^X, g^{X^2}, \ldots, g^{X^{2n}}, g_2^X, g_2^{X^2}, \ldots, g_2^{X^{2n}}$, where $X \in \F_p$ is generated via a trusted setup multiparty computation.
-% \\
-% \\
-% We make the assumption that the group elements have been honestly and securely computed in this way. Specifically, we assume by some trusted procedure $X$ has been sampled uniformly at random. We note that the pairing can be used to check the group elements are of the right form, i.e., for $i=1,\ldots,2n: e(g^{X^{i}},g_2)=e(g_1,g_2^{X^{i}})$ and for $i=1, \ldots, 2n-1: e(g^{X^{i+1}}, g_2^{X}) = e(g^{X^{i}}, g_2)$.
-% \\
-% \\
-% It should be noted that the protocol relies on $X$ being destroyed. If an attacker can recover $X$, they can create a commitment for arbitrary polynomials, that satisfy our SNARK proof relation.
-% 
-% 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
-% \subsection{The $q$-strong Diffie-Hellman assumption (SDH)}
-% The strong Diffie-Hellman ($q$-SDH) problem was first defined by Boneh and Boyen~\cite{BonehBoyen2004}. Adapted to our type of groups with pairings it says given $g,g^x,\ldots,g^{x^q},g_2,g_2^x$ for uniformly random $x\gets \F_p$ it should be hard to find $c,z$ such that $z=g^{\frac{1}{x+c}}$. More precisely, let $\A$ be an attacker, then we define its advantage against the SDH assumption over our setup to be 
-% $$\textbf{Adv}^{\text{SDH}}_{q,\A}=\Pr[x\gets \F_p; (c,z)\gets \A(g,g^x,\ldots,g^{x^q},g_2,g_2^x): (c,z)\in \F_p \times \Gr \text{ and } z^{x+c}=g].$$ We will assume that all realistic adversaries $\A$ humanity may construct in the immediate future will have miniscule advantage when using our choice of groups and pairing and $q=2n$.
-% \\
-% \\
-% Please note that the $q$-SDH assumption implies the hardness of other computational tasks such as the discrete logarithm problem for instance.
-% 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
-% 
-% \subsection{Random oracle model}
-% We will model our choice of hash function as a random oracle~\cite{Bellare}. Intuitively this means we believe the hash function mangles the input so much that the output looks random. Our protocols will use the hash function as a subroutine, i.e., algorithms are of the form $A^{\mathcal{O}(\cdot)}$. In our security modelling, we replace the hash function with a random oracle, i.e., instead of using $\mathcal{O}(x)=H(x)$ we define $\mathcal{O}(x)$ to return a random $y\gets \{0,1\}^{\ell}$ when $x$ has not been input before, and otherwise return the same $y$ as was used on the previous oracle call on $x$. Strengthening the random oracle model, we may also consider the programmable random oracle model, where an additional oracle $\mathcal{O}'$ is \d that on input $x$ ...
-% 
-% 
-% \subsection{Non-interactive zero-knowledge proofs}
-% $R = \{(w,x, crs)\} \subseteq \{0,1\}^{\star} \times \{0,1\}^{\star} \times \{0, 1\}^{\star}\}$ is a binary relation between a witness string $w$ an input string $x$ and a common reference string $crs$. An interactive zero knowledge protocol describes a system where a prover, $P$, must convince a verifier $V$ that, for a given input string $x$, there exists a witness $w$ such that $(w,x, crs) \in R$. If the zero knowledge protocol is \textbf{complete}, $V$ will always validate an input string $x$, created by $P$ interacting with $w$, where $(w,x, crs) \in R$. The following uses definitions from~\cite{ProofsOfKnowledge}.
-% \\
-% \\
-% A zero-knowledge protocol is \textbf{sound} if there exists a probabilistic polynomial time algorithm $E$ that can extract the witness string $w$ from a cheating prover $P^{\star}$ if given oracle access to $P^{\star}$ (i.e. if $P^{\star}$ can convince $V$ with a common input, $E$ can obtain proofs from $P^{\star}$ for any random challenge). If $P^{\star}$ can satisfy $V(x)$ with probability $\epsilon$, $E$ is able to extract a witness statement $w$ that satisfies $R$ with in $poly(\epsilon)$. i.e. whenever $P^{\star}$ can satisfy $V(x)$, $E$ can extract a valid witness string such that $(w, x, crs) \in R$ with overwhelming probability. Therefore $\epsilon$ is negligible for a `fake' proof where $(w, x, crs) \notin R$.
-% \\
-% \\
-% A proof system is \textbf{honest-verifier zero-knowledge} if there exists a probabilistic polynomial-time algorithm $S$ that, for any $(w, x, crs) \in R$, identically recreates the outputs of $V$.
-% \\
-% \\
-% In the universal SNARK protocol, the common reference string is generated through the protocol's commitment key generation phase (see section~\ref{setup}).
-% 
-% \subsection{Sigma Protocols}
-% 
-% For a proof relation $R = \{w, x, crs)\} \subseteq \{0, 1\}^{\star} \times \{0, 1\}^{\star} \times \{0, 1\}^{\star}$, a protocol, $\mathcal{P}$ is considered to be a $\Sigma$ protocol~\cite{Sigma} if the following are true:
-% \\
-% \\
-% $\mathcal{P}$ is a three-step protocol between two polynomial-algorithms $P, V$. Both algorithms have input string $x$ as a common input. The witness to $R$, $w$, is a private input to $P$. $\mathcal{P}$ must conform to the following three-step process:
-% 
-% \begin{itemize}
-% 	\item{$P$ sends $V$ a message $a$}
-% 	\item{$V$ sends $P$ a random challenge $c \overset{\$}{\gets} \mathbb{Z}_{p}$}
-% 	\item{$P$ sends $V$ a response $z$. $V$ accepts or rejects depending on the variables $x, a, c, z$}
-% \end{itemize}
-% $\mathcal{P}$ must be complete. If $P, V$ follow $\mathcal{P}$ with inputs that satisfy the proof relation, $V$ must always accept.
-% \\
-% \\
-% $\mathcal{P}$ must have the \textbf{special soundness} property. If, for any input string $x$, common reference string $crs$ and a pair of valid protocol parameters $(a, c, z), (a', c', z')$, $\mathcal{P}$ has special soundness if there exists an efficiently-computable algorithm to extract $w$ such that $(w, x, crs) \in R$.
-% \\
-% \\
-% $\mathcal{P}$ is special honest-verifier zero knowledge. There exist a polynomial-time algorithm $M$ that, for input string $x$ and random value $e \gets \mathbb{Z}_{p}$, outputs valid protocol parameters $(a, e, z)$ with the same probability distribution as honest algorithms $P, V$ acting on input string $x$.
-% 
-% \subsection{The Fiat-Shamir Transform}
-% 
-% The protocols in this paper utilize the Fiat-Shamir transform~\cite{FiatShamir}, which makes an interactive protocol non-interactive through the use of a hash function $H$. Instead of $c$ being provided by the verifier, $c$ is the output of a hash function, whose input is the set of the $\Sigma$ protocol's commitments. The challenge, $c$, is treated as a pseudo-random number whose entropy source is the input string of proof. The Fiat-Shamir transform is secure in the random oracle model~\cite{Bellare}.
-% 
-% 
-% \subsection{Sigma-protocols and the Fiat-Shamir heuristic}
-% Proof systems allow two parties, called the r and the verifier, to interact in a way that convinces the verifier a particular statement is true. Let $R$ be a binary relation with an efficient algorithm that can determine whether $(x,w)\in R$. We will call $x$ an instance and when $(x,w)\in R$ we call $w$ a witness to $x$. In our proof system, statements will be defined by the relation $R$, which is defined by our setup, and instances $x$, and be the claim that the prover knows a witness $w$ such that $(x,w)\in R$.
-% \\
-% \\
-% A Sigma-protocol is a particular type of proof system where the prover sends an initial commitment message to the verifier, gets back a random challenge from the verifier, and then sends a final response. Afterwards the verifier checks the instance $x$ and the transcript of commitment, challenge and response and decides whether to accept or reject. We are going to use a special type of Sigma-protocols that can be described by four efficient algorithms $,\Unique,\Extract,\Simulate$ and where the verifier chooses challenges from $\{0,1\}^{\ell}$.
-% \begin{description}
-% 	\item[$\Prove(x,w)$:] The prover algorithm is stateful and works in two phases. Assuming the input satisfies $(x,w)\in R$ it first generates an initial commitment message $B$. Then after receiving a challenge $c\in \{0,1\}^{\ell}$ it computes a response $z$.
-% 	\item[$\Unique(x,c,z)\to B$:] The deterministic unique commitment reconstruction algorithm on instance $x$, challenge $c$ and answer $z$, returns an initial commitment $B$. If the input is malformed, it may instead return an error symbol $\bot$. 
-% 	
-% 	The algorithm implicitly defines a verification procedure of a transcript $(B,c,z)$ that accepts if and only if $B=\Unique(x,c,z)\neq \bot$. We require (perfect) completeness, which means for all $(x,w)\in R$ and all $c\in \{0,1\}^{\ell}$ the outputs $B$ and $z$ of $\Prove(x,w)$ will satisfy $B=\Unique(x,c,z)\neq \bot$.
-% 	\item[$\Extract(x,c,z,c',z')\to w$:] The deterministic extraction algorithm returns a string $w$. We require (perfect) special soundness, which means whenever $\Unique(x,c,z)=\Unique(z,c',z')\neq \bot$ then the output $w$ will be a witness such that $(x,w)\in R$. 
-% 	\item[$\Simulate(x,c)\to z$:] The simulation algorithm returns a simulated answer $z$. We require (perfect) special honest verifier zero-knowledge, which means for all $(x,w)\in R$ and $c\in \{0,1\}^{\ell}$ the output has the same probability distribution as a response $z$ obtained from running $\Prove(x,w)$ on challenge $c$.
-% \end{description}
-% 
-% 
-% 
-% \subsection {The Kate polynomial commitment scheme}
-% 
-% $$\mathcal{R}_{poly}=\left\{\begin{array}{c} (x)=\left((A, P(X), a) \right) | \\
-% A \in \Gr , a \in \F_p \text{ and } A = g^{P(a)} \\
-% \end{array} \right\}$$
-% 
-% \begin{figure}[h]
-% 	\centering
-% 	\fbox{
-% 		\parbox{\textwidth}{
-% 			\begin{description}
-% 				\item[$\mathcal{P}_{poly}(A, P(X))$:] \ \\
-% 				First output of $\Prove$ is $$A$$ \\
-% 				Compute challenge $z = H(A)$ \\
-% 				Compute $a = P(z)$ \\
-% 				Compute $B = g^{\frac{P(X) - a}{X-z}}$ \\
-% 				return $\pi = (a, B)$ \\
-% 				\item[$\mathcal{V}_{poly}(A),\pi)$:] \ \\
-% 				Validate $A, B \in \Gr$\\
-% 				Compute first challenge $r = H(W(X, Y), Z(X, Y))$ \\
-% 				Validate that
-% 				$$
-% 				e(A, g_2^{d_i - d}) = e(g^{a - z} \cdot B, g_2) \cdot e(B, g_2^x)
-% 				$$
-% 				If all checks pass, return $1$ if $r=H(a)$, else return $0$
-% 			\end{description}
-% 		}
-% 	}
-% 	\caption{Algorithms $\mathcal{P}_{main}$, $\mathcal{V}_{main}$}
-% 	\label{fig:pProdd}
-% \end{figure}
-% 
-% \subsection{Multiplicative subgroups and Lagrange interpolation}
-% 
 
 \section{A batched version of the \cite{kate} scheme}\label{sec:kate}
 Crucial to the efficiency of our protocol is a batched version of the \cite{kate} polynomial commitment scheme similar to Appendix C of \cite{sonic}, allowing to query multiple committed polynomials at multiple points.
@@ -1392,8 +1244,8 @@ We claim that the reduction of Lemma \ref{lem:ideal-to-AGM} can be changed such 
 \begin{enumerate}
  \item \prv now sends only \sett{s_i=h_i(v_i(x))}{i\in S}.
  \item Now let $L$ be the restriction $G|_{X=x;X_i=s_i, i\in S}$. \ver and \prv use \sett{\com(f_i}{i\in [S]}, and the linearity of \com, to compute the commitment to the corresponding restriction $F_L$ of $F$.
- \item \ver computes the unique value $s=F_L(v^*_i(x))$, that will imply $F(x)=0$, assuming correctness of \sett{s_i}{i\in S}.
- \item Now \prv and \ver engage in the protocol \open to verify the correctness of $\sett{s_i}{i\in S}\cup \set{s}$.
+ \item Now \prv and \ver engage in the protocol \open to verify the correctness of the evaluations $\sett{s_i}{i\in S}$, and additionally to verify $F_L(x)=0$.
+ 
 \end{enumerate}
 
 
@@ -1675,8 +1527,8 @@ On the other hand, if $(f_L,f_R,f_O)$ copy-satisfies \sigof{\constsystem} and th
  \begin{corollary}\label{cor:final}
   Let \constsystem be a constraint system of the form described in Section \ref{sec:constsystems} with parameter $n$. There is a protocol for the relation \relof{\constsystem} with Knowledge Soundness in the Algebraic Group Model such that
    \begin{enumerate}
-  \item The prover \prv requires $11n+2$ \G1-exponentiations.
-  \item The total prover communication consists of $7$ \G1-elements and $8$ \F-elements.\footnote{The result stated in introduction with $7$ \F-elements uses an additional optimization suggested by Vitalik Buterin explained in Section \ref{sec:finalconst}.} 
+  \item The prover \prv requires $11n+1$ \G1-exponentiations.
+  \item The total prover communication consists of $7$ \G1-elements and $7$ \F-elements.\footnote{The result stated in introduction with $6$ \F-elements uses an additional optimization suggested by Vitalik Buterin explained in Section \ref{sec:finalconst}.} 
  \end{enumerate}
 
  \end{corollary}
@@ -1684,22 +1536,22 @@ On the other hand, if $(f_L,f_R,f_O)$ copy-satisfies \sigof{\constsystem} and th
 We bound the quantities $\proverexp(\prot),t^*(\prot),\reducedelems(\prot)$ from Section \ref{subsec:ideal-AGM}; where \prot is the polynomial protocol derived from the protocol of Theorem \ref{thm:mainprot} using Lemma \ref{lem:ranged-to-reg}. The result then follows from Lemma \ref{lem:ideal-to-AGM} and the discussion after. 
 (For extra clarity, a full self-contained description of the final protocol is given in Section \ref{sec:finalconst}.)
 
-We commit to polynomials $f_L,f_R,f_O\in\polysofdeg{n},Z\in \polysofdeg{n+1}$ and a polynomial $T\in \polysofdeg{3n}$ resulting from division by $Z_{H^*}$.
-This requires $7n+1$ \G1-exponentiations.
-Then, we need to open at random $x\in \F$: $f_L(x),f_R(x),f_O(x),T(x),\idpoly(x),\sigpoly_1(x),\sigpoly_2(x)$
+We commit to polynomials $f_L,f_R,f_O,Z\in\polysofdeg{n}$ and a polynomial $T\in \polysofdeg{3n}$ resulting from division by $Z_{H}$.
+This requires $7n$ \G1-exponentiations.
+Then, we need to open at random $x\in \F$: $f_L(x),f_R(x),f_O(x),\idpoly(x),\sigpoly_1(x),\sigpoly_2(x)$
 
 and at $x\cdot \hgen$:
 $Z(x\cdot \hgen)$.
 
-Note that fixing these 8 values, our identity becomes a linear polynomial $L$ which is a linear combination of $\selleft,\selright,\selout,\selmult,\selconst,Z,\sigpoly_3$. This implies $\reducedelems(\prot)\leq 8$.
+Note that fixing these 7 values, together with the value $Z_H(x)$ which the verifier can compute himself in $\log(n)$ operations,, our identity becomes a linear polynomial $L$ which is a linear combination of $\selleft,\selright,\selout,\selmult,\selconst,Z,\sigpoly_3,T$. This implies $\reducedelems(\prot)\leq 7$.
 
 It follows that
 \begin{itemize}
  \item 
-$\proverexp(\prot) = 11n+2$ -
-as we add to the $7n+1$ cost of commitments, the maximal degree among the polynomial evaluated at $x$ which is $3n$ plus the maximum degree among polynomials evaluated at $x/\hgen$ which is $n+1$.
+$\proverexp(\prot) = 11n+1$ -
+as we add to the $7n$ cost of commitments, the maximal degree among the polynomial evaluated at $x$ which is $3n$ plus the maximum degree among polynomials evaluated at $x/\hgen$ which is $n+1$.
 \item $t^*(\prot)=2$ - as we have two distinct evaluation points.
-\item $\reducedelems(\prot)\leq 8$.
+\item $\reducedelems(\prot)\leq 7$.
 
 \end{itemize}
 
@@ -1858,7 +1710,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\mathsf{r}(X) = \\
 	\ \ \ \left[ \bar{a} \bar{b} \cdot \mathsf{q_M}(X) + \bar{a} \cdot \mathsf{q_L}(X) + \bar{b} \cdot \mathsf{q_R}(X) + \bar{c} \cdot \mathsf{q_O}(X) + \pubinppoly(\chalpoint) + \mathsf{q_C}(X) \right] \\
 	+ \alpha [ (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma) \cdot \idpermpoly(X)\\ 
-	- (\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} + \beta \bar{z}_\omega \cdot \sigpoly_3(X)+\gamma )] \\
+	- (\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} + \beta \cdot \sigpoly_3(X)+\gamma )\bar{z}_\omega ] \\
 	+ \alpha^2 \left[( \idpermpoly(X) -1 ) \lagrangepoly_1(\chalpoint)\right] \\
 	- Z_H(\chalpoint)\cdot(t_{lo}(X)+ \chalpoint ^n t_{mid}(X) + \chalpoint^{2n} t_{hi}(X))\\
 	\end{array}
@@ -1915,34 +1767,20 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 \noindent
 \begin{enumerate}
  \item 	Validate $([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_z]_1, [W_{z\omega}]_1) \in \G1$.
-\item	Validate $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,  \bar{z}_\omega) \in \F_p^{7}$.
+\item	Validate $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,  \bar{z}_\omega) \in \F_p^{6}$.
 \item	Validate $(w_i)_{i \in [\ell]} \in \F_p^{\ell}$.
 	\item Compute challenges $\beta, \gamma,\alpha,\chalpoint,v,u \in \F_p$ as in prover description, from the common inputs, public input, and elements of $\pi_{\mathsf{SNARK}}$.
-% 	$$
-% 	\beta = H([a]_1, [b]_1, [c]_1, (w_i)_{i \in [\ell]}), \gamma = H([a]_1, [b]_1, [c]_1, (w_i)_{i \in [\ell]}, \beta)
-% 	$$
-% 	Compute quotient challenge $\alpha \in \F_p:$
-% 	$$
-% 	\alpha = H([a]_1, [b]_1, [c]_1, [z]_1)
-% 	$$
-% 	Compute evaluation challenge $z \in \F_p:$
-% 	$$
-% 	z = H([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1)
-% 	$$
 	\item Compute zero polynomial evaluation $\zeropoly(\chalpoint) = {\chalpoint^n - 1}$.
 \item	Compute Lagrange polynomial evaluation $\lagrangepoly_1(\chalpoint) = \frac{\omega(\chalpoint^n - 1)}{n(\chalpoint - \omega)}$.
 \item	Compute public input polynomial evaluation $\pubinppoly(\chalpoint) = \sum_{i \in \ell}w_i \lagrangepoly_i(\chalpoint)$.
-% \item	Compute quotient polynomial evaluation $$\bar{t} = \frac{\bar{r} + \pubinppoly(\chalpoint)
-% 	
-% 	- \lagrangepoly_1(\chalpoint)\alpha^2}{\zeropoly(\chalpoint)}$$.
 \item To save a verifier scalar multiplication, we split $r$ into its constant and non-constant terms. Compute $r$'s constant term: 
-\[r_0 \defeq \pubinppoly(\chalpoint) -\bar{z}_{\omega}\alpha- \lagrangepoly_1(\chalpoint)\alpha^2- (\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} +\gamma ),\]
+\[r_0 \defeq \pubinppoly(\chalpoint) - \lagrangepoly_1(\chalpoint)\alpha^2- \alpha(\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} +\gamma )\bar{z}_{\omega},\]
 	and let $r'(X)\defeq r(X)-r_0$. 
 	\item Compute first part of batched polynomial commitment $[D]_1 := [r']_1 + u \cdot [z]_1:$ 
 	$$
 	[D]_1 :=
 	\begin{array}{l}
-	\bar{a}\bar{b} \cdot \selmultcomm + \bar{a}  \cdot \selleftcomm + \bar{b} \cdot \selrightcomm + \bar{c} \cdot \seloutcomm +   \cdot \selconstcomm \\
+	\bar{a}\bar{b} \cdot \selmultcomm + \bar{a}  \cdot \selleftcomm + \bar{b} \cdot \selrightcomm + \bar{c} \cdot \seloutcomm +   \selconstcomm \\
 	+ \left( (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma)\alpha  + \lagrangepoly_1(\chalpoint)\alpha^2  + u\right) \cdot [z]_1\\
 	-(\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\alpha \beta \bar{z}_\omega \sigcommc\\
 -Z_H(\chalpoint) ([t_{lo}]_1
@@ -1967,7 +1805,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	$$
 	[E]_1 :=
 	\left( \begin{array}{l}
-r_0
+-r_0
 	+ v \bar{a}
 	+ v^2 \bar{b}
 	+ v^3 \bar{c} \\
