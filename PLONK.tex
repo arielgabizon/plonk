@@ -1228,7 +1228,7 @@ Thus, \prv sends three field elements.
 Note however, that we could instead have \prv send only $c\defeq h_1(x)$,
 and then simply verify in the \open protocol whether the polynomial
 $L(X)\defeq c\cdot h_2(X) -h_3(X)$ is equal to zero at $x$. (Note that we can compute $\com(L)=c\cdot \com(h_2)-\com(h_3)$.)
-
+We refer to $L$ later as the \emph{linearisation polynomial}.
 
 To describe the general method, we must define another technical measure of a polynomial protocol. We assume again (mainly for simplicity) that \verpoly checks only one identity $F$.
 Now define $\reducedelems(\prot)$ to be the minimal size of a subset $S\subset [M]$ such that 
