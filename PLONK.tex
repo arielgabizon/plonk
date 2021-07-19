@@ -200,6 +200,7 @@
  \newcommand{\nizk}[2]{\ensuremath{\mathrm{NIZK}(#1,#2)}\xspace}% #2 is the hash concatenation input
  \newcommand{\verifynizk}[3]{\ensuremath{\mathrm{VERIFY\mhyphen NIZK}(#1,#2,#3)}\xspace}
 \newcommand{\protver}{protocol verifier\xspace} 
+\newcommand{\hash}{\ensuremath{\mathcal{H}}\xspace} 
 \newcommand{\mulgroup}{\ensuremath{\F^*}\xspace}
 \newcommand{\lag}[1]{\ensuremath{L_{#1}}\xspace} 
 \newcommand{\sett}[2]{\ensuremath{\set{#1}_{#2}}\xspace}
@@ -347,7 +348,7 @@
 %\newcommand{\com}{\textsf{com}}  Ariel defined equivalent that also works in math mode
 \newcommand{\cgen}{\text{cgen}}
 \newcommand{\poly}{\ensuremath{\mathsf{poly(\lambda)}}\xspace}
-\newcommand{\snark}{\ensuremath{\mathsf{snark(\lambda)}}\xspace}
+\newcommand{\snark}{\ensuremath{\mathsf{snark}}\xspace}
 \newcommand{\grandprod}{\mathsf{prod}}
 \newcommand{\perm}{\mathsf{perm}}
 %\newcommand{\open}{\mathsf{open}}
@@ -383,7 +384,8 @@
 \newcommand{\xmark}{\ding{55}}%
 \newcommand{\marlin}{\ensuremath{\mathsf{Marlin}}\xspace}
 \newcommand{\fractal}{\ensuremath{\mathsf{Fractal}}\xspace}
-\newcommand{\Rsnark}{\R{\snark}}
+% \newcommand{\Rsnark}{\R{\snark}}
+\newcommand{\Rsnark}{\R}
 \begin{document}
     \maketitle
 
@@ -1580,32 +1582,35 @@ as we add to the $7n$ cost of commitments, the maximal degree among the polynomi
  By representing the identity permutation via degree-1 polynomials, their evaluations can be directly computed by the verifier. This reduces the size of the proof by 1 \F element, as well as reducing the number of Fast-Fourier-Transforms required by the prover.
 \\
 \\
-Finally, in the following protocol we use $H$ to refer to a hash function, where $H:\{0,1\}^*\to \{0,1\}^{\ell}$ is an efficiently computable hash function that takes arbitrary length inputs and returns $\ell$-bit outputs  
+Finally, in the following protocol we use \hash to refer to a hash function, where $\hash:\{0,1\}^*\to \{0,1\}^{\ell}$ is an efficiently computable hash function that takes arbitrary length inputs and returns $\ell$-bit outputs  
 
 \subsection{Polynomials that define a specific circuit}
 
-The following polynomials, along with integer $n$, uniquely define a universal SNARK circuit:
+The following polynomials, along with integer $n$, uniquely define our circuit:
 
 \begin{itemize}
 	\item $\selmultpoly(X), \selleftpoly(X), \selrightpoly(X), \seloutpoly(X), \selconstpoly(X)$, the `selector' polynomials that define the circuit's arithmetisation
 	\item $\idpoly_1(X) = X, \idpoly_2(X) = k_1X, \idpoly_3(X) = k_2X$: the identity permutation applied to $\lvar, \rvar, \ovar$. $k_1, k_2\in \F$ are chosen such that $H,k1\cdot H,k2\cdot H$ are distinct cosets of $H$ in $\F^*$, and thus consist of $3n$ distinct elements. (For example, when $\omega$ is a quadratic residue in $\F$, take $k_1$ to be any quadratic non-residue, and $k_2$ to be a  quadratic non-residue not contained in $k_1\cdot H$.)
-	\item $\sigpoly_1(X), \sigpoly_2(X), \sigpoly_3(X)$: the copy permutation applied to $\lvar, \rvar, \ovar$
-	\item $n$, the total number of arithmetic gates for a given circuit. This is used by $\Vsnark$ to compute the vanishing polynomial $\zeropoly(X) = {X^{n} - 1}$
+	\item Let us denote $H'\defeq K\cup k_1\cdot H\cup k_2\cdot H$. Let $\sigma:[3n]\to[3n]$ be a permutation. Now, identify $[3n]$ with $H'$ via $i \to \omega^i,n+i \to k_1\cdot \omega^i,2n+i \to k_2\cdot \omega^i$.  Finally, define  $\sigma^{*}$ below to denote the mapping from $[3n]$ to $H'$ derived from applying $\sigma$ and then this injective mapping into $H'$.
+We encode $\sigma^*$  by the three permutation polynomials	
+	\[\sigpoly_1(X) \defeq \sum_{i=1}^n \sigma^*(i) \lagrangepoly_i(X), \sigpoly_2(X) \defeq \sum_{i=1}^n \sigma^*(n + i) \lagrangepoly_i(X), \sigpoly_3(X) \defeq \sum_{i=1}^n \sigma^*(2n + i) \lagrangepoly_i(X).\]
 \end{itemize}
 
-\subsection{Commitments to wire values}
+% \subsection{Commitments to wire values}
+% 
+% For the following protocol we describe a relation for a circuit containing $n$ arithmetic gates. The witnesses to the proof are the wire value witnesses $(w_i)_{i=1}^{3n}$. The commitments $[a]_1, [b]_1, [c]_1$ are computationally binding Kate polynomial commitments to the wire value witnesses, utilizing a structured reference string containing the group elements $(x \cdot [1]_1, \ldots , x^{n} \cdot [1]_1)$. 
+% 
+\subsection{The SNARK proof relation}
+Given $\ell\leq n$ and fixed values for the above polynomials, we wish to prove statements of knowledge for the relation $\Rsnark\subset \F_p^{\ell}\times \F_p^{3n-\ell}$ containing all pairs
+$x=(w_i)_{i \in [\ell]}, w=(w_i)_{i=\ell+1}^{3n}$
+such that
+\begin{enumerate}
+\item For all  $i \in [n]$:  \[q_{Mi} w_i w_{n+i} + q_{Li}w_i  + q_{Ri}w_{n+i} + q_{Oi}w_{2n+i}  + q_{Ci} = 0,\]
+(where we used above the shorthand $q_i=q(\omega^i)$).
+\item  For all $i \in [3n]$: \[w_i = w_{\sigma(i)}.\]
+ 
+\end{enumerate}
 
-For the following protocol we describe a proof relation for a universal SNARK circuit containing $n$ arithmetic gates. The witnesses to the proof are the wire value witnesses $(w_i)_{i=1}^{3n}$. The commitments $[a]_1, [b]_1, [c]_1$ are computationally binding Kate polynomial commitments to the wire value witnesses, utilizing a structured reference string containing the group elements $(x \cdot [1]_1, \ldots , x^{n} \cdot [1]_1)$. 
-
-\subsection{The un-rolled universal SNARK proof relation}
-
-
-$$\Rsnark=\left\{\begin{array}{c} (x,w,crs)=((w_i)_{i \in [\ell]}), ((w_i)_{i=1, i \notin [\ell]}^{3n}), \\
-(q_{Mi}, q_{Li}, q_{Ri}, q_{Oi}, q_{Ci})_{i=1}^n, n, \sigma(x)) \\
-\text{For all } i\in \{1,\ldots,3n\}: w_i \in \F_p,  
-\text{ and for all } i \in \{1, \ldots, n \}:\\ w_i w_{n+i} q_{Mi} + w_i q_{Li} + w_{n+i} q_{Ri}+ w_{2n+i} q_{Oi} + q_{Ci} = 0 \\
-\text{and for all } i \in \{1, \ldots, 3n \}: w_i = w_{\sigma(i)}
-\end{array} \right\}$$
 
 
 
@@ -1615,14 +1620,14 @@ $$\Rsnark=\left\{\begin{array}{c} (x,w,crs)=((w_i)_{i \in [\ell]}), ((w_i)_{i=1,
 
 We describe the protocol below as a non-interactive protocol using the Fiat-Shamir hueristic.
 For this purpose we always denote by \transcript the concatenation of the common preprocessed input, and public input, and the proof elements written by the prover up to a certain point in time.
-We use \transcript for obtaining random challenges via Fiat-Shamir. One can alternatively, replace all points where we write below ``compute challenges'', by the verifier sending random field elements, to obtain the interactive protocol from which we derive the non-interactive one.
+We use \transcript for obtaining random challenges via Fiat-Shamir. One can alternatively, replace all points where we write below ``compute challenges'', by the verifier sending random field elements, to obtain the interactive protocol from which we derive the non-interactive one.  
 \begin{description}
 	\item[Common preprocessed input:]
-	$$\begin{array}{l}n, (x \cdot [1]_1, \ldots, {x^{n+5}} \cdot [1]_1), (q_{Mi}, q_{Li}, q_{Ri}, q_{Oi}, q_{Ci})_{i=1}^n, \sigma(X), \\
+	$$\begin{array}{l}n, (x \cdot [1]_1, \ldots, {x^{n+5}} \cdot [1]_1), (q_{Mi}, q_{Li}, q_{Ri}, q_{Oi}, q_{Ci})_{i=1}^n, \sigma^*, \\
 	\selmultpoly(X) = \sum_{i=1}^nq_{Mi}\lagrangepoly_i(X), \\
 	\selleftpoly(X) = \sum_{i=1}^nq_{Li}\lagrangepoly_i(X), \\
 	\selrightpoly(X) = \sum_{i=1}^nq_{Ri}\lagrangepoly_i(X), \\ \seloutpoly(X) = \sum_{i=1}^nq_{Oi}\lagrangepoly_i(X), \\ \selconstpoly(X) = \sum_{i=1}^nq_{Ci}\lagrangepoly_i(X), \\
-	\sigpoly_1(X) = \sum_{i=1}^n \sigma(i) \lagrangepoly_i(X), \\ \sigpoly_2(X) = \sum_{i=1}^n \sigma(n + i) \lagrangepoly_i(X), \\ \sigpoly_3(X) = \sum_{i=1}^n \sigma(2n + i) \lagrangepoly_i(X)\\ \
+	\sigpoly_1(X) = \sum_{i=1}^n \sigma^*(i) \lagrangepoly_i(X), \\ \sigpoly_2(X) = \sum_{i=1}^n \sigma^*(n + i) \lagrangepoly_i(X), \\ \sigpoly_3(X) = \sum_{i=1}^n \sigma^*(2n + i) \lagrangepoly_i(X)\\ \
 \end{array}$$
 	\item[Public input:] 	$\ell, \vecc{w_i}{i\in [\ell]}$
 	\item[\underline{Prover algorithm:}] \ \\
@@ -1650,14 +1655,14 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\\ \\
 	\noindent
 	\paragraph{\textbf{Round 2:}} \ \\
-	Compute permutation challenges $(\beta, \gamma) \in \F_p:$ \[\beta = H(\transcript,0), \gamma = H(\transcript, 1) \]
+	Compute permutation challenges $(\beta, \gamma) \in \F_p:$ \[\beta = \hash(\transcript,0), \gamma = \hash(\transcript, 1) \]
 	Compute permutation polynomial $\idpermpoly(X):$
 	\begin{adjustwidth}{-50mm}{-50mm}
-	$$
+	$$ 
 	\begin{array}{c}
 	\idpermpoly(X) = (b_7X^2 + b_8X + b_9)\zeropoly(X) \\
 	+ \lagrangepoly_1(X) + \sum_{i=1}^{n-1} \left(
-	\lagrangepoly_{i+1}(X) \prod_{j=1}^i\frac{(w_j + \beta \omega^{j-1} + \gamma)(w_{n+j} + \beta k_1 \omega^{j-1} + \gamma)(w_{2n + j} + \beta k_2 \omega^{j-1} + \gamma)}{(w_j + \sigma(j)\beta + \gamma)(w_{n+j} + \sigma(n+j)\beta + \gamma)(w_{2n+j} + \sigma(2n+j)\beta + \gamma)}
+	\lagrangepoly_{i+1}(X) \prod_{j=1}^i\frac{(w_j + \beta \omega^{j-1} + \gamma)(w_{n+j} + \beta k_1 \omega^{j-1} + \gamma)(w_{2n + j} + \beta k_2 \omega^{j-1} + \gamma)}{(w_j + \sigma^*(j)(\beta + \gamma)(w_{n+j} + \sigma^*(n+j)\beta + \gamma)(w_{2n+j} + \sigma^*(2n+j)\beta + \gamma)}
 	\right)
 	\end{array}
 	$$
@@ -1668,7 +1673,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\\ \\
 	\noindent
 	\paragraph{\textbf{Round 3:}} \ \\
-	Compute quotient challenge $\alpha \in \F_p:$ \[ \alpha = H(\transcript) \]
+	Compute quotient challenge $\alpha \in \F_p:$ \[ \alpha = \hash(\transcript) \]
 	Compute quotient polynomial $\mathsf{t}(X):$
 	\begin{adjustwidth*}{-22mm}{-22mm}
 	$$
@@ -1689,7 +1694,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	Third output of $\Psnark$ is $([t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1)$
 	\\ \\
 	\noindent
-	\paragraph{\textbf{Round 4:}} \ \\Compute evaluation challenge $\chalpoint \in \F_p:$ \[ \chalpoint = H(\transcript)\]
+	\paragraph{\textbf{Round 4:}} \ \\Compute evaluation challenge $\chalpoint \in \F_p:$ \[ \chalpoint = \hash(\transcript)\]
 	Compute opening evaluations:
 	$$
 	\begin{array}{c}
@@ -1702,7 +1707,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\paragraph{\textbf{Round 5:}}\ \\
 	Compute opening challenge $v \in \F_p:$
 	$$
-	v = H(\transcript)
+	v = \hash(\transcript)
 	$$
 	Compute linearisation polynomial $\mathsf{r}(X):$
 	$$
@@ -1748,7 +1753,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	
 	Compute multipoint evaluation challenge $u \in \F_p:$
 	$$
-	u = H(\transcript)
+	u = \hash(\transcript)
 	$$
 
 	We now describe the verifier algorithm in a way that minimizes the number of \G1 scalar multiplications.
@@ -1828,7 +1833,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 
 
 
- \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe, Cody Gunton, Alexander Vlasov, Kevaundray Wedderburn and David Wong for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
+ \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe, Cody Gunton, Alexander Vlasov, Kevaundray Wedderburn, David Wong and Ye Zhang for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
 \bibliography{references}
     
 \appendix
