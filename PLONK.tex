@@ -1570,25 +1570,15 @@ as we add to the $7n$ cost of commitments, the maximal degree among the polynomi
  
  
  \section{The final protocol, rolled out}\label{sec:finalconst}
- For the reader's convenience we present the full final protocol.
-
- Adding zero-knowledge was not explicitly discussed so far, but is implemented here:
- All that is needed is essentially adding random multiples of $Z_{H}$ to the witness based-polynomials. This does not ruin satisfiability, but creates a situation where the values are either completely uniform or determined by verifier equations.
- 
- 
-
- We explicitly define the multiplicative subgroup $H$ as containing the $n$'th roots of unity in $\F_p$, where $\omega$ is a primitive $n$'th root of unity and a generator of $H$. i.e: $H = \{1, \omega, \ldots, \omega^{n-1}\}$.
- \\
- \\
- We assume that the number of gates in a circuit is no more than $n$.
- \\
- \\
- We also include an optimisation suggested by Vitalik Buterin, to define the identity permutations through degree-1 polynomials. The identity permutations must map each wire value to a unique element $\in$ \F. This can be done by defining $\idpoly_1(X) = X, \idpoly_2(X) = k_1X, \idpoly_3(X) = k_2X$, where $k_1, k_2$ are quadratic non-residues $\in \F$.
- This effectively maps each wire value to a root of unity in $H$, with right and output wires having an additional multiplicative factor of $k_1, k_2$ applied respectively.
- By representing the identity permutation via degree-1 polynomials, their evaluations can be directly computed by the verifier. This reduces the size of the proof by 1 \F element, as well as reducing the number of Fast-Fourier-Transforms required by the prover.
-\\
-\\
-Finally, in the following protocol we use \hash to refer to a hash function, where $\hash:\{0,1\}^*\to \{0,1\}^{\ell}$ is an efficiently computable hash function that takes arbitrary length inputs and returns $\ell$-bit outputs  
+ For the reader's convenience we present the full final protocol. 
+ A few preliminary notes:
+\begin{itemize}
+ \item  Adding zero-knowledge was not explicitly discussed so far, but is implemented here.
+ All that is needed is adding random multiples of $Z_{H}$ to the prover polynomials. This does not ruin satisfiability, and creates a situation where all values are either\footnote{A small  exception to this noted by Sean Bowe, is that the prover aborts caused by  denominators being zero in the computation of $Z$ in Section \ref{sec:permprotocol} leak information about the witnesses. For this reason, a formal analysis would attain statistical rather than perfect zero-knowledge.} completely uniform or determined by verifier equations.
+\item We explicitly define the multiplicative subgroup $H$ as containing the $n$'th roots of unity in $\F_p$, where $\omega$ is a primitive $n$'th root of unity and a generator of $H$. i.e: $H = \{1, \omega, \ldots, \omega^{n-1}\}$. We assume that the number of gates in a circuit is no more than $n$.
+\item  We include an optimisation suggested by Vitalik Buterin - representing the identity permutation via degree-1 polynomials, so that their evaluations can be directly computed by the verifier. This reduces the size of the proof by one field element, as well as reducing the number of Fast-Fourier-Transforms required by the prover. The representation is described in the next subsection.
+\item We use \hash to refer to an efficiently computable hash function, $\hash:\{0,1\}^*\to \F$, that takes arbitrary length inputs and returns elements of \F. We use \hash to obtain a non-interactive version of our protocol via the Fiat-Shamir transformation. Thus, \hash should be modelled as a random oracle for a security proof of this non-interactive variant.
+\end{itemize}
 
 \subsection{Polynomials that define a specific circuit}
 
