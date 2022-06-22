@@ -466,7 +466,7 @@ In a nutshell, one reason multiplicative subgroups are useful is that several pr
 We observe that if we think of the points $x,\hgen\cdot x$ as neighbours, where \hgen is a generator of a multiplicative subgroup of a field \F, it is very convenient to check relations between different polynomials at such pairs of points.
 
 A related convenience is that multiplicative subgroups interact well with Lagrange bases.
-For example, suppose  $H\subset \F$ is a multiplicative subgroup of order $n+1$, and $x\in H$.  The polynomial $L_x$ of degree at most $n$  that vanishes on $H\setminus\set{x}$ and has $f(x)=1$, has a very sparse representation of the form
+For example, suppose  $H\subset \F$ is a multiplicative subgroup of order $n+1$, and $x\in H$.  The polynomial $L_x$ of degree at most $n$  that vanishes on $H\setminus\set{x}$ and has $L_x(x)=1$, has a very sparse representation of the form
 \[L_x(X)= \frac{c_x(X^{n+1}-1)}{(X-x)},\]
 for a constant $c_x$.
 This is beneficial when constructing an efficiently verifiable \cite{permorig}-style permutation argument in terms of polynomial identities.
@@ -517,7 +517,7 @@ This is beneficial when constructing an efficiently verifiable \cite{permorig}-s
 
 We compare the performance of this work to the state of the art, both for non-universal SNARKs and universal SNARKs. At the time of publication, the only fully succinct universal SNARK construction is (the fully-succinct version of) the \sonic protocol~\cite{sonic}. This protocol requires the prover compute $273n$ \G1 group exponentiations, where $n$ is the number of multiplication gates. In fully-succinct \sonic, every wire can only be used in three linear relationships, requiring the addition of `dummy' multiplication gates to accommodate wires used in more than three addition gates. This increase in the multiplication gate count is factored into the prover computation estimate (see~\cite{sonic} for full details).
 
-Our universal SNARK requires the prover to compute 6 polynomial commitments, combined with two opening proofs to evaluate the polynomial commitments at a random challenge point. There are two ``flavours''of \plonk to suit the tastes of the user. By increasing the proof size by two group elements, the total prover computations can be reduced by $\approx10\%$. The combined degree of the polynomials is either $9(n + a)$ (larger proofs) or $11(n + a)$ (smaller proofs, reduced verifier work), where $n$ is the number of multiplication gates and $a$ is the number of addition gates.
+Our universal SNARK requires the prover to compute 5 polynomial commitments, combined with two opening proofs to evaluate the polynomial commitments at a random challenge point. There are two ``flavours''of \plonk to suit the tastes of the user. By increasing the proof size by two group elements, the total prover computations can be reduced by $\approx10\%$. The combined degree of the polynomials is either $9(n + a)$ (larger proofs) or $11(n + a)$ (smaller proofs, reduced verifier work), where $n$ is the number of multiplication gates and $a$ is the number of addition gates.
 Currently, the most efficient fully-succinct SNARK construction available is Groth's 2016 construction~\cite{Groth16}, which requires a unique, non-updateable CRS per circuit. Proof construction times are dominated by $3n + m$ \G1 and $n$ \G2 group exponentiations, where $m$ is formally the number of R1CS variables, and is typically bounded by $n$ (for the rest of this section, the reader may assume $m=n$ for simplicity). If we assume that one \G2 exponentiation is equivalent to three \G1 exponentiations, this yields $6n + m$ equivalent \G1 group exponentiations.
 
 
@@ -1015,7 +1015,7 @@ A \emph{$(d,D,t,\ell)$-polynomial protocol} is a multiround protocol between a p
 \item The messages of  \verpoly to \prvpoly are arbitrary (but we will concentrate on public coin protocols where the messages are simply random coins).
 
 
- \item At the end of the protocol, suppose $f_1,\ldots,f_t$ are the polynomials that were sent from \prvpoly to \ideal. \verpoly may ask \ideal if certain polynomial identities holds between \set{f_1,\ldots,f_t,g_1,\ldots,g_\ell}.
+ \item At the end of the protocol, suppose $f_1,\ldots,f_t$ are the polynomials that were sent from \prvpoly to \ideal. \verpoly may ask \ideal if certain polynomial identities hold between \set{f_1,\ldots,f_t,g_1,\ldots,g_\ell}.
  Where each identity is of the form
  \[F(X)\defeq G(X, h_1(v_1(X)),\ldots,h_M(v_M(X)))\equiv 0,\]
  for some $h_i\in  \set{f_1,\ldots,f_t,g_1,\ldots,g_\ell}$, $G\in \F[X,X_1,\ldots,X_{M}]$, $v_1,\ldots,v_{M} \in \polysofdeg{d}$
@@ -1251,7 +1251,7 @@ Assume \prot is such that $\reducedelems \defeq \reducedelems(\prot)<M$
 We claim that the reduction of Lemma \ref{lem:ideal-to-AGM} can be changed such that only $\reducedelems$ $\F$-elements are sent by \prv.
 \begin{enumerate}
  \item \prv now sends only \sett{s_i=h_i(v_i(x))}{i\in S}.
- \item Now let $L$ be the restriction $G|_{X=x;X_i=s_i, i\in S}$. \ver and \prv use \sett{\com(f_i}{i\in [S]}, and the linearity of \com, to compute the commitment to the corresponding restriction $F_L$ of $F$.
+ \item Now let $L$ be the restriction $G|_{X=x;X_i=s_i, i\in S}$. \ver and \prv use \sett{\com(f_i)}{i\in [S]}, and the linearity of \com, to compute the commitment to the corresponding restriction $F_L$ of $F$.
  \item Now \prv and \ver engage in the protocol \open to verify the correctness of the evaluations $\sett{s_i}{i\in S}$, and additionally to verify $F_L(x)=0$.
  
 \end{enumerate}
@@ -1261,7 +1261,7 @@ We claim that the reduction of Lemma \ref{lem:ideal-to-AGM} can be changed such 
 
 
 \section{Polynomial protocols for identifying permutations}\label{sec:permprotocol}
-At the heart our universal SNARK is a ``permutation check'' inspired by the permutation argument originally presented by Bayer and Groth \cite{permorig} and its variants in \cite{Bootle,sonic}. Again, our main advantage over \cite{sonic} is getting a simpler protocol by working with \emph{univariate} polynomials and multiplicative subgroups.
+At the heart of our universal SNARK is a ``permutation check'' inspired by the permutation argument originally presented by Bayer and Groth \cite{permorig} and its variants in \cite{Bootle,sonic}. Again, our main advantage over \cite{sonic} is getting a simpler protocol by working with \emph{univariate} polynomials and multiplicative subgroups.
 
 
 \paragraph{Degree bounds:}
@@ -1285,7 +1285,7 @@ More precisely, the following claim follows directly from the definition of \set
 
 
 For $f,g\in \polysofdeg{d}$ and a permutation $\sigma :[n]\to [n]$,
-we write $g=\sigma(f)$ if for each $i\in \dom$, $g(\hgen^i) = f(\hgen^{\sigma(i)})$. \footnote{Note that according to this definition there are multiple $g$ with $g=\sigma(f)$. Intuitively, we think of \sigof{f} as the unique such $g\in \polysofdeg{n}$, but do not define this formally to avoid needing to enforce this degree bound for efficiency reasons.}
+we write $g=\sigma(f)$ if for each $i\in [n]$, $g(\hgen^i) = f(\hgen^{\sigma(i)})$. \footnote{Note that according to this definition there are multiple $g$ with $g=\sigma(f)$. Intuitively, we think of \sigof{f} as the unique such $g\in \polysofdeg{n}$, but do not define this formally to avoid needing to enforce this degree bound for efficiency reasons.}
 
 We present a ranged polynomial protocol enabling \prvpoly to prove that
 $g=\sigof{f}$.
@@ -1367,7 +1367,7 @@ $\sigpoly_j(\hgen^i) = \sigma((j-1)\cdot n + i)$ for each $i\in [n]$.
 \paragraph{Inputs: $f_1,\ldots,f_k,g_1,\ldots,g_k \in \polysofdeg{n}$}
 \paragraph{Protocol:}
 \begin{enumerate}
- \item\label{item:betgamma} \verpoly chooses random $\beta,\gamma \in\F$ and sends to \prvpoly.
+ \item\label{item:betgamma} \verpoly chooses random $\beta,\gamma \in\F$ and sends them to \prvpoly.
  \item Let $f_j'\defeq f_j+\beta\cdot  \idpoly_j +\gamma$, and $ g'_j\defeq g_j+\beta\cdot \sigpoly_j + \gamma$.
 That is, for $j\in [k],i\in [n]$
  \[f'_j(\hgen^i) = f_j(\hgen^i) + \beta((j-1)\cdot n + i) + \gamma,
@@ -1377,7 +1377,7 @@ That is, for $j\in [k],i\in [n]$
  
  \item \prvpoly computes $Z \in \polysofdeg{n}$, such that 
  $Z(\hgen) =1$; and for $i\in \set{2,\ldots,n}$
- \[Z(\hgen^i)  = \prod_{1\leq \ell <i} f'(\hgen^j)/g'(\hgen^j).\]
+ \[Z(\hgen^i)  = \prod_{1\leq j <i} f'(\hgen^j)/g'(\hgen^j).\]
  (The case of one of the products being undefined is handled as in the previous protocol.)
  
  
@@ -1424,8 +1424,8 @@ $(f_1,\ldots,f_k) = \sigma(f_1,\ldots,f_k)$.
 
 
 \section{Constraint systems}\label{sec:constsystems}
-Fix integers $m,n$ with $n\leq m\leq 2n$
-We present a type of constraint system that captures fan-in two arithmetic circuits of unlimited fan-out with $n$ gates and $m$ wires (but is more general).
+Fix positive integers $m$ and $n$.
+We present a type of constraint system that captures fan-in two arithmetic circuits of unlimited fan-out with $n$ gates and $m$ wires, but is more general.
 
 The constraint system $\constsystem=(\vars,\selectors)$ is defined as follows.
 \begin{itemize}
@@ -1503,7 +1503,7 @@ Overloading notation, the polynomials $\selleft,\selright,\selout,\selmult,\selc
 \begin{enumerate}
  \item Let $\assignment\in \F^m$ be \prvpoly's assignment consistent with the public input \inp.
  \prvpoly computes the three polynomials $f_L,f_R,f_O\in \polysofdeg{n}$, where for $i\in [n]$
-\[f_L(i)= \assignment_{\lvar_i},f_R(i)= \assignment_{\rvar_i},f_O(i)= \assignment_{\ovar_i}.\]
+\[f_L(\hgen^ i)= \assignment_{\lvar_i},f_R(\hgen^i)= \assignment_{\rvar_i},f_O(\hgen^i)= \assignment_{\ovar_i}.\]
 \prvpoly sends $f_L,f_R,f_O$ to \ideal.
 \item \prvpoly and \verpoly run the extended permutation check protocol using the permutation $\sigma$ between $(f_L,f_R,f_O)$ and itself. As explained in Section \ref{subsec:copychecks}, this exactly checks whether $(f_L,f_R,f_O)$ copy-satisfies \partof{\constsystem}.
 \item \verpoly computes the ``Public input polynomial'' 
@@ -1574,7 +1574,7 @@ as we add to the $7n$ cost of commitments, the maximal degree among the polynomi
  A few preliminary notes:
 \begin{itemize}
  \item  Adding zero-knowledge was not explicitly discussed so far, but is implemented here.
- All that is needed is adding random multiples of $Z_{H}$ to the prover polynomials, and requiring the verifier to send challenges in $\F\setminus H$. This does not ruin satisfiability, and creates a situation where all values are either\footnote{A small  exception to this noted by Sean Bowe, is that the prover aborts caused by  denominators being zero in the computation of $Z$ in Section \ref{sec:permprotocol} leak information about the witnesses. For this reason a formal analysis would attain statistical rather than perfect zero-knowledge.} completely uniform or determined by verifier equations.
+ All that is needed is adding random multiples of $Z_{H}$ to the prover polynomials, and requiring the verifier to send challenges in $\F\setminus H$. This does not ruin satisfiability, and creates a situation where all values are either\footnote{A small  exception noted to us by Sean Bowe, is that the prover aborts caused by  denominators being zero in the computation of $Z$ in Section \ref{sec:permprotocol} leak information about the witnesses. For this reason a formal analysis would attain statistical rather than perfect zero-knowledge.} completely uniform or determined by verifier equations.
 \item We explicitly define the multiplicative subgroup $H$ as containing the $n$'th roots of unity in $\F_p$, where $\omega$ is a primitive $n$'th root of unity and a generator of $H$. i.e: $H = \{1, \omega, \ldots, \omega^{n-1}\}$. We assume that the number of gates in a circuit is no more than $n$.
 \item  We include an optimisation suggested by Vitalik Buterin - representing the identity permutation via degree-1 polynomials, so that their evaluations can be directly computed by the verifier. This reduces the size of the proof by one field element, as well as reducing the number of Fast-Fourier-Transforms required by the prover. The representation is described in the next subsection.
 \item We use \hash to refer to an efficiently computable hash function, $\hash:\{0,1\}^*\to \F$, that takes arbitrary length inputs and returns elements of \F. We use \hash to obtain a non-interactive version of our protocol via the Fiat-Shamir transformation. Thus, \hash should be modelled as a random oracle for a security proof of this non-interactive variant.
@@ -1587,7 +1587,7 @@ The following polynomials, along with integer $n$, uniquely define our circuit:
 \begin{itemize}
 	\item $\selmultpoly(X), \selleftpoly(X), \selrightpoly(X), \seloutpoly(X), \selconstpoly(X)$, the `selector' polynomials that define the circuit's arithmetisation
 	\item $\idpoly_1(X) = X, \idpoly_2(X) = k_1X, \idpoly_3(X) = k_2X$: the identity permutation applied to $\lvar, \rvar, \ovar$. $k_1, k_2\in \F$ are chosen such that $H,k1\cdot H,k2\cdot H$ are distinct cosets of $H$ in $\F^*$, and thus consist of $3n$ distinct elements. (For example, when $\omega$ is a quadratic residue in $\F$, take $k_1$ to be any quadratic non-residue, and $k_2$ to be a  quadratic non-residue not contained in $k_1\cdot H$.)
-	\item Let us denote $H'\defeq K\cup k_1\cdot H\cup k_2\cdot H$. Let $\sigma:[3n]\to[3n]$ be a permutation. Now, identify $[3n]$ with $H'$ via $i \to \omega^i,n+i \to k_1\cdot \omega^i,2n+i \to k_2\cdot \omega^i$.  Finally, define  $\sigma^{*}$ below to denote the mapping from $[3n]$ to $H'$ derived from applying $\sigma$ and then this injective mapping into $H'$.
+	\item Let us denote $H'\defeq H\cup (k_1\cdot H)\cup (k_2\cdot H)$. Let $\sigma:[3n]\to[3n]$ be a permutation. Now, identify $[3n]$ with $H'$ via $i \to \omega^i,n+i \to k_1\cdot \omega^i,2n+i \to k_2\cdot \omega^i$.  Finally, define  $\sigma^{*}$ below to denote the mapping from $[3n]$ to $H'$ derived from applying $\sigma$ and then this injective mapping into $H'$.
 We encode $\sigma^*$  by the three permutation polynomials	
 	\[\sigpoly_1(X) \defeq \sum_{i=1}^n \sigma^*(i) \lagrangepoly_i(X), \sigpoly_2(X) \defeq \sum_{i=1}^n \sigma^*(n + i) \lagrangepoly_i(X), \sigpoly_3(X) \defeq \sum_{i=1}^n \sigma^*(2n + i) \lagrangepoly_i(X).\]
 \end{itemize}
@@ -1614,7 +1614,7 @@ such that
 
 \subsection{The protocol}
 
-We describe the protocol below as a non-interactive protocol using the Fiat-Shamir hueristic.
+We describe the protocol below as a non-interactive protocol using the Fiat-Shamir heuristic.
 For this purpose we always denote by \transcript the concatenation of the common preprocessed input, and public input, and the proof elements written by the prover up to a certain point in time.
 We use \transcript for obtaining random challenges via Fiat-Shamir. One can alternatively, replace all points where we write below ``compute challenges'', by the verifier sending random field elements, to obtain the interactive protocol from which we derive the non-interactive one.  
 \begin{description}
@@ -1658,7 +1658,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\begin{array}{c}
 	\idpermpoly(X) = (b_7X^2 + b_8X + b_9)\zeropoly(X) \\
 	+ \lagrangepoly_1(X) + \sum_{i=1}^{n-1} \left(
-	\lagrangepoly_{i+1}(X) \prod_{j=1}^i\frac{(w_j + \beta \omega^{j-1} + \gamma)(w_{n+j} + \beta k_1 \omega^{j-1} + \gamma)(w_{2n + j} + \beta k_2 \omega^{j-1} + \gamma)}{(w_j + \sigma^*(j)\beta + \gamma)(w_{n+j} + \sigma^*(n+j)\beta + \gamma)(w_{2n+j} + \sigma^*(2n+j)\beta + \gamma)}
+	\lagrangepoly_{i+1}(X) \prod_{j=1}^i\frac{(w_j + \beta \omega^{j} + \gamma)(w_{n+j} + \beta k_1 \omega^{j} + \gamma)(w_{2n + j} + \beta k_2 \omega^{j} + \gamma)}{(w_j + \sigma^*(j)\beta + \gamma)(w_{n+j} + \sigma^*(n+j)\beta + \gamma)(w_{2n+j} + \sigma^*(2n+j)\beta + \gamma)}
 	\right)
 	\end{array}
 	$$
@@ -1767,13 +1767,13 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 \end{description}
 \noindent
 \begin{enumerate}
- \item 	Validate $([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_z]_1, [W_{z\omega}]_1) \in \G1$.
+ \item 	Validate $([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_z]_1, [W_{z\omega}]_1) \in \G1^9$.
 \item	Validate $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,  \bar{z}_\omega) \in \F_p^{6}$.
 \item	Validate $(w_i)_{i \in [\ell]} \in \F_p^{\ell}$.
 	\item Compute challenges $\beta, \gamma,\alpha,\chalpoint,v,u \in \F_p$ as in prover description, from the common inputs, public input, and elements of $\pi_{\mathsf{SNARK}}$.
 	\item Compute zero polynomial evaluation $\zeropoly(\chalpoint) = {\chalpoint^n - 1}$.
 \item	Compute Lagrange polynomial evaluation $\lagrangepoly_1(\chalpoint) = \frac{\omega(\chalpoint^n - 1)}{n(\chalpoint - \omega)}$.
-\item	Compute public input polynomial evaluation $\pubinppoly(\chalpoint) = \sum_{i \in \ell}w_i \lagrangepoly_i(\chalpoint)$.
+\item	Compute public input polynomial evaluation $\pubinppoly(\chalpoint) = \sum_{i \in [\ell]}w_i \lagrangepoly_i(\chalpoint)$.
 \item To save a verifier scalar multiplication, we split $r$ into its constant and non-constant terms. Compute $r$'s constant term: 
 \[r_0 \defeq \pubinppoly(\chalpoint) - \lagrangepoly_1(\chalpoint)\alpha^2- \alpha(\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} +\gamma )\bar{z}_{\omega},\]
 	and let $r'(X)\defeq r(X)-r_0$. 
@@ -1829,7 +1829,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 
 
 
- \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe for noticing we weren't hashing the public inputs in our original Fiat-Shamir description which can \href{https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/}{lead} to attacks. We thank Sean Bowe, Jay Butera, Cody Gunton, Adrian Hamelink, Amir Taaki, Alexander Vlasov, Kevaundray Wedderburn, David Wong and Ye Zhang for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
+ \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe for noticing we weren't hashing the public inputs in our original Fiat-Shamir description which can \href{https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/}{lead} to attacks. We thank Sean Bowe, Jay Butera, Cody Gunton, Adrian Hamelink, Marek Sefranek, Amir Taaki, Alexander Vlasov, Kevaundray Wedderburn, David Wong and Ye Zhang for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
 \bibliography{references}
     
 \appendix
@@ -1870,7 +1870,7 @@ then the entries in the tuple $(a_1, \ldots, a_n)$ equal the entries in the tupl
 Let $P_a(X) =  \prod_{i=1}^{n}(X+ a_i)$ and $P_b(X) = \prod_{i=1}^{n}(X+b_i)$. The roots of $P_a$ are $(-a_1, \ldots, -a_n)$ and the roots of $P_b$ are $(-b_1, \ldots, -b_n)$.  
 By the Schwartz-Zippel lemma, if polynomials $P_a(X)$ and $P_b(X)$ are not equal, equality \ref{eq:simple_prod} holds with probability $\frac{n}{|\mathbb{F}|}$ which is negligible for any polynomial degree $n$ used in our snark construction. 
 Thus, equality \ref{eq:simple_prod} holds with non-negligible probability only when the two polynomials $P_a(X)$ and $P_b(X)$ are equal. This implies all the roots of $P_a(X)$ must be roots of $P_b(X)$ and the other way around, which, in turn, 
-implies the conclusion of the lemma. As a note, the conclusion of the lemma can be written in an equivalent but more formal way: there exist a permutation $\sigma$ of $[n]$ such that $b_i = a_{\sigma(i)}, \forall i \in [n]$.
+implies the conclusion of the lemma. As a note, the conclusion of the lemma can be written in an equivalent but more formal way: there exists a permutation $\sigma$ of $[n]$ such that $b_i = a_{\sigma(i)}, \forall i \in [n]$.
 \end{proof}
 
 \begin{corollary} \label{co:simple_prod}
@@ -1886,9 +1886,9 @@ lemma \ref{le:simple_prod}, we obtain the desired conclusion.
 
 \begin{proof} for Claim \ref{clm:randpermO}
 
-Lets denote by $B_i = b_i + \gamma$ and $A_i = a_i + \gamma$, $\forall i \in [n]$. Then, according to \ref{co:simple_prod}, the values in the tuple $(\frac{B_1}{\sigma(1)}, \ldots, \frac{B_n}{\sigma(n)})$ are the same as the values in 
+Let us denote by $B_i = b_i + \gamma$ and $A_i = a_i + \gamma$, $\forall i \in [n]$. Then, according to \ref{co:simple_prod}, the values in the tuple $(\frac{B_1}{\sigma(1)}, \ldots, \frac{B_n}{\sigma(n)})$ are the same as the values in 
 the tuple $(A_1, \ldots, \frac{A_n}{n})$, $\forall i \in [n]$. Assume there exists $i_0 \in [n]$ such that $B_{i_0} \neq A_{\sigma(i_0)}$. This implies there exists $j \in [n]$, with $j \neq \sigma(i_0) $ such that $\frac{B_{i_0}}{\sigma(i_0)} = \frac{A_j}{j}$. 
-Expending, we obtain $j \cdot (b_{i_0}+ \gamma) = \sigma(i_0) \cdot (a_j + \gamma)$ and this holds with non-negligible probability over the choice of $\gamma$. Using the Schwartz-Zippel lemma as in \ref{le:simple_prod}, 
+Expanding, we obtain $j \cdot (b_{i_0}+ \gamma) = \sigma(i_0) \cdot (a_j + \gamma)$ and this holds with non-negligible probability over the choice of $\gamma$. Using the Schwartz-Zippel lemma as in \ref{le:simple_prod}, 
 we obtain that $\sigma(i_0) = j$ which contradicts our assumption. Hence, we have proven that $\forall  i \in [n], B_i = A_{\sigma(i)}$, which, in turn, implies $b_i = a_{\sigma(i)}$, $\forall  i \in [n]$. 
 \end{proof}
 
