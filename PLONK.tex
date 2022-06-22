@@ -1251,7 +1251,7 @@ Assume \prot is such that $\reducedelems \defeq \reducedelems(\prot)<M$
 We claim that the reduction of Lemma \ref{lem:ideal-to-AGM} can be changed such that only $\reducedelems$ $\F$-elements are sent by \prv.
 \begin{enumerate}
  \item \prv now sends only \sett{s_i=h_i(v_i(x))}{i\in S}.
- \item Now let $L$ be the restriction $G|_{X=x;X_i=s_i, i\in S}$. \ver and \prv use \sett{\com(f_i)}{i\in [S]}, and the linearity of \com, to compute the commitment to the corresponding restriction $F_L$ of $F$.
+ \item Now let $L$ be the restriction $G|_{X=x;X_i=s_i, i\in S}$. \ver and \prv use \sett{\com(f_i)}{i\in S}, and the linearity of \com, to compute the commitment to the corresponding restriction $F_L$ of $F$.
  \item Now \prv and \ver engage in the protocol \open to verify the correctness of the evaluations $\sett{s_i}{i\in S}$, and additionally to verify $F_L(x)=0$.
  
 \end{enumerate}
