@@ -384,6 +384,12 @@
 \newcommand{\xmark}{\ding{55}}%
 \newcommand{\marlin}{\ensuremath{\mathsf{Marlin}}\xspace}
 \newcommand{\fractal}{\ensuremath{\mathsf{Fractal}}\xspace}
+	\newcommand{\tlo}{\ensuremath{\mathsf{t_{lo}}}\xspace}
+	\newcommand{\tprimelo}{\ensuremath{\mathsf{t'_{lo}}}\xspace}
+	\newcommand{\tmid}{\ensuremath{\mathsf{t_{mid}}}\xspace}
+	\newcommand{\tprimemid}{\ensuremath{\mathsf{t'_{mid}}}\xspace}
+	\newcommand{\thi}{\ensuremath{\mathsf{t_{hi}}}\xspace}
+	\newcommand{\tprimehi}{\ensuremath{\mathsf{t'_{hi}}}\xspace}
 % \newcommand{\Rsnark}{\R{\snark}}
 \newcommand{\Rsnark}{\R}
 \begin{document}
@@ -1575,7 +1581,7 @@ as we add to the $7n$ cost of commitments, the maximal degree among the polynomi
 \begin{itemize}
  \item  Adding zero-knowledge was not explicitly discussed so far, but is implemented here.
  All that is needed is adding random multiples of $Z_{H}$ to the prover polynomials, and requiring the verifier to send challenges in $\F\setminus H$. This does not ruin satisfiability, and creates a situation where all values are either\footnote{A small  exception noted to us by Sean Bowe, is that the prover aborts caused by  denominators being zero in the computation of $Z$ in Section \ref{sec:permprotocol} leak information about the witnesses. For this reason a formal analysis would attain statistical rather than perfect zero-knowledge.} completely uniform or determined by verifier equations.
-\item We explicitly define the multiplicative subgroup $H$ as containing the $n$'th roots of unity in $\F_p$, where $\omega$ is a primitive $n$'th root of unity and a generator of $H$. i.e: $H = \{1, \omega, \ldots, \omega^{n-1}\}$. We assume that the number of gates in a circuit is no more than $n$.
+\item We explicitly define the multiplicative subgroup $H$ as containing the $n$'th roots of unity in $\F$, where $\omega$ is a primitive $n$'th root of unity and a generator of $H$. i.e: $H = \{1, \omega, \ldots, \omega^{n-1}\}$. We assume that the number of gates in a circuit is no more than $n$.
 \item  We include an optimisation suggested by Vitalik Buterin - representing the identity permutation via degree-1 polynomials, so that their evaluations can be directly computed by the verifier. This reduces the size of the proof by one field element, as well as reducing the number of Fast-Fourier-Transforms required by the prover. The representation is described in the next subsection.
 \item We use \hash to refer to an efficiently computable hash function, $\hash:\{0,1\}^*\to \F$, that takes arbitrary length inputs and returns elements of \F. We use \hash to obtain a non-interactive version of our protocol via the Fiat-Shamir transformation. Thus, \hash should be modelled as a random oracle for a security proof of this non-interactive variant.
 \end{itemize}
@@ -1597,7 +1603,7 @@ We encode $\sigma^*$  by the three permutation polynomials
 % For the following protocol we describe a relation for a circuit containing $n$ arithmetic gates. The witnesses to the proof are the wire value witnesses $(w_i)_{i=1}^{3n}$. The commitments $[a]_1, [b]_1, [c]_1$ are computationally binding Kate polynomial commitments to the wire value witnesses, utilizing a structured reference string containing the group elements $(x \cdot [1]_1, \ldots , x^{n} \cdot [1]_1)$. 
 % 
 \subsection{The SNARK proof relation}
-Given $\ell\leq n$ and fixed values for the above polynomials, we wish to prove statements of knowledge for the relation $\Rsnark\subset \F_p^{\ell}\times \F_p^{3n-\ell}$ containing all pairs
+Given $\ell\leq n$ and fixed values for the above polynomials, we wish to prove statements of knowledge for the relation $\Rsnark\subset \F^{\ell}\times \F^{3n-\ell}$ containing all pairs
 $x=(w_i)_{i \in [\ell]}, w=(w_i)_{i=\ell+1}^{3n}$
 such that
 \begin{enumerate}
@@ -1634,7 +1640,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	
 	\noindent
 	\paragraph{\textbf{Round 1:}} \ \\
-	Generate random blinding scalars $(b_1, \ldots, b_{9}) \in \F_p$ \\
+	Generate random blinding scalars $(b_1, \ldots, b_{9}) \in \F$ \\
 	Compute wire polynomials $\lpoly(X), \rpoly(X), \opoly(X):$
 	$$
 	\lpoly(X) = (b_1X + b_2)\zeropoly(X) + \sum_{i=1}^nw_i\lagrangepoly_i(X)
@@ -1651,7 +1657,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\\ \\
 	\noindent
 	\paragraph{\textbf{Round 2:}} \ \\
-	Compute permutation challenges $(\beta, \gamma) \in \F_p:$ \[\beta = \hash(\transcript,0), \gamma = \hash(\transcript, 1) \]
+	Compute permutation challenges $(\beta, \gamma) \in \F:$ \[\beta = \hash(\transcript,0), \gamma = \hash(\transcript, 1) \]
 	Compute permutation polynomial $\idpermpoly(X):$
 	\begin{adjustwidth}{-50mm}{-50mm}
 	$$ 
@@ -1669,7 +1675,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\\ \\
 	\noindent
 	\paragraph{\textbf{Round 3:}} \ \\
-	Compute quotient challenge $\alpha \in \F_p:$ \[ \alpha = \hash(\transcript) \]
+	Compute quotient challenge $\alpha \in \F:$ \[ \alpha = \hash(\transcript) \]
 	Compute quotient polynomial $\mathsf{t}(X):$
 	\begin{adjustwidth*}{-22mm}{-22mm}
 	$$
@@ -1682,15 +1688,20 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\end{array}
 	$$
 	\end{adjustwidth*}
-	Split $t(X)$ into degree $<n$ polynomials $t_{lo}(X), t_{mid}(X)$ and $t_{hi}(X)$ of degree at most $n+5$, such that
+	Split $\mathsf{t}(X)$ into degree $<n$ polynomials $\tprimelo(X), \tprimemid(X)$ and $\tprimehi(X)$ of degree at most $n+5$, such that
 	$$
-	t(X) = t_{lo}(X) + X^nt_{mid}(X) + X^{2n}t_{hi}(X)
-	$$
-	Compute $[t_{lo}]_{1} := \enc1{\mathsf{t_{lo}}(x)}, [t_{mid}]_1 := \enc1{\mathsf{t_{mid}}(x)}, [t_{hi}]_1 := \enc1{\mathsf{t_{hi}}(x)}$ \\ \\
+	\mathsf{t}(X) = \tprimelo(X) + X^n\tprimemid(X) + X^{2n}\tprimehi(X)
+	$$ 
+	Now choose random scalars $b_{10},b_{11}\in \F$ and define
+	\[\tlo(X)\defeq \tprimelo(X)+b_{10}X^n,\tmid(X)\defeq \tprimemid(X)-b_{10}+b_{11}X^n,\thi(X)\defeq \tprimehi(X)-b_{11}\]
+	Note that we have $
+	\mathsf{t}(X) = \tlo(X) + X^n\tmid(X) + X^{2n}\thi(X)$.
+	
+	Compute $[t_{lo}]_{1} := \enc1{\tlo(x)}, [t_{mid}]_1 := \enc1{\tmid(x)}, [t_{hi}]_1 := \enc1{\thi(x)}$ \\ \\
 	Third output of $\Psnark$ is $([t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1)$
 	\\ \\
 	\noindent
-	\paragraph{\textbf{Round 4:}} \ \\Compute evaluation challenge $\chalpoint \in \F_p:$ \[ \chalpoint = \hash(\transcript)\]
+	\paragraph{\textbf{Round 4:}} \ \\Compute evaluation challenge $\chalpoint \in \F:$ \[ \chalpoint = \hash(\transcript)\]
 	Compute opening evaluations:
 	$$
 	\begin{array}{c}
@@ -1701,7 +1712,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	Fourth output of $\Psnark$ is $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb, \bar{z}_\omega )$ \\ \\
 	\noindent
 	\paragraph{\textbf{Round 5:}}\ \\
-	Compute opening challenge $v \in \F_p:$
+	Compute opening challenge $v \in \F:$
 	$$
 	v = \hash(\transcript)
 	$$
@@ -1747,7 +1758,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	\right)
 	$$
 	
-	Compute multipoint evaluation challenge $u \in \F_p:$
+	Compute multipoint evaluation challenge $u \in \F:$
 	$$
 	u = \hash(\transcript)
 	$$
@@ -1768,9 +1779,9 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 \noindent
 \begin{enumerate}
  \item 	Validate $([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_z]_1, [W_{z\omega}]_1) \in \G1^9$.
-\item	Validate $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,  \bar{z}_\omega) \in \F_p^{6}$.
-\item	Validate $(w_i)_{i \in [\ell]} \in \F_p^{\ell}$.
-	\item Compute challenges $\beta, \gamma,\alpha,\chalpoint,v,u \in \F_p$ as in prover description, from the common inputs, public input, and elements of $\pi_{\mathsf{SNARK}}$.
+\item	Validate $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,  \bar{z}_\omega) \in \F^{6}$.
+\item	Validate $(w_i)_{i \in [\ell]} \in \F^{\ell}$.
+	\item Compute challenges $\beta, \gamma,\alpha,\chalpoint,v,u \in \F$ as in prover description, from the common inputs, public input, and elements of $\pi_{\mathsf{SNARK}}$.
 	\item Compute zero polynomial evaluation $\zeropoly(\chalpoint) = {\chalpoint^n - 1}$.
 \item	Compute Lagrange polynomial evaluation $\lagrangepoly_1(\chalpoint) = \frac{\omega(\chalpoint^n - 1)}{n(\chalpoint - \omega)}$.
 \item	Compute public input polynomial evaluation $\pubinppoly(\chalpoint) = \sum_{i \in [\ell]}w_i \lagrangepoly_i(\chalpoint)$.
@@ -1829,7 +1840,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 
 
 
- \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe for noticing we weren't hashing the public inputs in our original Fiat-Shamir description which can \href{https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/}{lead} to attacks. We thank Sean Bowe, Jay Butera, Cody Gunton, Adrian Hamelink, Marek Sefranek, Amir Taaki, Alexander Vlasov, Kevaundray Wedderburn, David Wong and Ye Zhang for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments.\bibliographystyle{alpha}
+ \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe for noticing we weren't hashing the public inputs in our original Fiat-Shamir description which can \href{https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/}{lead} to attacks. We thank Sean Bowe, Jay Butera, Cody Gunton, Adrian Hamelink, Marek Sefranek, Amir Taaki, Alexander Vlasov, Kevaundray Wedderburn, David Wong and Ye Zhang for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments. We thank Marek Sefranek for a correction on how to make the quotient polynomial $T$ zero knowledge in Section \ref{sec:finalconst}, when splitting it into multiple polynomials.\bibliographystyle{alpha}
 \bibliography{references}
     
 \appendix
