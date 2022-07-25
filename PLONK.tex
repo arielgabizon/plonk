@@ -1770,15 +1770,15 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	$$
 	\begin{array}{l}
  \selmultcomm := \selmultpoly(x) \cdot [1]_1, \selleftcomm := \selleftpoly(x) \cdot [1]_1, \selrightcomm := \selrightpoly(x) \cdot [1]_1, \seloutcomm := \seloutpoly(x) \cdot [1]_1, \\
-	\sigcomma := \sigpoly_1(x) \cdot [1]_1, \sigcommb := \sigpoly_2(x) \cdot [1]_1, \sigcommc := \sigpoly_3 (x)\cdot [1]_1 \\
-	x \cdot [1]_2
+ \selconstcomm := \selconstpoly(x) \cdot [1]_1, \sigcomma := \sigpoly_1(x) \cdot [1]_1, \sigcommb := \sigpoly_2(x) \cdot [1]_1,\\
+ \sigcommc := \sigpoly_3(x)\cdot [1]_1, x \cdot [1]_2
 	\end{array}
 	$$
 	\item[$\Vsnark((w_i)_{i \in {[}\ell{]}}, \pi_{\mathsf{SNARK}})$:] \ \\
 \end{description}
 \noindent
 \begin{enumerate}
- \item 	Validate $([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_z]_1, [W_{z\omega}]_1) \in \G1^9$.
+ \item 	Validate $([a]_1, [b]_1, [c]_1, [z]_1, [t_{lo}]_1, [t_{mid}]_1, [t_{hi}]_1, [W_\chalpoint]_1, [W_{\chalpoint\omega}]_1) \in \G1^9$.
 \item	Validate $(\bar{a}, \bar{b}, \bar{c}, \sigpolyevala, \sigpolyevalb,  \bar{z}_\omega) \in \F^{6}$.
 \item	Validate $(w_i)_{i \in [\ell]} \in \F^{\ell}$.
 	\item Compute challenges $\beta, \gamma,\alpha,\chalpoint,v,u \in \F$ as in prover description, from the common inputs, public input, and elements of $\pi_{\mathsf{SNARK}}$.
@@ -1788,13 +1788,13 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 \item To save a verifier scalar multiplication, we split $r$ into its constant and non-constant terms. Compute $r$'s constant term: 
 \[r_0 \defeq \pubinppoly(\chalpoint) - \lagrangepoly_1(\chalpoint)\alpha^2- \alpha(\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)(\bar{c} +\gamma )\bar{z}_{\omega},\]
 	and let $r'(X)\defeq r(X)-r_0$. 
-	\item Compute first part of batched polynomial commitment $[D]_1 := [r']_1 + u \cdot [z]_1:$ 
+	\item Compute first part of batched polynomial commitment $[D]_1 := [r']_1 + u \cdot [z]_1$: 
 	$$
 	[D]_1 :=
 	\begin{array}{l}
 	\bar{a}\bar{b} \cdot \selmultcomm + \bar{a}  \cdot \selleftcomm + \bar{b} \cdot \selrightcomm + \bar{c} \cdot \seloutcomm +   \selconstcomm \\
 	+ \left( (\bar{a} + \beta \chalpoint + \gamma)(\bar{b} + \beta k_1 \chalpoint + \gamma)(\bar{c} + \beta k_2 \chalpoint + \gamma)\alpha  + \lagrangepoly_1(\chalpoint)\alpha^2  + u\right) \cdot [z]_1\\
-	-(\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\alpha \beta \bar{z}_\omega \sigcommc\\
+	-(\bar{a} + \beta \sigpolyevala + \gamma)(\bar{b} + \beta \sigpolyevalb + \gamma)\alpha \beta \bar{z}_\omega \cdot \sigcommc\\
 -Z_H(\chalpoint) ([t_{lo}]_1
 	+ \chalpoint^n \cdot [t_{mid}]_1
 	+ \chalpoint^{2n} \cdot [t_{hi}]_1) 
@@ -1802,7 +1802,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	
 	\end{array}
 	$$
-\item	Compute full batched polynomial commitment $[F]_1:$
+\item	Compute full batched polynomial commitment $[F]_1$:
 	$$
 	[F]_1 := 	\begin{array}{l}
 	[D]_1
@@ -1823,7 +1823,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 	+ v^3 \bar{c} \\
 	+ v^4 \sigpolyevala
 	+ v^5 \sigpolyevalb
-	+ u\bar{z_\omega}
+	+ u\bar{z}_\omega
 	\end{array}
 	\right)
 	\cdot [1]_1
