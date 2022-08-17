@@ -1840,7 +1840,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 
 
 
- \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe for noticing we weren't hashing the public inputs in our original Fiat-Shamir description which can \href{https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/}{lead} to attacks. We thank Sean Bowe, Jay Butera, Luke Edwards, Cody Gunton, Adrian Hamelink, Marek Sefranek, Amir Taaki, Alexander Vlasov, Yongge Wang, Kevaundray Wedderburn, David Wong and Ye Zhang for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments. We thank Marek Sefranek for a correction in Section \ref{sec:finalconst} on how to correctly implement zero-knowledge for $\mathsf{t}$ in Round 3. \bibliographystyle{alpha}
+ \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe for noticing we weren't hashing the public inputs in our original Fiat-Shamir description which can \href{https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/}{lead} to attacks. We thank Sean Bowe, Jay Butera, Luke Edwards, Cody Gunton, Adrian Hamelink, Marek Sefranek, Amir Taaki, Alexander Vlasov, Yongge Wang, Kevaundray Wedderburn, David Wong and Ye Zhang for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments. We thank Marek Sefranek for a correction in Section \ref{sec:finalconst} on how to correctly implement zero-knowledge for $\mathsf{t}$ in Round 3. We thank Tohru Kohrita for a simplified proof of Claim \ref{clm:randpermO}.  \bibliographystyle{alpha}
 \bibliography{references}
     
 \appendix
@@ -1848,34 +1848,40 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
     
 
 \section{Claims for permutation argument:}
-
-Fix a permutation $\sigma$ of $[n]$, and $a_1,\ldots,a_n,b_1,\ldots,b_n \in \F$.
+The following claim is crucial for the correctness of the protocols in Section \ref{sec:permprotocol}.
 \begin{claim}\label{clm:randpermO}
- If the following holds with non-negligible probability over random $\beta,\gamma \in \F$
+Fix any permutation $\sigma$ of $[n]$, and any $a_1,\ldots,a_n,b_1,\ldots,b_n \in \F$.
+ If 
  \[\prod_{i\in [n]} (a_i + \beta \cdot i + \gamma) = \prod_{i\in [n]} (b_i+ \beta \cdot \sigma(i) + \gamma)\] 
- then $\forall i \in [n]$, $b_i = a_{\sigma(i)}$.
+ with probability larger than $n/|\F|$ over uniform $\beta,\gamma \in \F$;
+ then  $b_i = a_{\sigma(i)}$ for all $i \in [n]$.
 \end{claim}
 
-We will prove claim \ref{clm:randpermO} using the well-known Schwartz-Zippel lemma.
+% We will prove claim \ref{clm:randpermO} using the well-known Schwartz-Zippel lemma.
+% 
+% \begin{lemma}(Schwartz-Zippel)\label{le:SchwartzZippel}. Let $P(X_1, \ldots, X_m)$ be a non-zero multivariate polynomial of degree $n$ over $\F$, then
+% the probability that  $P(\alpha_1, \ldots, \alpha_m)= 0 $ for uniformly chosen $\alpha_1, \ldots, \alpha_m$ is at most $n/|\F|$.
+% \end{lemma}
 
-\begin{lemma}(Schwartz-Zippel)\label{le:SchwartzZippel}. Let $P(X_1, \ldots, X_n)$ be a non-zero multivariate polynomial of degree $d$ over $\mathbb{Z}_p$, then
-the probability of $P(\alpha_1, \ldots, \alpha_n)= 0 \leftarrow \mathbb{Z}_p$ for randomly chosen $\alpha_1, \ldots, \alpha_n$ is at most $d/p$.
-\end{lemma}
+% The Schwartz-Zippel lemma is used in polynomial equality testing. Given two multi-variate polynomials $P_1(X_1, \ldots, X_m)$
+% and $P_2(X_1, \ldots, X_m)$ we can test whether $P_1(\alpha_1, \ldots, \alpha_m) -  P_2(\alpha_1, \ldots, \alpha_m)  = 0$ for random $\alpha_1, \ldots, \alpha_m  \leftarrow \mathbb \F$.
+% If the two polynomials are identical, this will always be true, whereas if the two polynomials are different then the equality holds with probability at most $max(n_1, n_2)/|\F|$, where $n_1$ and 
+% $n_2$ are the degrees of the polynomials $P_1$ and $P_2$. 
 
-The Schwartz-Zippel lemma is used in polynomial equality testing. Given two multi-variate polynomials $P_1(X_1, \ldots, X_n)$
-and $P_2(X_1, \ldots, X_n)$ we can test whether $P_1(\alpha_1, \ldots, \alpha_n) -  P_2(\alpha_1, \ldots, \alpha_n)  = 0$ for random $\alpha_1, \ldots, \alpha_n  \leftarrow \mathbb{Z}_p$.
-If the two polynomials are identical, this will always be true, whereas if the two polynomials are different then the equality holds with probability at most $max(d_1, d_2)/p$, where $d_1$ and 
-$d_2$ are the degrees of the polynomials $P_1$ and $P_2$. 
+\noindent
+We present the following proof by Tohru Kohrita.
 
+\begin{proof}  
 
-
-\begin{proof} for Claim \ref{clm:randpermO}
-
-By \ref{le:SchwartzZippel}, the following equality of polynomials in $X$ and $Y$ holds:
-\[\prod_{i=1}^n(a_i+iX +Y) = \prod_{i=1}^n(b_i+\sigma(i)X +Y)\in\mathbb F[X,Y].\]
-Because $\mathbb F[X,Y]$ is a unique factorization domain and all coefficients of $Y$ appearing in the above decomposition into irreducible elements are $1,$ comparing the coefficients of $X,$ we must have
-\[a_{\sigma(i)}+\sigma(i)X +Y = b_i+\sigma(i)X +Y\]
-for $\forall i \in [n].$ Thus, we conclude $a_{\sigma(i)} = b_i.$
+By Schwartz-Zippel and the assumption of the claim, the following equality of polynomials holds in $\F[X,Y]$.
+\[\prod_{i=1}^n(a_i+iX +Y) \equiv  \prod_{i=1}^n(b_i+\sigma(i)X +Y).\]
+ Recall that $\F[X,Y]$ is a unique factorization domain where the invertible elements are exactly $\F^*$. Note also that the linear factors in the above products are irreducible. Thus, there must be a one to one map $M\to M'$ between the factors of each side, such that $M=c\cdot M'$ for some $c\in \F^*$.
+% As $\F[X,Y]$ is a unique factorization domain and all coefficients of $Y$ appearing in the above decomposition into irreducible elements are $1$, comparing the coefficients of $X$, we must have
+Moreover, since the coefficient of $Y$ in all terms on both sides is one, we must always have $c=1$.
+Thus, this mapping must map a factor on the LHS to one on the RHS with the same coefficient for $X$.
+In summary, we have for all $i\in [n]$, 
+\[a_{\sigma(i)}+\sigma(i)X +Y \equiv b_i+\sigma(i)X +Y.\]
+ Thus, we conclude that $b_i = a_{\sigma(i)}$  for all $i\in [n]$.
 \end{proof}
 
 
