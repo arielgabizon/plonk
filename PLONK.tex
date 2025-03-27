@@ -90,7 +90,7 @@
 %\newcommand{\authorname}}
 \newcommand{\company}{}
 \title{ \bf \papertitle \\[0.72cm]}
-\author{ Ariel Gabizon\thanks{Most of this work was done while the first author was working at Protocol Labs.}\\ \tt{Aztec}  \and Zachary J. Williamson\\ \tt{Aztec} \and Oana Ciobotaru} 
+\author{ Ariel Gabizon\thanks{Most of this work was done while the first author was working at Protocol Labs.}\\ \tt{Aztec}  \and Zachary J. Williamson\\ \tt{Aztec} \and Oana Ciobotaru\\ \tt{Pi Squared}} 
 
 % 	\large{\authorname} \\[0.5cm] \large{\company}
 % 	\\ {DRAFT}
@@ -383,6 +383,8 @@
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
 \newcommand{\marlin}{\ensuremath{\mathsf{Marlin}}\xspace}
+\newcommand{\spartan}{\ensuremath{\mathsf{Spartan}}}
+\newcommand{\spark}{\ensuremath{\mathsf{SPARK}}\xspace}
 \newcommand{\fractal}{\ensuremath{\mathsf{Fractal}}\xspace}
 	\newcommand{\tlo}{\ensuremath{\mathsf{t_{lo}}}\xspace}
 	\newcommand{\tprimelo}{\ensuremath{\mathsf{t'_{lo}}}\xspace}
@@ -705,7 +707,7 @@ This variant of \cite{sonic} is much more prover efficient, but not fully succin
 Thus, the barrier to a fully succinct version of the more prover efficient version of \sonic (and for a fully succinct version of \cite{
 auroralight}), is a method to efficiently verify an evaluation $S(z,y)$ in the case $S$ only contains $O(n)$ non-zero monomials.
 
-A significant technical contribution of the recent concurrent \fractal and \marlin systems \cite{marlin,fractal}
+A significant technical contribution of the recent\footnote{In hindsight, we realized \spartan\cite{spartan} gave a similar sparse evaluation scheme for multilinear polynomials prior to \cite{marlin,fractal}.}  concurrent \fractal and \marlin systems \cite{marlin,fractal}
 is a solution to this problem ``in Lagrange Basis''.
 
 Specifically, suppose that $H,K$ are multiplicative subgroups of size $O(n)$ of \F such that $S$ has only $M$ non-zero values on $H\times K$; then \cite{marlin,fractal} devise a protocol to convince a succinct verifier that $S(z,y)=t$ where the prover's work is linear in $M$. This is a good point to note that the solution to this problem by the natural generalization of \cite{kate} to a bi-variate polynomial commitment scheme would have led to $O(n^2)$ proving time.
@@ -1252,9 +1254,8 @@ Now define $\reducedelems(\prot)$ to be the minimal size of a subset $S\subset [
  \[F(X)\defeq G(X, h_1(v_1(X)),\ldots,h_{M}(v_{M}(X)))\]
 has degree zero or one as a polynomial in the variables \sett{X_j}{j\in [M]\setminus S} whose coefficients are polynomials in $X$ and \sett{X_j}{j\in S}. 
 \end{itemize}
-Assume \prot is such that $\reducedelems \defeq \reducedelems(\prot)<M$
-
-We claim that the reduction of Lemma \ref{lem:ideal-to-AGM} can be changed such that only $\reducedelems$ $\F$-elements are sent by \prv.
+Assume \prot is such that $\reducedelems \defeq \reducedelems(\prot)<M$.
+We claim that the reduction of Lemma \ref{lem:ideal-to-AGM} can be changed so that only $\reducedelems$ $\F$-elements are sent by \prv.
 \begin{enumerate}
  \item \prv now sends only \sett{s_i=h_i(v_i(x))}{i\in S}.
  \item Now let $L$ be the restriction $G|_{X=x;X_i=s_i, i\in S}$. \ver and \prv use \sett{\com(f_i)}{i\in S}, and the linearity of \com, to compute the commitment to the corresponding restriction $F_L$ of $F$.
@@ -1471,9 +1472,9 @@ A fan-in 2 circuit of $n$ gates, each being either an addition or multiplication
 A common occurrence in proof systems is the need to enforce $\assignment_j \in \set{0,1}$ for some $j\in [m]$. This is equivalent in our system to setting, for some $i\in [n]$,
 \[\lvar_i=\rvar_i=j,(\selleft)_i=-1, (\selmult)_i=1, (\selright)_i=(\selout)_i = (\selconst)_i =0.\]  
 
-\paragraph{Enforcing public inputs:}
-It is quite convenient and direct to enforce values of public inputs $\assignment_1,\ldots\assignment_\ell$: To enforce the constraint $\assignment_j = \inp_j$ we set  for some $i\in [n]$
-\[\lvar_i=j,    (\selleft)_i=1 ,(\selmult)_i= (\selright)_i=(\selout)_i = 0 , (\selconst)_i =-\inp_j.\]  
+\paragraph{Enforcing constants:}
+It is quite convenient and direct to set constant values: Fix any $j\in [m], a\in \F$.  To enforce the constraint $\assignment_j = a$ we set  for some $i\in [n]$
+\[\lvar_i=j,    (\selleft)_i=1 ,(\selmult)_i= (\selright)_i=(\selout)_i = 0 , (\selconst)_i =-a.\]  
 
 
 
@@ -1840,7 +1841,7 @@ We use \transcript for obtaining random challenges via Fiat-Shamir. One can alte
 
 
 
- \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe for noticing we weren't hashing the public inputs in our original Fiat-Shamir description which can \href{https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/}{lead} to attacks. We thank Sean Bowe, Jay Butera, Luke Edwards, Cody Gunton, Adrian Hamelink, Marek Sefranek, Amir Taaki, Alexander Vlasov, Yongge Wang, Kevaundray Wedderburn, David Wong and Ye Zhang for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments. We thank Marek Sefranek for a correction in Section \ref{sec:finalconst} on how to correctly implement zero-knowledge for $\mathsf{t}$ in Round 3. We thank Tohru Kohrita for a simplified proof of Claim \ref{clm:randpermO}.  \bibliographystyle{alpha}
+ \section*{Acknowledgements} We thank Mary Maller for telling us about the field element reduction method discussed in the end of Section \ref{sec:polyprot}. We thank Vitalik Buterin for suggesting that we define the identity permutation using degree-1 polynomials, which reduces proof construction time, as well as reducing the proof size by 1 field element, and reduces the verification costs by 1 scalar multiplication. We thank Swastik Kopparty for pointing out an error in the permutation argument in a previous version of the paper, whose correction led to improved performance. We thank Justin Drake and Konstantin Panarin for discussions leading to corrections and simplifications of the permutation argument. We thank Sean Bowe for noticing we weren't hashing the public inputs in our original Fiat-Shamir description which can \href{https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/}{lead} to attacks. We thank Sean Bowe, Jay Butera, Luke Edwards, Cody Gunton, Adrian Hamelink, Marek Sefranek, Amir Taaki, Patrick Towa, Alexander Vlasov, Yongge Wang, Kevaundray Wedderburn, David Wong and Ye Zhang for comments and corrections. We thank the anonymous reviewers of SBC 2020 for their comments. We thank Marek Sefranek for a correction in Section \ref{sec:finalconst} on how to correctly implement zero-knowledge for $\mathsf{t}$ in Round 3. We thank Tohru Kohrita for a simplified proof of Claim \ref{clm:randpermO}.  \bibliographystyle{alpha}
 \bibliography{references}
     
 \appendix
