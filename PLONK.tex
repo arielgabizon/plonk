@@ -829,7 +829,7 @@ and constructs using group operations the correct SRS for the protocol.
 \end{proof}
 
 
-\paragraph{Knowlege soundness in the Algebraic Group Model}
+\paragraph{Knowledge soundness in the Algebraic Group Model}
 We say a protocol \prot between a prover \prv and verifier \ver for a relation \rel has \emph{Knowledge Soundness in the Algebraic Group Model} if there exists an efficient \ext such that
 the probability of any algebraic adversary \adv winning the following game is \negl.
 
@@ -1008,7 +1008,7 @@ For this, let us denote the distinct evaluation points by $z,z'$ and by $t_1,t_2
 \section{Idealised low-degree protocols}\label{sec:polyprot}
 We define a limited type of protocol between a prover and a verifier to cleanly capture and abstract the use of a polynomial commitment scheme such as \cite{kate}.
  In this protocol, the prover sends low-degree polynomials to a third trusted party \ideal.
-The verifier may then ask \ideal whether certain identites hold between the prover's polynomials, and additional predefined polynomials known to the verifier.
+The verifier may then ask \ideal whether certain identities hold between the prover's polynomials, and additional predefined polynomials known to the verifier.
 \begin{dfn}\label{dfn:polyprotocol}
 Fix positive integers $d,D,t,\ell$.
 A \emph{$(d,D,t,\ell)$-polynomial protocol} is a multiround protocol between a prover \prvpoly, verifier 
@@ -1066,7 +1066,7 @@ Given a relation \rel, a \emph{polynomial protocol for \rel} is a polynomial pro
 \end{enumerate}
 \end{dfn}
 \begin{remark}
-We intentionally do not define a zero-knowlege property for idealized protocols, as achieving ZK will depend on how much information on the polynomials sent to \ideal is leaked in the final ``compiled'' protocol. This in turn depends on specific details of the polynomial commitment scheme used for compilation.
+We intentionally do not define a zero-knowledge property for idealized protocols, as achieving ZK will depend on how much information on the polynomials sent to \ideal is leaked in the final ``compiled'' protocol. This in turn depends on specific details of the polynomial commitment scheme used for compilation.
 \end{remark}
 
 \subsection{Polynomial protocols on ranges}
@@ -1119,7 +1119,7 @@ For the lemma, we use the following simple claim.
 Let \prot be the \rangedprot{d}{D}{t}{\ell}{S}.
 We construct the protocol \protprime.
 The set of preprocessed polynomials in \protprime are the same as in \prot with the addition of $Z_S(X)\defeq \prod_{a\in S} (X-a)$.
-\protprime proceeds exactly as \prot until the point where \verpoly asks about identites on $S$.
+\protprime proceeds exactly as \prot until the point where \verpoly asks about identities on $S$.
 Suppose that the $k$ identities the verifier asks about are
 $F_1(X),\ldots, F_k(X)$ (where each $F_i$ is of total degree at most $D$ and of the form described in Definition \ref{dfn:polyprotocol}).
 \protprime now proceeds as follows:
@@ -1292,8 +1292,8 @@ More precisely, the following claim follows directly from the definition of \set
 
 
 For $f,g\in \polysofdeg{d}$ and a permutation $\sigma :[n]\to [n]$,
-we write $g=\sigma(f)$ if for each $i\in [n]$, $g(\hgen^i) = f(\hgen^{\sigma(i)})$. \footnote{Note that according to this definition there are multiple $g$ with $g=\sigma(f)$. Intuitively, we think of \sigof{f} as the unique such $g\in \polysofdeg{n}$, but do not define this formally to avoid needing to enforce this degree bound for efficiency reasons.}
-
+we write $g=\sigma(f)$ if for each $i\in [n]$, $g(\hgen^i) = f(\hgen^{\sigma(i)})$.\footnote{Note that according to this definition there are multiple $g$ with $g=\sigma(f)$. Intuitively, we think of \sigof{f} as the unique such $g\in \polysofdeg{n}$, but do not define this formally to avoid needing to enforce this degree bound for efficiency reasons.}\\ \\
+\noindent
 We present a ranged polynomial protocol enabling \prvpoly to prove that
 $g=\sigof{f}$.
 
@@ -1331,7 +1331,7 @@ For any strategy of \prvpoly, the probability of \verpoly outputting \acc in the
 \begin{proof}
  Suppose that $g\neq \sigof{f}$. By claim \ref{clm:randpermO}, e.w.p \negl over the choice of $\beta,\gamma\in \F$, 
  \[a\defeq \prod_{i\in [n]}f'(\hgen^i)\neq b\defeq \prod_{i\in [n]} g'(\hgen^i).\]
- Assume $\beta,\gamma$ were chosen such that the above holds, and also such that $g'(\hgen^i)\neq 0$ for all $i\in [n]$. We show \verpoly rejects; specifically, that assuming both identites \verpoly checks hold leads to contradiction.
+ Assume $\beta,\gamma$ were chosen such that the above holds, and also such that $g'(\hgen^i)\neq 0$ for all $i\in [n]$. We show \verpoly rejects; specifically, that assuming both identities \verpoly checks hold leads to contradiction.
  
  From the first check we know that $Z(\hgen) = 1$.
 From the second check we can show inductively, that for each $i\in [n]$
@@ -1488,13 +1488,13 @@ It will be convenient to first define the following notion of the \emph{partitio
 Suppose $\vars=(\lvar,\rvar,\ovar)$; think of \vars as a vector $V$ in $[m]^{3n}$.
 For $i\in [m]$, let $T_i\subset [3n]$ be the set of indices $j\in [3n]$ such that $V_j=i$.
 Now define 
-\[\partof{\constsystem}\defeq \sett{T_i}{i\in [m]}\]
+\[\partof{\constsystem}\defeq \sett{T_i}{i\in [m]}.\]
 
 
 We make a final definition before presenting the protocol.
 We say \constsystem is \emph{prepared for $\ell$ public inputs} if for $i\in [\ell]$ 
 \[\lvar_i=i,    (\selleft)_i=1 ,(\selmult)_i= (\selright)_i=(\selout)_i = 0 , (\selconst)_i =0.\]  
-
+\noindent
 Recall that $\dom=\set{\hgen,\ldots,\hgen^n}$.
 We present an \dom-ranged polynomial protocol for \relof{\constsystem}.
 
@@ -1537,7 +1537,7 @@ On the other hand, if $(f_L,f_R,f_O)$ copy-satisfies \sigof{\constsystem} and th
  \end{proof}
 
 
- 
+ \noindent
  Now, using Lemma \ref{lem:ranged-to-reg} and Lemma \ref{lem:ideal-to-AGM} we get
  \begin{corollary}\label{cor:final}
   Let \constsystem be a constraint system of the form described in Section \ref{sec:constsystems} with parameter $n$. There is a protocol for the relation \relof{\constsystem} with Knowledge Soundness in the Algebraic Group Model such that
